@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#10171d">
-<title>风雪之外 · UI / Interaction Concept</title>
+<title>风雪之外 · UI/交互概念 v1.2</title>
 <style>
 :root{--bg:#0c1218;--panel:#15202a;--panel2:#1b2933;--stroke:#30414a;--text:#f0ecdf;--muted:#a9b4b8;--gold:#e7b77a;--gold2:#bf8353;--mint:#91c4ae;--danger:#d99583;--radius:17px;--shadow:0 22px 75px #02070cbf;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft Yahei",sans-serif;color:var(--text)}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 65% 0%,#263542 0%,transparent 50%),linear-gradient(150deg,#10181f,#070d12);font-size:14px}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:3px}button:disabled{opacity:.43;cursor:not-allowed}::selection{background:#7d6349}
@@ -12,19 +12,75 @@
 @media(max-width:1080px){.page{padding:15px}.app.has-drawer .app-body{grid-template-columns:minmax(0,1fr) 275px}.toolbar .tool{padding:8px}.timer{padding:0;margin-left:auto}.stage{min-height:450px}.app{min-height:0}.drawer{max-height:560px}}
 @media(max-width:760px){.page{padding:10px}.masthead{align-items:flex-start}.hint-pill{display:none}.brand h1{font-size:18px}.app-top{padding:0 12px}.world-status{gap:5px}.world-status .world-caption{display:none}.app.has-drawer .app-body{grid-template-columns:1fr}.app.has-drawer .drawer{position:absolute;z-index:8;right:0;top:0;bottom:0;width:min(90%,365px);max-height:none;box-shadow:-20px 0 40px #0006}.stage{min-height:420px}.stage-foot{left:12px;right:12px;bottom:12px}.scene-controls{gap:4px}.round{width:34px;height:34px}.toolbar{flex-wrap:wrap;gap:0}.timer{margin-left:auto}.tool{font-size:12px}.rewards small{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* V1.2 · scene-first refinement: not final pixel art */
+:root{--gold:#eec18a;--muted:#a8b4b6}
+.brand h1{letter-spacing:4px;font-weight:580}
+.app{border-color:#61757b91;box-shadow:0 18px 72px #020a0fc5,inset 0 1px 0 #c4d2d515}
+.app-top{background:linear-gradient(90deg,#1f303a,#14222c);height:59px}
+.time{font-weight:480;font-size:24px;letter-spacing:1px}
+.activity{min-width:0;width:min(355px,45vw);padding:12px 14px;background:#13232bc5;border-color:#d5c1a54d;box-shadow:0 10px 26px #0710147d}
+.activity .eyebrow{color:#aebec0}
+.activity strong{font-weight:500}
+.activity button{color:#edc18b}
+.mode-label{background:#3349475e}
+.scene-label{border-color:#c6d8d63d}
+.scene-controls .round{transition:background .18s,border-color .18s}
+.stage{background:#16212b}
+#stove,#windowJar,#bookshelf,#desk,#woodpile{cursor:pointer;transition:filter .2s ease}
+#stove:hover,#windowJar:hover,#bookshelf:hover,#desk:hover,#woodpile:hover{filter:brightness(1.12)}
+#stove:focus-visible,#windowJar:focus-visible,#bookshelf:focus-visible,#desk:focus-visible,#woodpile:focus-visible{outline:2px solid #e5bc85;outline-offset:2px}
+#cabinSvg{transition:filter 700ms ease, opacity 200ms ease}
+.app[data-mode="ambient"][data-season="夏"] #windowBlock{filter:hue-rotate(65deg) saturate(1.45)}
+.app[data-mode="ambient"][data-season="春"] #windowBlock{filter:hue-rotate(25deg) saturate(1.22)}
+.app[data-mode="ambient"][data-season="秋"] #windowBlock{filter:hue-rotate(-16deg) saturate(1.15)}
+.app[data-mode="ambient"][data-weather="晴"] #windowBlock{filter:brightness(1.13) saturate(1.1)}
+.app[data-mode="ambient"][data-time="黄昏"] #cabinSvg{filter:sepia(.22) saturate(1.12)}
+.app[data-mode="ambient"][data-time="清晨"] #cabinSvg{filter:brightness(1.12) saturate(.93)}
+.app[data-mode="ambient"][data-time="夜"] #windowBlock{filter:brightness(.65) saturate(.8)}
+#fireFlame{transform-origin:930px 458px;animation:ember-breathe 4s ease-in-out infinite}
+#stoveSteam{animation:smoke-wisp 5s ease-in-out infinite}
+@keyframes ember-breathe{0%,100%{opacity:.94;transform:scale(1)}50%{opacity:1;transform:scale(1.014,.97)}}
+@keyframes smoke-wisp{0%,100%{opacity:.28;transform:translateY(1px)}50%{opacity:.45;transform:translateY(-8px)}}
+.compact-controls{display:none;position:absolute;z-index:5;right:12px;bottom:12px;align-items:center;gap:8px}
+.compact-controls .compact-camera{background:#10212bd4;color:#efdec6;border:1px solid #b5b1a766;padding:7px 10px;border-radius:8px;font-size:11px}
+.compact-controls span{font-size:10px;color:#f0e6d7;background:#11232bc9;padding:7px 10px;border-radius:8px;max-width:152px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app.compact{box-shadow:0 23px 74px #02080cbf}
+.app.compact .toolbar{justify-content:space-between;min-height:58px}
+.app.compact .toolbar .tool.compact-restore{display:flex!important;font-size:11px;padding:9px 10px;color:#d7ddd9;background:#20323b;border-color:#6b777a;white-space:nowrap}
+.app.compact .toolbar .tool.primary{padding:9px 11px;white-space:nowrap}
+.app.compact .toolbar .timer{gap:8px;flex:1;justify-content:flex-end}
+.app.compact .timer-mini{font-size:10px;max-width:90px}
+.app.compact .stage{height:286px;min-height:286px}
+.app.compact .app-body{min-height:286px}
+.app.compact .compact-controls{display:flex}
+.app.compact .scene-label{max-width:80%;white-space:nowrap}
+.app.compact .stage-foot{display:none}
+.app.compact .weather-noise{display:none}
+.app.compact #modeBadge{max-width:102px;text-overflow:ellipsis;overflow:hidden}
+.app.compact #worldDay{font-size:11px}
+.weather-noise{pointer-events:none;position:absolute;inset:0;z-index:2;opacity:.13;background-image:radial-gradient(circle,#d7e9ef 1px,transparent 1.7px),radial-gradient(circle,#d8eaf1 1px,transparent 2px);background-size:112px 113px,173px 171px;background-position:12px 22px,60px 74px;mix-blend-mode:screen;animation:drift-snow 25s linear infinite}
+@keyframes drift-snow{to{background-position:110px 130px,230px 250px}}
+.app[data-mode="ambient"][data-weather="晴"] .weather-noise{opacity:0}
+.app[data-mode="ambient"][data-season="夏"] .weather-noise{opacity:0}
+.app[data-mode="outdoor"] .weather-noise{opacity:.21}
+.prototype-status{font-size:10px;color:#9cb4b2;padding:5px 8px;border-left:1px solid #79918a48}
+@media(max-width:880px){.prototype-status{display:none}.activity{width:min(330px,62vw)}}
+@media(max-width:560px){.page{padding:10px}.masthead{gap:5px}.mast-actions{gap:6px}.mast-actions .ghost-btn{font-size:11px;padding:7px 8px}.brand{gap:8px}.brand h1{font-size:16px;letter-spacing:1px}.brand small{font-size:7px}.stage{min-height:375px}.activity{width:min(290px,75vw)}.scene-controls{flex-direction:column}.stage-foot{align-items:end}.toolbar .timer .tool.primary{font-size:11px;padding:8px}.toolbar .time{font-size:21px}}
+@media(prefers-reduced-motion:reduce){#fireFlame,#stoveSteam,.weather-noise{animation:none!important}#cabinSvg{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="page">
  <header class="masthead">
   <div class="brand"><div class="mark">❄</div><div><h1>风雪之外</h1><small>BEYOND THE STORM · INTERACTION STUDY</small></div></div>
-  <div class="mast-actions"><span class="hint-pill">04 / UI & INTERACTION</span><span class="hint-pill">交互演示 · 非真实存档</span><button id="soundToggle" class="ghost-btn" onclick="toggleSound()">♫ 环境声</button><button id="windowToggle" class="ghost-btn" onclick="toggleCompact()">↘ 小窗预览</button></div>
+  <div class="mast-actions"><span class="hint-pill">04 / UI & INTERACTION</span><span class="hint-pill">v1.2 · 交互演示 / 非真实存档</span><button id="soundToggle" class="ghost-btn" onclick="toggleSound()">♫ 环境声</button><button id="windowToggle" class="ghost-btn" onclick="toggleCompact()">↘ 小窗预览</button></div>
  </header>
  <div class="section-note"><span><strong>把时间留给现实，把生活留给木屋。</strong></span><span>概念验证 · 点击下面的控件体验四种世界状态</span></div>
  <div id="app" class="app" data-mode="companion">
    <div class="app-top">
     <div class="world-status"><span class="time-bullet">✦</span><span id="worldDay">世界第 12 日 · 冬</span><span id="weatherMeta" class="world-caption">· 小雪</span><span id="modeBadge" class="mode-label">正常陪伴</span></div>
-    <div class="rewards"><small>今日的份</small><span id="dotBox" class="dots" aria-label="今日已获得三份"></span></div>
+    <div class="rewards"><small>今日的份</small><span id="dotBox" class="dots" aria-label="演示数据：今天已获得三份"></span></div>
    </div>
    <div class="app-body">
     <div class="stage" id="stage">
@@ -87,16 +143,16 @@
          <rect x="782" y="318" width="280" height="207" rx="18" fill="url(#stoveBody)" stroke="#78817f" stroke-width="9"/>
          <rect x="813" y="345" width="212" height="143" rx="8" fill="#101a1e" stroke="#777c76" stroke-width="7"/>
          <ellipse cx="918" cy="466" rx="91" ry="45" fill="#ad4827" opacity=".65" filter="url(#blur)"/>
-         <path d="M860 470q-5-40 29-76 8 28 24 34 13-54 43-74 0 45 20 60 23 16 16 56z" fill="#ec8c44"/>
+         <path id="fireFlame" d="M860 470q-5-40 29-76 8 28 24 34 13-54 43-74 0 45 20 60 23 16 16 56z" fill="#ec8c44"/>
          <path d="M888 469q-9-25 11-40 15 12 19 20 11-34 30-49 3 35 18 44 6 8 4 25z" fill="#f7cd79"/>
          <path d="M827 476h193" stroke="#7c4d34" stroke-width="13"/>
          <rect x="799" y="523" width="35" height="24" fill="#303b40"/><rect x="1016" y="523" width="33" height="24" fill="#303b40"/>
          <circle cx="1042" cy="406" r="7" fill="#c2ac85"/>
          <rect x="857" y="294" width="155" height="24" rx="8" fill="#526069"/>
          <path d="M883 290q-8-40 38-42 46 2 44 40z" fill="#858984"/><path d="M918 248v-23" stroke="#a7aeaa" stroke-width="7"/><path d="M951 267q20 0 20-16" fill="none" stroke="#b1b7ab" stroke-width="8"/>
-         <path d="M903 215q-12-20 2-37M932 212q15-20 0-40" stroke="#e3e1d5" stroke-opacity=".32" stroke-width="7" fill="none"/>
+         <path id="stoveSteam" d="M903 215q-12-20 2-37M932 212q15-20 0-40" stroke="#e3e1d5" stroke-opacity=".32" stroke-width="7" fill="none"/>
         </g>
-        <g id="woodpile" fill="#977453" stroke="#48362c" stroke-width="3">
+        <g id="sceneTrace" style="display:none"><rect x="436" y="393" width="32" height="29" rx="5" fill="#d3bd9e" stroke="#896b56" stroke-width="3"/><path d="M467 401q13-4 13 6t-12 7" fill="none" stroke="#d3bd9e" stroke-width="4"/><path d="M443 384q-5-11 2-18M457 386q5-8-1-19" fill="none" stroke="#efe0c1" stroke-width="3" opacity=".7"/></g><g id="woodpile" fill="#977453" stroke="#48362c" stroke-width="3">
          <rect x="1071" y="476" width="68" height="22" rx="9"/><rect x="1090" y="453" width="69" height="22" rx="9"/><rect x="1063" y="430" width="72" height="22" rx="9"/><circle cx="1116" cy="464" r="8" fill="none" stroke="#d0a780"/><circle cx="1107" cy="487" r="8" fill="none" stroke="#d0a780"/>
         </g>
         <rect x="90" y="535" width="250" height="52" rx="26" fill="#50605a" fill-opacity=".5"/>
@@ -125,8 +181,8 @@
         <g fill="#e6ece8" opacity=".55"><circle cx="150" cy="152" r="3"/><circle cx="440" cy="112" r="2.4"/><circle cx="610" cy="165" r="3"/><circle cx="751" cy="125" r="2"/><circle cx="1010" cy="203" r="4"/><circle cx="1111" cy="96" r="2"/></g>
        </svg>
       </div>
-      <div class="room-frost"></div>
-      <div id="sceneLabel" class="scene-label"><b></b><span id="sceneLabelText">真实的今天 · 世界继续</span></div>
+      <div class="room-frost"></div><div class="weather-noise" aria-hidden="true"></div>
+      <div class="compact-controls" id="compactControls"><button class="compact-camera" onclick="compactNextCamera()" title="雪窗 / 炉边切换">⌗ 切换镜头</button><span id="compactAction">他正在读书</span></div><div id="sceneLabel" class="scene-label"><b></b><span id="sceneLabelText">真实的今天 · 世界继续</span></div>
       <div class="stage-foot">
        <div id="activityBox" class="activity"><span class="eyebrow">ANOTHER LIFE · 另一种生活</span><strong id="activityText">他正在读《观测员手册》</strong><div><button id="journalShortcut" onclick="openJournal('world')">看看今天 →</button></div></div>
        <div class="scene-controls">
@@ -151,13 +207,13 @@
      <button class="tool compact-restore" onclick="toggleCompact()">↗ 展开完整窗口</button>
    </nav>
  </div>
- <div class="mock-label"><strong>原型说明：</strong>此页面演示信息结构、可操作控件和四种世界状态；角色行为、天气、库存和「份」都是示例，不代表正式游戏模拟、真实存档或最终像素美术。你可以试着开始计时、切换氛围、打开手记、出门和户外临时专注。</div>
- <footer><span>GPT · UI/Interaction Direction v1.1 · 2026.11.13</span><span><button class="footer-link" onclick="simulateLife()">模拟一件真实世界事件（演示）</button>　·　<button class="footer-link" onclick="simulateShare()">演示获得一份</button>　·　所有数据仅在页面内暂存</span></footer>
+ <div class="mock-label"><strong>原型说明：</strong>此页面演示信息结构、可操作控件和四种世界状态；点击炉火、书架、书桌、玻璃罐可看对应信息。角色行为、天气、库存和「份」都是示例，不代表正式游戏模拟、真实存档或最终像素美术。你可以试着开始计时、切换氛围、打开手记、出门和户外临时专注。</div>
+ <footer><span>GPT · UI/Interaction Direction v1.2 · 2026.11.13</span><span><button class="footer-link" onclick="simulateLife()">模拟一件真实世界事件（演示）</button>　·　<button class="footer-link" onclick="simulateShare()">演示获得一份</button>　·　所有数据仅在页面内暂存</span></footer>
 </div>
 <script>
 (function(){
 'use strict';
-var state={mode:'companion',panel:'',camera:'wide',prevCamera:'wide',compact:false,sound:true,share:3,seconds:1500,minutes:25,running:false,timerDeadline:0,timerId:null,task:'学习 Java',activity:'reading',eventCount:0,season:'冬',weather:'大雪',timeOfDay:'夜',bookTab:'world',wood:60,food:45,supplyWood:1,supplyFood:1,hasSouvenir:false,soundLevel:65,style:'暖黄灯光',status:'正常陪伴'};
+var state={mode:'companion',panel:'',camera:'wide',prevCamera:'wide',miniCamera:'window',compact:false,sound:true,share:3,seconds:1500,minutes:25,running:false,timerDeadline:0,timerId:null,task:'学习 Java',activity:'reading',eventCount:0,season:'冬',weather:'大雪',timeOfDay:'夜',bookTab:'world',wood:60,food:45,supplyWood:1,supplyFood:1,hasSouvenir:false,soundLevel:65,style:'暖黄灯光',jarCount:3,pendingSeeds:0,status:'正常陪伴'};
 function el(id){return document.getElementById(id)}
 function esc(s){return String(s).replace(/[&<>"']/g,function(x){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]})}
 function pad(n){return String(n).padStart(2,'0')}
@@ -165,7 +221,7 @@ function setText(id,v){el(id).textContent=v}
 function close(){state.panel='';el('app').classList.remove('has-drawer')}
 function appendNote(s){var log=el('activityText');if(log)log.textContent=s}
 function render(){
- var app=el('app');app.dataset.mode=state.mode;app.classList.toggle('compact',state.compact);if(state.compact)close();
+ var app=el('app');app.dataset.mode=state.mode;app.dataset.season=state.season;app.dataset.weather=state.weather;app.dataset.time=state.timeOfDay;app.classList.toggle('compact',state.compact);if(state.compact)close();
  setText('modeBadge',state.mode==='companion'?'正常陪伴':state.mode==='ambient'?'独立氛围':state.mode==='outdoor'?'户外直控':'户外临时专注');
  setText('sceneLabelText',state.mode==='companion'?'真实的今天 · 世界继续':state.mode==='ambient'?'氛围预览 · 世界暂停':state.mode==='outdoor'?'松林步道 · 主动探索':'户外暂停 · 角色停在原地');
  el('sceneLabel').classList.toggle('frozen',state.mode==='ambient'||state.mode==='outdoor-focus');
@@ -174,7 +230,7 @@ function render(){
  setText('outdoorButtonLabel',state.mode==='outdoor'?'模拟走到家门':state.mode==='outdoor-focus'?'返回野外':state.mode==='ambient'?'回到今天':'出门走走');
  var d='';for(var i=0;i<9;i++)d+='<i class="'+(i<state.share?'on':'')+'"></i>';el('dotBox').innerHTML=d;el('dotBox').setAttribute('aria-label','演示数据：今天'+state.share+'份');
  setText('timerDisplay',pad(Math.floor(state.seconds/60))+':'+pad(state.seconds%60));
- setText('timerDescription',state.running?'正在专注 · '+state.task:state.mode==='outdoor'?'户外直控不累计专注':state.task);
+ setText('timerDescription',state.compact?(state.running?'正在专注':'电脑前的专注'):state.running?'正在专注 · '+state.task:state.mode==='outdoor'?'户外直控不累计专注':state.task);
  setText('timerButton',state.running?'Ⅱ 暂停':'▶ 开始专注');
  el('timerButton').disabled=state.mode==='outdoor';
  el('cabinCharacter').style.display=state.mode==='outdoor-focus'?'none':'';
@@ -182,10 +238,13 @@ function render(){
  roomSvg.setAttribute('viewBox',cam==='window'?'54 80 490 355':cam==='stove'?'720 160 450 350':cam==='desk'?'327 112 410 390':'0 0 1200 620');
  if(state.mode==='outdoor'){appendNote('天气尚好，可以沿着林间路慢慢走。')}else if(state.mode==='outdoor-focus'){appendNote('他留在松林原地。木屋是空的，世界暂停。')}else if(state.mode==='ambient'){appendNote('只是一幅你喜欢的风雪画面。真实世界暂停。')}else if(state.activity==='tea'){appendNote('他把书合上，正打算泡杯茶。')}else{appendNote('他正在读《观测员手册》。')}
  el('cabinCharacter').setAttribute('transform',state.activity==='tea'?'translate(238 0)':'translate(0 0)');
- if(state.compact){state.camera='window';roomSvg.setAttribute('viewBox','54 80 490 355')}
+ el('sceneTrace').style.display=state.eventCount>0?'':'none';
+ setText('compactAction',state.mode==='outdoor-focus'?'他仍在野外':state.mode==='ambient'?'安静的氛围预览':state.activity==='tea'?'他在泡茶':'他正在读书');
+ var seeds='';for(var si=0;si<Math.min(30,state.jarCount);si++){var sx=401+(si%5)*9,sy=366-Math.floor(si/5)*7;seeds+='<circle cx="'+sx+'" cy="'+sy+'" r="3.3" fill="'+(si%2?'#956e4d':'#b08458')+'"/>'}el('jarSeeds').innerHTML=seeds;
+ if(state.compact){roomSvg.setAttribute('viewBox',state.miniCamera==='stove'?'720 160 450 350':'54 80 490 355')}
 }
 function openPanel(name){
- if(state.compact){state.compact=false;render();}
+ if(state.compact){state.compact=false;state.camera=state.prevCamera;render();setText('windowToggle','↘ 小窗预览');}
  if(state.panel===name){close();return}
  state.panel=name;el('app').classList.add('has-drawer');
  var titles={journal:'时光手记',tasks:'现实专注',ambient:'天气与氛围',camera:'镜头与取景',stove:'炉火与生活',pack:'出门准备',outdoor:'松林 · 行走',styles:'样式与摆放'};
@@ -226,7 +285,7 @@ function renderPanel(){
  out='<div class="book-tabs">';
  [['real','现实专注'],['world','世界日记'],['projects','项目收藏'],['year','世界年册']].forEach(function(a){out+='<button class="'+(state.bookTab===a[0]?'on':'')+'" onclick="switchBookTab(&quot;'+a[0]+'&quot;)">'+a[1]+'</button>';});out+='</div>';var journalTabs=out;
  if(state.bookTab==='world')out='<div class="entry"><small>世界第 12 日 · 冬 · 小雪</small><p>早上去泉屋提了水。午后把《观测员手册》翻到了下一章。炉火还暖着。</p></div>'+(state.eventCount?'<div class="entry"><small>新增 · 演示事件</small><p>他合上手里的书，烧了壶热水。窗台上的玻璃罐旁，多了一只杯子。</p></div>':'')+'<p class="panel-note">世界日记只记录真实运行过的事件。这里是演示文字，不是游戏实际存档。</p>';
- else if(state.bookTab==='real')out='<div class="entry"><small>现实专注 · 示例</small><p>今天 2 小时 10 分 · 编程学习 · 获得 '+state.share+' 份。</p></div><div class="entry"><small>隐私</small><p>小窗默认不显示具体任务名。个人任务与世界日志分开保存。</p></div>';
+ else if(state.bookTab==='real')out='<div class="entry"><small>现实专注 · 示例</small><p>今天 2 小时 10 分 · 编程学习 · 获得 '+state.share+' 份。'+(state.pendingSeeds?' 有 '+state.pendingSeeds+' 颗象征性小球果，等待他下次有空整理。':'')+'</p></div><div class="entry"><small>隐私</small><p>小窗默认不显示具体任务名。个人任务与世界日志分开保存。</p></div>';
  else if(state.bookTab==='projects')out='<div class="entry"><small>木屋 · 真实施工阶段</small><p>补窗缝 · 第二阶段；他有空时继续做，专注的份数不会推进施工。</p></div><div class="entry"><small>已发现</small><p>《观测员手册》 · 旧搪瓷杯 · 松林地图。</p></div>';
  else out='<div class="entry"><small>世界年册 · 示例</small><p>第一年还在继续。待这一年真正结束，才会生成实际天气、修缮和探索总结。</p></div>';
  out=journalTabs+out;
@@ -269,7 +328,8 @@ window.openPanel=openPanel;
 window.openJournal=function(tab){state.bookTab=tab||'world';state.panel='';openPanel('journal')};
 window.switchBookTab=function(tab){state.bookTab=tab;renderPanel()};
 window.pickCamera=function(cam){state.camera=cam;render();renderPanel()};
-window.toggleCompact=function(){if(state.mode==='outdoor'&&!state.compact){openPanel('outdoor');return}state.compact=!state.compact;if(state.compact){state.prevCamera=state.camera;state.camera='window'}else state.camera=state.prevCamera;render();setText('windowToggle',state.compact?'↗ 完整窗口':'↘ 小窗预览')};
+window.toggleCompact=function(){if(state.mode==='outdoor'&&!state.compact){openPanel('outdoor');return}state.compact=!state.compact;if(state.compact){state.prevCamera=state.camera;state.camera=state.miniCamera}else state.camera=state.prevCamera;render();setText('windowToggle',state.compact?'↗ 完整窗口':'↘ 小窗预览')};
+window.compactNextCamera=function(){state.miniCamera=state.miniCamera==='window'?'stove':'window';state.camera=state.miniCamera;render()};
 window.toggleSound=function(){state.sound=!state.sound;setText('soundToggle',state.sound?'♫ 环境声':'♫ 已静音');if(state.panel==='ambient')renderPanel()};
 window.setMode=function(mode){if((state.mode==='outdoor'||state.mode==='outdoor-focus')&&mode==='companion'){window.backOutdoor();return}state.mode=mode;render();if(state.panel==='ambient')renderPanel()};
 window.applyAmbient=function(){state.season=el('seasonSelect').value;state.weather=el('weatherSelect').value;state.timeOfDay=el('timeSelect').value;state.mode=(state.mode==='outdoor'||state.mode==='outdoor-focus')?'outdoor-focus':'ambient';render();close()};
@@ -290,8 +350,15 @@ window.backOutdoor=function(){pause();state.mode='outdoor';render();openPanel('o
 window.returnHome=function(){pause();state.mode='companion';state.camera='wide';state.eventCount++;state.activity='reading';render();window.openJournal('world')};
 window.findSouvenir=function(){state.hasSouvenir=true;el('panelContent').insertAdjacentHTML('beforeend','<div class="entry"><small>演示发现</small><p>找到一卷旧胶卷。以后回家，它可以成为一个真实的慢事或收藏。</p></div>')};
 window.applyStyle=function(n){state.style=n;close()};
-window.simulateLife=function(){state.activity=state.activity==='reading'?'tea':'reading';state.eventCount++;render();if(state.panel==='journal')renderPanel()};
-window.simulateShare=function(){state.share=Math.min(9,state.share+1);render();if(state.panel==='journal'||state.panel==='tasks')renderPanel()};
+window.simulateLife=function(){state.activity=state.activity==='reading'?'tea':'reading';state.eventCount++;state.jarCount=Math.min(30,state.jarCount+state.pendingSeeds);state.pendingSeeds=0;render();if(state.panel==='journal'||state.panel==='tasks')renderPanel()};
+window.simulateShare=function(){if(state.share<9){state.share++;state.pendingSeeds++}render();if(state.panel==='journal'||state.panel==='tasks')renderPanel()};
+/* Objects are view-only detail entrances, not direct orders to the character. */
+ [['stove','stove'],['woodpile','stove'],['windowJar','journal'],['bookshelf','journal'],['desk','journal']].forEach(function(pair){
+  var node=el(pair[0]);node.setAttribute('role','button');node.setAttribute('tabindex','0');node.setAttribute('aria-label',pair[0]==='stove'?'查看炉火与生活':'查看木屋记录');
+  var show=function(){if(state.mode==='outdoor')return;if(pair[1]==='journal')window.openJournal(pair[0]==='windowJar'?'real':'projects');else openPanel('stove')};
+  node.addEventListener('click',show);
+  node.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();show()}});
+ });
 document.addEventListener('keydown',function(e){
  var target=e.target;if(target&&['INPUT','TEXTAREA','SELECT'].indexOf(target.tagName)!==-1)return;
  if(e.key==='Escape'){if(state.panel)close();return}
