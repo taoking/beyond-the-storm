@@ -293,7 +293,7 @@ C.clearRect(0,0,W,H);
 if(state.mode==='outdoor')drawOutdoor(frame);else sceneFrame(frame);
 screen.fillStyle=P.dark;screen.fillRect(0,0,W,H);screen.imageSmoothingEnabled=false;
 var cam=state.mini?state.miniCamera:state.camera;
-var source=cam==='window'?{x:41,y:90,w:228,h:128}:cam==='hearth'?{x:309,y:106,w:165,h:94}:{x:0,y:0,w:480,h:270};
+var source=cam==='window'?{x:41,y:98,w:228,h:128}:cam==='hearth'?{x:309,y:106,w:165,h:94}:{x:0,y:0,w:480,h:270};
 if(state.mode==='outdoor')source={x:0,y:0,w:480,h:270};
 screen.drawImage(buffer,source.x,source.y,source.w,source.h,0,0,W,H);
 }
