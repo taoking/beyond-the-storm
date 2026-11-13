@@ -10,6 +10,7 @@ import { collapse, outingMinute, travel, arriveHome } from "./outing.ts";
 export const FOREST_WIDTH = 13;
 export const FOREST_HEIGHT = 9;
 export const FOREST_GATE = { x: 1, y: 4 } as const;
+export const FOREST_CAMPFIRE = { x: 9, y: 4 } as const;
 export type ForestKind = "wood" | "ingredient" | "lumber" | "rope" | "canvas" | "fuel" | "can";
 export interface ForestNode {
   id: string;
@@ -213,6 +214,25 @@ export function restForest(w: World): ForestResult {
   live.stamina=Math.min(100,live.stamina+24);
   return YES;
 }
+/** 固定篝火点。消耗真实携带柴捆（3 根柴），可延长野外停留但不免费回血。 */
+export function warmForest(w: World): ForestResult {
+  const f=ready(w),o=w.outing;
+  if(!f || !o)return no("没有在松林地图中。");
+  if(Math.abs(f.x-FOREST_CAMPFIRE.x)+Math.abs(f.y-FOREST_CAMPFIRE.y)>1)
+    return no("先走到工棚旁的避风火堆。");
+  if(o.bundles<1)return no("需要行囊里的一捆柴才能升火。");
+  o.bundles-=1;
+  // 点火时立刻开始回温；接下来实际消耗 20 游戏分钟，包含炉火/野外饭点。
+  f.warmth=Math.min(100,f.warmth+30);
+  if(!spend(w,20))return no("生火途中撑不住了，醒来时已在木屋里。");
+  const live=ready(w);
+  if(!live)return no("已经回到木屋。");
+  live.warmth=Math.min(100,live.warmth+25);
+  live.stamina=Math.min(100,live.stamina+10);
+  bump(w,"松林篝火耗柴",3);
+  return YES;
+}
+
 export function returnForest(w: World): ForestResult {
   const f=ready(w);
   if (!f) return no("没有在松林地图中。");
@@ -253,6 +273,8 @@ export interface ForestSnapshot {
   warmth:number; stamina:number; health:number;
   returnMinutes:number;
   atGate:boolean;
+  canWarm:boolean;
+  fireSpot:{ x:number;y:number };
   slots:number; maxSlots:number;
   goods:ForestGoods;
   nodes: { id:string; x:number; y:number; name:string; ready:boolean; reachable:boolean; unique:boolean }[];
@@ -264,6 +286,8 @@ export function forestSnapshot(w: World): ForestSnapshot | null {
     x:f.x,y:f.y,width:FOREST_WIDTH,height:FOREST_HEIGHT,tiles:ROWS,
     warmth:Math.round(f.warmth),stamina:Math.round(f.stamina),health:Math.round(f.health),
     returnMinutes:o.minutesFromDoor,atGate:f.x===FOREST_GATE.x && f.y===FOREST_GATE.y,
+    canWarm:Math.abs(f.x-FOREST_CAMPFIRE.x)+Math.abs(f.y-FOREST_CAMPFIRE.y)<=1 && o.bundles>=1,
+    fireSpot:{...FOREST_CAMPFIRE},
     slots:slotCount(o),maxSlots:20,goods:{...f.goods},
     nodes:FOREST_NODES.map(n=>({id:n.id,x:n.x,y:n.y,name:n.name,
       ready:isForestNodeReady(w,n),
