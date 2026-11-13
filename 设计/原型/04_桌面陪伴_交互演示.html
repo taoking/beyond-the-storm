@@ -241,7 +241,7 @@ function render(){
  roomSvg.setAttribute('viewBox',cam==='window'?'54 80 490 355':cam==='stove'?'720 160 450 350':cam==='desk'?'327 112 410 390':'0 0 1200 620');
  if(state.mode==='outdoor'){appendNote('天气尚好，可以沿着林间路慢慢走。')}else if(state.mode==='outdoor-focus'){appendNote('他留在松林原地。木屋是空的，世界暂停。')}else if(state.mode==='ambient'){appendNote('只是一幅你喜欢的风雪画面。真实世界暂停。')}else if(state.activity==='tea'){appendNote('他把书合上，正打算泡杯茶。')}else{appendNote('他正在读《观测员手册》。')}
  el('cabinCharacter').setAttribute('transform',state.activity==='tea'?'translate(238 0)':'translate(0 0)');
- el('sceneTrace').style.display=state.eventCount>0?'':'none';
+ el('sceneTrace').style.display=(state.eventCount>0&&state.activity==='tea')?'':'none';
  setText('compactAction',state.mode==='outdoor-focus'?'他仍在野外':state.mode==='ambient'?'安静的氛围预览':state.activity==='tea'?'他在泡茶':'他正在读书');
  var seeds='';for(var si=0;si<Math.min(30,state.jarCount);si++){var sx=401+(si%5)*9,sy=366-Math.floor(si/5)*7;seeds+='<circle cx="'+sx+'" cy="'+sy+'" r="3.3" fill="'+(si%2?'#956e4d':'#b08458')+'"/>'}el('jarSeeds').innerHTML=seeds;
  if(state.compact){roomSvg.setAttribute('viewBox',state.miniCamera==='stove'?'720 160 450 350':'54 80 490 355')}
