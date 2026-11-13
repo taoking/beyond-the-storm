@@ -101,6 +101,36 @@ function renderFocus(s: Snapshot, g: Game): string {
   return out.join(" ");
 }
 
+function renderForest(s: Snapshot): string {
+  const o=s.outing, f=o?.forest;
+  if(!o || !f)return "";
+  const marks=new Map(f.nodes.map(n=>[n.x+","+n.y,n.ready ? "✦" : "·"]));
+  const rows=f.tiles.map((row,y)=>Array.from(row).map((tile,x)=>{
+    if(x===f.x && y===f.y)return "@";
+    if(tile==="G")return "G";
+    return marks.get(x+","+y) ?? (tile==="#" ? "▣" : "·");
+  }).join(" ")).join("\n");
+  const canAct=s.mode==="outdoor" && !o.panel;
+  const gather=f.nodes.filter(n=>n.ready).map(n=>btn(n.reachable ? "拾取："+n.name : n.name+"（走近）",
+    "forestGather",[n.id],!canAct || !n.reachable)).join(" ");
+  const goods=Object.entries(f.goods).filter(([,n])=>n>0).map(([name,n])=>
+    ({wood:"柴",ingredient:"食材",lumber:"木料",rope:"旧绳",canvas:"帆布",fuel:"燃油",can:"罐头"} as Record<string,string>)[name]+" ×"+n).join("、");
+  return `<div class="forest-panel">
+    <strong>松林 · 小地图试玩</strong> <span class="dim">G 林口 / @ 他 / ✦ 可采 / ▣ 障碍</span>
+    <pre class="forest-map">${esc(rows)}</pre>
+    <div>体温 ${f.warmth} · 体力 ${f.stamina} · 生命 ${f.health}</div>
+    <div>背包 ${f.slots}/${f.maxSlots} 格 · 采得：${esc(goods || "暂无")}</div>
+    <div class="row">${btn("↑","forestMove",[0,-1],!canAct)}
+      ${btn("←","forestMove",[-1,0],!canAct)}
+      ${btn("↓","forestMove",[0,1],!canAct)}
+      ${btn("→","forestMove",[1,0],!canAct)}
+      ${btn("原地歇 10 分","forestRest",[],!canAct)}
+      ${btn("走林道回木屋","forestReturn",[],!canAct || !f.atGate)}</div>
+    <div class="dim">WASD / 方向键移动一格，走到 G 再返家。离家约 ${f.returnMinutes} 游戏分钟。</div>
+    <div class="row">${gather || '<span class="dim">周围资源已采完</span>'}</div>
+  </div>`;
+}
+
 function renderInspect(s: Snapshot, g: Game): string {
   const w = g.world;
   const st = s.stock;
@@ -163,11 +193,12 @@ function renderInspect(s: Snapshot, g: Game): string {
   h.push("<h3>出门</h3>");
   if (s.outing) {
     const o = s.outing;
-    h.push(`<div>${o.area ? `在${esc(o.area)}` : "在院门外"} · 走回家门要 ${o.minutesFromDoor} 分钟 · 干粮 ${o.rations} · 柴 ${o.bundles} 捆</div>
-      <div class="row">${btn("去松林", "travelTo", ["pineForest"], s.mode !== "outdoor" || o.area === "松林")}
-      ${btn("走回家", "headHome", [], s.mode !== "outdoor")}
+    h.push(`<div>${o.area ? `在${esc(o.area)}` : "在院门外"} · 返回木屋约 ${o.minutesFromDoor} 游戏分钟 · 干粮 ${o.rations} · 柴 ${o.bundles} 捆</div>
+      <div class="row">${!o.forest ? btn("进入松林", "enterForest", [], s.mode !== "outdoor" || !!o.area) : ""}
+      ${!o.forest ? btn("走回家", "headHome", [], s.mode !== "outdoor") : ""}
       ${(["map", "pack", "journal"] as const).map((p) => btn(o.panel === p ? `合上${PANEL_NAME[p]}` : PANEL_NAME[p], "outdoorPanel", [o.panel === p ? null : p], s.mode !== "outdoor")).join("")}</div>
-      <div class="dim">${o.panel ? "面板开着：世界暂停，也不算专注。" : "野外的地图、采集和身体状态还没有做，这里只有时间、行囊和回家。"}</div>`);
+      <div class="dim">${o.panel ? "面板开着：世界和体温暂停，也不算专注。" : o.forest ? "林中行走、采集和歇息都会推进真实游戏时间。" : "从院门出发，走 20 分钟林道进入松林。"}</div>`);
+    if(o.forest)h.push(renderForest(s));
   } else {
     const c = checkOuting(w);
     h.push(`<div class="row">干粮 <input id="packRations" type="number" min="0" max="${c.maxRations}" value="${Math.min(2, c.maxRations)}" style="width:50px"/>
@@ -261,7 +292,8 @@ function render(): void {
   $("notices").textContent = s.notices.slice(-2).map((n) => n.text).join("　");
   // 检查面板里有下拉框和输入框：鼠标或键盘正停在上面时不重画，免得打断操作
   const inspect = $("inspect");
-  if (!inspect.matches(":hover") && !inspect.contains(document.activeElement)) inspect.innerHTML = renderInspect(s, g);
+  if ((s.outing?.forest || !inspect.matches(":hover")) && !inspect.contains(document.activeElement))
+    inspect.innerHTML = renderInspect(s, g);
   $("debug").innerHTML = renderDebug(s, g);
   const sig = g.focus.tasks.map((t) => `${t.id}${t.done}`).join(",");
   if (sig !== lastTaskSig) {
@@ -352,6 +384,15 @@ $<HTMLInputElement>("note").addEventListener("keydown", (ev) => {
 });
 
 document.addEventListener("keydown", (ev) => {
+  const tag=(ev.target as HTMLElement).tagName;
+  if (tag==="INPUT" || tag==="TEXTAREA" || tag==="SELECT" || (ev.target as HTMLElement).isContentEditable) return;
+  const f=rt.game?.world.outing?.forest;
+  if (f && rt.game?.mode==="outdoor" && !rt.game?.outdoorPanel) {
+    const dir: Record<string,[number,number]> = {w:[0,-1],a:[-1,0],s:[0,1],d:[1,0],
+      ArrowUp:[0,-1],ArrowLeft:[-1,0],ArrowDown:[0,1],ArrowRight:[1,0]};
+    const delta=dir[ev.key] ?? dir[ev.key.toLowerCase()];
+    if (delta) {ev.preventDefault();rt.dispatch("forestMove",...delta);render();return;}
+  }
   if (ev.key === "Escape" && showToday) {
     showToday = false;
     render();
