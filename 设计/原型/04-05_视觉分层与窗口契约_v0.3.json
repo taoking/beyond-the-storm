@@ -11,7 +11,9 @@
     "content": "设计/03_主要内容.md",
     "ui": "设计/04_UI与交互.md §19-20",
     "art": "设计/05_美术与音频.md §9-10",
-    "prototype": "设计/原型/04-05_窗下书桌_窗口体验原型.html"
+    "prototype": "设计/原型/04-05_窗下书桌_窗口体验原型.html",
+    "layeredSvgMotherScene": "设计/原型/05_窗下书桌_像素分层母场景.svg",
+    "indoorActorSpriteStudy": "设计/原型/05_室内角色_三动作像素试片.svg"
   },
   "scene": {
     "logicalWidth": 480,
@@ -318,8 +320,42 @@
   },
   "validation": {
     "mockDOMTests": 22,
-    "renderedChromiumScreenshots": "pending",
+    "renderedChromiumScreenshots": "pending, screenshot test script committed",
     "realFocusEngine": "not implemented here",
-    "worldSimulation": "not implemented here"
-  }
+    "worldSimulation": "not implemented here",
+    "svgStudiesAdded": true
+  },
+  "assetDeliverables": [
+    {
+      "file": "05_窗下书桌_像素分层母场景.svg",
+      "kind": "editable pixel-aligned layered SVG",
+      "layers": [
+        "interior_base",
+        "window_weather",
+        "window_frame",
+        "static_furniture",
+        "jar_state",
+        "desk_objects",
+        "actor_indoor",
+        "stove_fire",
+        "lighting_overlay",
+        "far_worker_optional"
+      ],
+      "status": "visual study; not production atlas"
+    },
+    {
+      "file": "05_室内角色_三动作像素试片.svg",
+      "kind": "transparent shared-body sprite sheet study",
+      "cellSize": [
+        60,
+        96
+      ],
+      "poses": [
+        "read",
+        "tea",
+        "observe"
+      ],
+      "status": "visual study; not final animated frames"
+    }
+  ]
 }
