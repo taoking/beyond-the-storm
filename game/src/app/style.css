@@ -30,3 +30,10 @@ table { border-collapse: collapse; width: 100%; } td, th { padding: 1px 4px; tex
 .dim { color: var(--dim); } .row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 2px 0; }
 .follower { color: var(--cold); }
 @media (max-width: 1100px) { #app { grid-template-columns: 1fr; } }
+
+/* 06 v0.4 松林灰盒地图：清楚地展示规则，而不是最终像素画。 */
+.forest-panel { margin-top: 10px; padding: 10px; border: 1px solid #54695d; background: #18251f; border-radius: 5px; }
+.forest-map { margin: 7px 0; padding: 9px 5px; border-radius: 4px; background: #101e19; color: #b7cdb8;
+  font: 600 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0; white-space: pre;
+  overflow-x: auto; user-select: none; }
+.forest-panel .row { margin-top: 8px; }
