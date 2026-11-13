@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="960" height="540" shape-rendering="crispEdges" aria-label="风雪之外雪夜气象站木屋，窗下书桌，读书人物与暖炉，分层像素美术试片">
+<title>风雪之外 · 窗下书桌分层母场景 · v0.3</title>
+<desc>480×270 像素对齐的可编辑 SVG 分层试片，非最终精灵图。scene groups correspond to visual contract v0.3.</desc>
+<defs>
+ <clipPath id="snow-window-mask"><rect x="53" y="32" width="167" height="155"/></clipPath>
+</defs>
+<g id="interior_base" data-static="true">
+ <rect width="480" height="270" fill="#35434b"/>
+ <rect width="480" height="9" fill="#634a3c"/><rect y="7" width="480" height="3" fill="#b28b63"/>
+ <rect y="39" width="480" height="2" fill="#293b45"/><rect y="73" width="480" height="2" fill="#293b45"/>
+ <rect y="109" width="480" height="2" fill="#293b45"/><rect y="144" width="480" height="2" fill="#293b45"/>
+ <rect y="180" width="480" height="2" fill="#293b45"/>
+ <rect x="12" y="11" width="10" height="188" fill="#614839"/>
+ <rect x="15" y="11" width="3" height="188" fill="#a07b56"/>
+ <rect x="461" y="10" width="13" height="187" fill="#624b3c"/>
+ <rect y="195" width="480" height="6" fill="#a17c59"/>
+ <rect y="201" width="480" height="7" fill="#493a31"/>
+ <rect y="208" width="480" height="62" fill="#403832"/>
+ <g fill="#262c2f"><rect x="0" y="223" width="480" height="2"/><rect x="0" y="246" width="480" height="2"/></g>
+ <g fill="#6a503e"><rect x="53" y="209" width="2" height="61"/><rect x="126" y="209" width="2" height="61"/><rect x="203" y="209" width="2" height="61"/><rect x="279" y="209" width="2" height="61"/><rect x="363" y="209" width="2" height="61"/></g>
+ <g fill="#52616a"><rect x="18" y="54" width="16" height="2"/><rect x="26" y="89" width="10" height="2"/><rect x="326" y="45" width="9" height="2"/><rect x="333" y="78" width="11" height="1"/></g>
+</g>
+<g id="window_weather" data-inputs="season,weather,dayPhase" clip-path="url(#snow-window-mask)">
+ <rect x="53" y="32" width="167" height="155" fill="#536e87"/>
+ <rect x="53" y="32" width="167" height="46" fill="#445f7d"/>
+ <rect x="178" y="50" width="13" height="13" fill="#dae5e7"/>
+ <rect x="181" y="53" width="7" height="7" fill="#f5eddb"/>
+ <path d="M53 142 L80 100 L104 126 L145 79 L185 135 L220 98 V187 H53Z" fill="#788f9f"/>
+ <path d="M53 162 L79 125 L111 148 L149 117 L179 140 L220 121 V187 H53Z" fill="#a7bfcb"/>
+ <path d="M53 180 L73 162 L110 177 L155 153 L184 168 L220 155 V187 H53Z" fill="#d5e3e3"/>
+ <g fill="#284954">
+  <path d="M58 177 L72 126 L86 177Z"/><path d="M84 175 L97 133 L108 175Z"/>
+  <path d="M192 177 L208 124 L222 177Z"/>
+ </g>
+ <g fill="#456572">
+  <path d="M62 157 L72 117 L84 157Z"/><path d="M89 158 L98 126 L107 158Z"/>
+  <path d="M195 151 L207 119 L219 151Z"/>
+ </g>
+ <g fill="#e6ece7">
+  <rect x="65" y="147" width="11" height="2"/><rect x="93" y="146" width="7" height="2"/>
+  <rect x="201" y="137" width="11" height="2"/><rect x="72" y="86" width="2" height="2"/>
+  <rect x="86" y="62" width="2" height="2"/><rect x="116" y="94" width="2" height="2"/>
+  <rect x="162" y="73" width="2" height="2"/><rect x="186" y="108" width="2" height="2"/>
+  <rect x="203" y="87" width="2" height="2"/><rect x="69" y="116" width="3" height="2"/>
+ </g>
+</g>
+<g id="window_frame" data-static="true">
+ <rect x="44" y="23" width="183" height="176" fill="none" stroke="#463a34" stroke-width="9"/>
+ <rect x="47" y="27" width="176" height="165" fill="none" stroke="#ab8964" stroke-width="6"/>
+ <rect x="129" y="29" width="6" height="159" fill="#876448"/>
+ <rect x="51" y="109" width="169" height="5" fill="#876448"/>
+ <rect x="45" y="189" width="186" height="7" fill="#b28b63"/>
+ <rect x="49" y="196" width="178" height="4" fill="#48382f"/>
+ <rect x="57" y="35" width="16" height="2" fill="#e9eef1"/>
+ <rect x="57" y="38" width="3" height="14" fill="#dce7e9"/>
+ <rect x="212" y="41" width="2" height="17" fill="#eaf2f1"/>
+</g>
+<g id="static_furniture" data-static="true">
+ <rect x="232" y="19" width="90" height="114" fill="#473a34"/>
+ <rect x="236" y="23" width="82" height="102" fill="#2b3131"/>
+ <rect x="236" y="51" width="82" height="6" fill="#876448"/>
+ <rect x="236" y="88" width="82" height="6" fill="#876448"/>
+ <g>
+  <rect x="243" y="33" width="8" height="17" fill="#a58667"/><rect x="254" y="29" width="7" height="21" fill="#6e8a82"/>
+  <rect x="264" y="36" width="9" height="14" fill="#b9a27c"/><rect x="275" y="31" width="7" height="19" fill="#967968"/>
+  <rect x="285" y="34" width="8" height="16" fill="#bf9869"/><rect x="296" y="27" width="6" height="23" fill="#738a85"/>
+  <rect x="242" y="67" width="8" height="19" fill="#b99e7e"/><rect x="253" y="65" width="10" height="21" fill="#748c83"/>
+  <rect x="266" y="71" width="6" height="15" fill="#a7896d"/><rect x="277" y="63" width="9" height="23" fill="#c2a47c"/>
+  <rect x="290" y="67" width="9" height="19" fill="#74837d"/>
+ </g>
+ <rect x="88" y="180" width="150" height="10" fill="#674831"/>
+ <rect x="86" y="181" width="150" height="7" fill="#b28b63"/>
+ <rect x="88" y="186" width="150" height="6" fill="#94704f"/>
+ <rect x="93" y="193" width="9" height="53" fill="#634a3c"/>
+ <rect x="222" y="193" width="9" height="53" fill="#634a3c"/>
+ <rect x="104" y="216" width="116" height="3" fill="#745641"/>
+ <rect x="151" y="193" width="13" height="44" fill="#494c46"/>
+ <rect x="142" y="229" width="47" height="8" fill="#765b44"/>
+ <g id="woodpile" data-variable="inventory">
+  <rect x="15" y="172" width="31" height="16" fill="#5d4a39"/>
+  <rect x="18" y="169" width="11" height="9" fill="#876448"/>
+  <rect x="29" y="169" width="12" height="9" fill="#97754f"/>
+  <rect x="16" y="178" width="11" height="9" fill="#b28b63"/>
+  <rect x="30" y="180" width="12" height="7" fill="#8f6849"/>
+  <rect x="20" y="181" width="5" height="3" fill="#614635"/>
+ </g>
+</g>
+<g id="jar_state" data-inputs="realFocusSharesAlreadyStaged" >
+ <rect x="77" y="163" width="22" height="23" fill="#8aa8b0" fill-opacity=".75"/>
+ <rect x="80" y="165" width="16" height="19" fill="#c1d5d3" fill-opacity=".7"/>
+ <rect x="77" y="163" width="22" height="4" fill="#b28b63"/>
+ <g id="jar_fill_example" fill="#a0764c"><rect x="82" y="179" width="4" height="4"/><rect x="87" y="179" width="4" height="4"/><rect x="92" y="180" width="3" height="3"/></g>
+</g>
+<g id="desk_objects" data-inputs="actorActivity,inventory,displayState">
+ <rect x="194" y="174" width="32" height="5" fill="#e9d2a8"/>
+ <rect x="194" y="174" width="13" height="3" fill="#fff0c8"/>
+ <rect x="208" y="175" width="2" height="6" fill="#876448"/>
+ <rect x="113" y="170" width="14" height="15" fill="#cbbba0"/>
+ <rect x="125" y="173" width="6" height="9" fill="#aa9f88"/>
+ <rect x="116" y="168" width="8" height="3" fill="#e5d8ba"/>
+ <rect x="125" y="163" width="2" height="6" fill="#c6d2c4"/>
+ <rect x="232" y="161" width="8" height="21" fill="#594a3a"/>
+ <rect x="235" y="151" width="2" height="11" fill="#aeaa83"/>
+ <rect x="231" y="151" width="9" height="4" fill="#e4b276"/>
+</g>
+<g id="actor_indoor" data-inputs="actorPosition,actorActivity,clothingStyle">
+ <!-- Reading seated, wearing a soft knit jumper: production must replace with consistent sprite frames -->
+ <rect x="160" y="203" width="10" height="15" fill="#263039"/>
+ <rect x="180" y="204" width="10" height="15" fill="#263039"/>
+ <rect x="158" y="211" width="15" height="7" fill="#212932"/>
+ <rect x="179" y="212" width="14" height="6" fill="#212932"/>
+ <rect x="156" y="153" width="40" height="49" fill="#857e68"/>
+ <rect x="155" y="164" width="9" height="31" fill="#5f5b4e"/>
+ <rect x="188" y="160" width="9" height="35" fill="#6f6b58"/>
+ <rect x="163" y="173" width="27" height="3" fill="#b4a688"/>
+ <rect x="165" y="184" width="23" height="2" fill="#55554a"/>
+ <rect x="162" y="145" width="28" height="24" fill="#c49f85"/>
+ <rect x="164" y="139" width="25" height="11" fill="#59483e"/>
+ <rect x="165" y="134" width="24" height="7" fill="#4b3e39"/>
+ <rect x="168" y="156" width="4" height="2" fill="#2d353b"/>
+ <rect x="188" y="172" width="15" height="7" fill="#d2ae8e"/>
+ <rect x="200" y="169" width="17" height="13" fill="#eed3ac"/>
+ <rect x="203" y="172" width="16" height="2" fill="#fff1cf"/>
+ <rect x="207" y="168" width="2" height="13" fill="#9c7658"/>
+</g>
+<g id="stove_fire" data-inputs="actualFireLevel">
+ <rect x="376" y="0" width="24" height="119" fill="#1b2630"/>
+ <rect x="379" y="0" width="17" height="115" fill="#435059"/>
+ <rect x="380" y="0" width="3" height="113" fill="#66706e"/>
+ <rect x="338" y="107" width="123" height="110" fill="#162029"/>
+ <rect x="338" y="107" width="123" height="5" fill="#708080"/>
+ <rect x="338" y="112" width="5" height="105" fill="#607074"/>
+ <rect x="456" y="112" width="5" height="105" fill="#556469"/>
+ <rect x="346" y="119" width="108" height="86" fill="#2e3738"/>
+ <rect x="351" y="124" width="98" height="73" fill="#111a20"/>
+ <rect x="358" y="180" width="85" height="13" fill="#4c3d32"/>
+ <path d="M365 185 L372 153 L385 169 L400 136 L410 164 L421 153 L430 185Z" fill="#a9482e"/>
+ <path d="M378 186 L385 159 L396 178 L405 148 L415 176 L423 166 L425 186Z" fill="#f7b05d"/>
+ <path d="M387 184 L399 168 L404 182 L409 166 L416 185Z" fill="#f6d49a"/>
+ <rect x="359" y="192" width="83" height="3" fill="#88684c"/>
+ <rect x="347" y="208" width="14" height="13" fill="#182129"/>
+ <rect x="441" y="208" width="13" height="13" fill="#182129"/>
+ <rect x="339" y="99" width="111" height="9" fill="#526269"/>
+ <rect x="364" y="83" width="47" height="16" fill="#848a80"/>
+ <rect x="373" y="79" width="27" height="6" fill="#a9ad9b"/>
+ <rect x="385" y="75" width="8" height="5" fill="#d1c4a1"/>
+ <rect x="410" y="86" width="12" height="5" fill="#b2ab95"/>
+ <g fill="#9fb4b0"><rect x="385" y="66" width="2" height="6"/><rect x="396" y="60" width="2" height="8"/></g>
+</g>
+<g id="lighting_overlay" data-inputs="worldDayPhase,lampStyle,actualFireLevel">
+ <rect x="317" y="127" width="8" height="26" fill="#6d634f"/>
+ <rect x="315" y="138" width="14" height="17" fill="#e4b276"/>
+ <rect x="317" y="140" width="10" height="12" fill="#f6d49a"/>
+ <rect x="313" y="134" width="19" height="5" fill="#775c45"/>
+ <rect x="319" y="124" width="6" height="8" fill="#b8a987"/>
+</g>
+<g id="far_worker_optional" data-status="A4 candidate, hidden until real data validates" display="none">
+ <rect x="154" y="126" width="5" height="6" fill="#524844"/>
+ <rect x="153" y="132" width="8" height="13" fill="#405a61"/>
+</g>
+</svg>
