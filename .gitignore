@@ -3,3 +3,4 @@
 !/.gitignore
 !/设计/
 .DS_Store
+__pycache__/
