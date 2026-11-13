@@ -14,7 +14,7 @@
   const FIRE_KINDS = ["out", "ember", "low", "mid", "high"];
   const CAMERA_RECTS = Object.freeze({
     wide: [0, 0, 640, 360],
-    window: [24, 62, 376, 211.5],
+    window: [24, 68, 366, 205.875],
     hearth: [328, 82, 300, 168.75]
   });
 
