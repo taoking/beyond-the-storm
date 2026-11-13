@@ -1,6 +1,7 @@
 // 出门和回家：02 第 9 节、第 14.3–14.5 条。这里只管事实（库存、炉火、人在哪），
 // 野外的地图、采集、身体状态还没有做；现在的野外只有「离家门几分钟」这一个量。
 import { CONFIG } from "./config.ts";
+import { settleForestGoods, tickForestBody } from "./forest.ts";
 import { seasonOf } from "./calendar.ts";
 import { zoneOf } from "./content.ts";
 import {
@@ -121,6 +122,8 @@ export function outingMinute(w: World): boolean {
     collapse(w);
     return true;
   }
+  // 只有真实林中停留才失温；地图、背包、手记面板与户外临时专注由 game.ts 冻结。
+  if (tickForestBody(w)) return true;
   return false;
 }
 
@@ -139,6 +142,8 @@ export function travel(w: World, minutes: number, toward: "home" | "out"): boole
 export function arriveHome(w: World): void {
   const o = w.outing;
   if (!o) return;
+  // 收纳野外采集物，并保持独一份素材；原有行囊与库存结算继续执行。
+  settleForestGoods(w, false);
   // 装不下的部分不入库，也不记进来源（账要对得上）
   const food = Math.max(0, Math.min(o.rations, foodCap(w) - w.stock.food));
   const wood = Math.max(0, Math.min(o.bundles * O.sticksPerBundle, woodCap(w) - w.stock.wood));
@@ -158,6 +163,8 @@ export function arriveHome(w: World): void {
 export function collapse(w: World): void {
   const o = w.outing;
   if (!o) return;
+  // 昏倒只损失普通物资；绳索、帆布、燃油等独一份素材不会凭空消失。
+  settleForestGoods(w, true);
   const keep = 1 - CONFIG.IMPL.collapseLossRatio;
   const rations = Math.floor(o.rations * keep);
   const wood = Math.floor(o.bundles * keep) * O.sticksPerBundle;
