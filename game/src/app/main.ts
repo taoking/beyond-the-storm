@@ -108,6 +108,7 @@ function renderForest(s: Snapshot): string {
   const rows=f.tiles.map((row,y)=>Array.from(row).map((tile,x)=>{
     if(x===f.x && y===f.y)return "@";
     if(tile==="G")return "G";
+    if(x===f.fireSpot.x && y===f.fireSpot.y)return "F";
     return marks.get(x+","+y) ?? (tile==="#" ? "▣" : "·");
   }).join(" ")).join("\n");
   const canAct=s.mode==="outdoor" && !o.panel;
@@ -116,7 +117,7 @@ function renderForest(s: Snapshot): string {
   const goods=Object.entries(f.goods).filter(([,n])=>n>0).map(([name,n])=>
     ({wood:"柴",ingredient:"食材",lumber:"木料",rope:"旧绳",canvas:"帆布",fuel:"燃油",can:"罐头"} as Record<string,string>)[name]+" ×"+n).join("、");
   return `<div class="forest-panel">
-    <strong>松林 · 小地图试玩</strong> <span class="dim">G 林口 / @ 他 / ✦ 可采 / ▣ 障碍</span>
+    <strong>松林 · 小地图试玩</strong> <span class="dim">G 林口 / F 篝火点 / @ 他 / ✦ 可采 / ▣ 障碍</span>
     <pre class="forest-map">${esc(rows)}</pre>
     <div>体温 ${f.warmth} · 体力 ${f.stamina} · 生命 ${f.health}</div>
     <div>背包 ${f.slots}/${f.maxSlots} 格 · 采得：${esc(goods || "暂无")}</div>
@@ -125,6 +126,7 @@ function renderForest(s: Snapshot): string {
       ${btn("↓","forestMove",[0,1],!canAct)}
       ${btn("→","forestMove",[1,0],!canAct)}
       ${btn("原地歇 10 分","forestRest",[],!canAct)}
+      ${btn("生篝火回温（耗 1 捆柴）","forestWarm",[],!canAct || !f.canWarm)}
       ${btn("走林道回木屋","forestReturn",[],!canAct || !f.atGate)}</div>
     <div class="dim">WASD / 方向键移动一格，走到 G 再返家。离家约 ${f.returnMinutes} 游戏分钟。</div>
     <div class="row">${gather || '<span class="dim">周围资源已采完</span>'}</div>
