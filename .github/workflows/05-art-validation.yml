@@ -1,0 +1,58 @@
+name: 05 pixel art source validation
+
+on:
+  push:
+    branches:
+      - gpt/05-v0.6-real-art-validation-20261113
+    paths:
+      - "设计/原型/**"
+      - "设计/05_美术与音频.md"
+      - ".github/workflows/05-art-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export-and-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: ".github/workflows/05-art-validation.yml"
+      - name: Install pixel export and browser dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install lxml cairosvg pillow playwright
+          python -m playwright install --with-deps chromium
+      - name: Unit-check nested independent layers
+        run: python "设计/原型/05_v0.5_图层导出自检.py"
+      - name: Render actual SVG into transparent layers
+        run: |
+          python "设计/原型/05_v0.5_透明图层导出.py" \
+            --svg "设计/原型/05_雪夜木屋_高保真分层母场景_v0.4.svg" \
+            --out "artifacts/05-layer-export" --scale 2 --trim
+      - name: Screenshot actual browser in 3 windows and 3 cameras
+        run: |
+          python "设计/原型/05_v0.4_浏览器截图验收.py" \
+            --html "设计/原型/05_v0.4_雪夜木屋_镜头与分层检视.html" \
+            --output "artifacts/05-browser-screens" \
+            --browsers chromium
+      - name: Validate exported asset inventory and real scene integrity
+        run: |
+          python "设计/原型/05_v0.6_实际资产验收.py" \
+            --manifest "artifacts/05-layer-export/manifest.json" \
+            --screenshot-report "artifacts/05-browser-screens/report.json" \
+            --out "artifacts/05-validation-summary.json"
+      - name: Upload rendered pictures and reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: 05-real-svg-png-and-screens
+          path: artifacts/
+          retention-days: 14
+          if-no-files-found: warn
