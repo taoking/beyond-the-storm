@@ -243,8 +243,8 @@ window.simulateReturnHome=function(){
  updateUI();paint(0)
 };
 window.changeWeather=function(){state.weather=el('weather').value;state.mode=state.location==='outside'?'outdoor-focus':'ambient';updateUI();paint(0)};
-window.simulateShare=function(){if(state.shares<9){state.shares++;state.pending++}updateUI();paint(0)};
-window.simulateLife=function(){state.life++;if(state.mode==='companion'){state.jar=Math.min(30,state.jar+state.pending);state.pending=0;state.action=state.action==='read'?'tea':'read';state.events.push('一件生活小事发生了。')}updateUI();paint(0)};
+window.simulateShare=function(){if(state.mode!=='outdoor'&&state.shares<9){state.shares++;state.pending++}updateUI();paint(0)};
+window.simulateLife=function(){if(state.mode!=='companion'){updateUI();paint(0);return}state.life++;state.jar=Math.min(30,state.jar+state.pending);state.pending=0;state.action=state.action==='read'?'tea':'read';state.events.push('一件生活小事发生了。');updateUI();paint(0)};
 window.stopFocus=function(){state.running=false;updateUI()};
 window.toggleFocus=function(){if(state.mode==='outdoor')return;state.running=!state.running;updateUI()};
 var last=Date.now(),frame=0;
