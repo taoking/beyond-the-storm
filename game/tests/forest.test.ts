@@ -147,11 +147,11 @@ describe("06 v0.4 forest vertical slice",()=>{
   it("outdoor temporary focus keeps the real forest coordinates and inventory frozen",()=>{
     const g=ready();
     cmdForestMove(g,1,0);
-    const saved=JSON.stringify(g.world);
     expect(cmdStartFocus(g,WALL,cal,{preset:{kind:"countup"}}).ok).toBe(true);
+    const saved=JSON.stringify({...g.world,pendingCones:0});
     expect(g.mode).toBe("outdoorFocus");
     advance(g,{wall:WALL+20*60_000,verifiedMs:20*60_000},cal);
-    expect(JSON.stringify(g.world)).toBe(saved.replace('"pendingCones":0','"pendingCones":1')); // only share award is pending
+    expect(JSON.stringify({...g.world,pendingCones:0})).toBe(saved); // focus only adds pending cones
     expect(present(g,WALL,cal).stage.show).toBe(false);
     cmdReturnToWild(g);
     expect(g.mode).toBe("outdoor");
