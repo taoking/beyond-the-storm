@@ -85,21 +85,29 @@
     const projectedLook = snapshot.look && typeof snapshot.look === "object"
       ? snapshot.look : null;
     const isAmbience = mode === "ambience";
-    const projected = isAmbience && projectedLook;
-    const weather = projected
+    const hasProjection = projectedLook && (
+      projectedLook.source === "ambience" ||
+      // Backwards-compatible mock fixture from 05 v1.0.
+      (isAmbience && projectedLook.source === undefined)
+    );
+    const previewMissing = (isAmbience || mode === "outdoorFocus") &&
+      (!projectedLook || projectedLook.source === "missing");
+    const weather = hasProjection
       ? {
           source: "ambience_projection",
-          weather: plain(projected.weather),
-          season: plain(projected.season),
-          dayPart: plain(projected.dayPart)
+          weather: plain(projectedLook.weatherLabel) ?? plain(projectedLook.weather),
+          weatherTier: plain(projectedLook.weather),
+          season: plain(projectedLook.season),
+          dayPart: plain(projectedLook.dayPart)
         }
-      : isAmbience
-      ? { source: "projection_missing", weather: null, season: null, dayPart: null }
+      : previewMissing
+      ? { source: "projection_missing", weather: null, weatherTier: null, season: null, dayPart: null }
       : {
           source: "real_world",
-          weather: plain(snapshot.world.look),
-          season: plain(snapshot.world.dayLabel),
-          dayPart: plain(snapshot.world.dayPart)
+          weather: plain(projectedLook?.weatherLabel) ?? plain(snapshot.world.look),
+          weatherTier: plain(projectedLook?.weather),
+          season: plain(projectedLook?.season) ?? plain(snapshot.world.dayLabel),
+          dayPart: plain(projectedLook?.dayPart) ?? plain(snapshot.world.dayPart)
         };
 
     const cones = Math.max(0, Math.trunc(Number(snapshot.jar.cones) || 0));
@@ -152,7 +160,7 @@
         // Non-final: no occlusion/pixel silhouette check yet.
         visibilityBasis: "candidate art-space bbox intersection, not 06 coarse camera memberships",
         missingPoseProjection: seen && !pose,
-        missingAmbienceProjection: isAmbience && !projectedLook,
+        missingAmbienceProjection: Boolean(previewMissing),
         snapshotActorVisibleNotUsed: true
       }
     };
