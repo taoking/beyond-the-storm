@@ -65,7 +65,39 @@ export interface DrawOptions {
   frames?: boolean;
 }
 
+/** 单独的野外灰盒主镜头：这里只画 Snapshot，不负责移动、采集或世界时间。 */
+function drawForestScene(ctx: CanvasRenderingContext2D, snap: Snapshot): void {
+  const f=snap.outing?.forest;
+  if(!f)return;
+  const w=ctx.canvas.width,h=ctx.canvas.height;
+  ctx.save();
+  ctx.fillStyle="#0e1716";ctx.fillRect(0,0,w,h);
+  const unit=Math.max(8,Math.floor(Math.min((w-30)/f.width,(h-30)/f.height)));
+  const ox=Math.floor((w-unit*f.width)/2),oy=Math.floor((h-unit*f.height)/2);
+  const nodes=new Map(f.nodes.map(n=>[n.x+","+n.y,n]));
+  for(let y=0;y<f.height;y++)for(let x=0;x<f.width;x++){
+    const tile=f.tiles[y][x];
+    const px=ox+x*unit,py=oy+y*unit;
+    ctx.fillStyle=tile==="#" ? "#283631" : tile==="G" ? "#8b7460" : (x+y)%3===0 ? "#294238" : "#20372e";
+    ctx.fillRect(px,py,unit-1,unit-1);
+    const n=nodes.get(x+","+y);
+    if(n){
+      ctx.fillStyle=n.ready ? (n.unique ? "#efbd72" : "#95c5a4") : "#526257";
+      ctx.beginPath();ctx.arc(px+unit/2,py+unit/2,Math.max(2,unit/6),0,Math.PI*2);ctx.fill();
+    }
+    if(x===f.x && y===f.y){
+      ctx.fillStyle="#f3b36c";ctx.fillRect(px+unit*.3,py+unit*.15,unit*.4,unit*.7);
+      ctx.fillStyle="#a5443f";ctx.fillRect(px+unit*.35,py+unit*.09,unit*.3,unit*.21);
+    }
+  }
+  ctx.fillStyle="#d5dfd6";ctx.font="12px ui-monospace,monospace";
+  ctx.fillText("松林 · 06 v0.4 灰盒试玩（非最终美术）",12,16);
+  ctx.fillText("体温 "+f.warmth+"   体力 "+f.stamina+"   生命 "+f.health+"   背包 "+f.slots+"/20",12,h-8);
+  ctx.restore();
+}
+
 export function drawScene(ctx: CanvasRenderingContext2D, snap: Snapshot, opt: DrawOptions = {}): void {
+  if(snap.mode==="outdoor" && snap.outing?.forest){drawForestScene(ctx,snap);return;}
   const cw = ctx.canvas.width;
   const ch = ctx.canvas.height;
   ctx.save();
