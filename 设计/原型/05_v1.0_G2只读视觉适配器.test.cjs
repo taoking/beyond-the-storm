@@ -76,5 +76,5 @@ check("round summary never invents a reward", () => {
  const s=fixture();s.focus.summaryText="这一轮 25 分钟";
  assert.equal(adapt(s,"window").focus.lastRoundSummary,"这一轮 25 分钟");
 });
-check("invalid camera is rejected", () => assert.throws(()=>adapt(fixture(),"unknown"),RangeError));
+check("invalid camera is rejected", () => assert.throws(()=>adapt(fixture(),"unknown"),{name:"RangeError"}));
 console.log(passed + " art adapter checks passed");
