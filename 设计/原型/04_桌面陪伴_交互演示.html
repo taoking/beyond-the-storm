@@ -224,7 +224,7 @@ function renderPanel(){
  }
  else if(p==='journal'){
  out='<div class="book-tabs">';
- [['real','现实专注'],['world','世界日记'],['projects','项目收藏'],['year','世界年册']].forEach(function(a){out+='<button class="'+(state.bookTab===a[0]?'on':'')+'" onclick="switchBookTab('"+a[0]+"')">'+a[1]+'</button>';});out+='</div>';var journalTabs=out;
+ [['real','现实专注'],['world','世界日记'],['projects','项目收藏'],['year','世界年册']].forEach(function(a){out+='<button class="'+(state.bookTab===a[0]?'on':'')+'" onclick="switchBookTab(&quot;'+a[0]+'&quot;)">'+a[1]+'</button>';});out+='</div>';var journalTabs=out;
  if(state.bookTab==='world')out='<div class="entry"><small>世界第 12 日 · 冬 · 小雪</small><p>早上去泉屋提了水。午后把《观测员手册》翻到了下一章。炉火还暖着。</p></div>'+(state.eventCount?'<div class="entry"><small>新增 · 演示事件</small><p>他合上手里的书，烧了壶热水。窗台上的玻璃罐旁，多了一只杯子。</p></div>':'')+'<p class="panel-note">世界日记只记录真实运行过的事件。这里是演示文字，不是游戏实际存档。</p>';
  else if(state.bookTab==='real')out='<div class="entry"><small>现实专注 · 示例</small><p>今天 2 小时 10 分 · 编程学习 · 获得 '+state.share+' 份。</p></div><div class="entry"><small>隐私</small><p>小窗默认不显示具体任务名。个人任务与世界日志分开保存。</p></div>';
  else if(state.bookTab==='projects')out='<div class="entry"><small>木屋 · 真实施工阶段</small><p>补窗缝 · 第二阶段；他有空时继续做，专注的份数不会推进施工。</p></div><div class="entry"><small>已发现</small><p>《观测员手册》 · 旧搪瓷杯 · 松林地图。</p></div>';
