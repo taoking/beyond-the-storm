@@ -1,9 +1,9 @@
 // 06 v0.4 松林竖切：地图、采集、背包与体温体力生命。
 // 全部确定性；不用系统时间和随机数，不改变 02/03 v3.1 的经济/专注规则。
 // 林中动作推进游戏分钟，真正入库仅在回到木屋门口后发生。
-import { CONFIG, type Season, type WeatherTier } from "./config.ts";
+import { CONFIG, type Season } from "./config.ts";
 import { seasonOf } from "./calendar.ts";
-import { foodCap, woodCap, stepMinute, logEvent } from "./sim.ts";
+import { woodCap, stepMinute, logEvent } from "./sim.ts";
 import { bump, type World } from "./state.ts";
 import { collapse, outingMinute, travel, arriveHome } from "./outing.ts";
 
@@ -126,22 +126,24 @@ export function shortestStepsToGate(x: number, y: number): number {
   return Infinity;
 }
 
-/** 在真实 06 world clock 中消费时间：炉火仍在消耗，野外饭点与午夜仍按旧逻辑。 */
+/** 每个真实游戏分钟失温：世界正常走时、林中动作及返家路上都共用。 */
+export function tickForestBody(w: World): boolean {
+  const f=w.outing?.forest;
+  if (!f) return false;
+  const weather=w.weather.today;
+  f.warmth=Math.max(0,f.warmth-(weather==="C" ? 0.20 : weather==="B" ? 0.10 : 0.065));
+  if (f.warmth<20) f.health=Math.max(0,f.health-(20-f.warmth)/150);
+  if (f.warmth<=0 || f.health<=0 || f.stamina<=0) {
+    collapse(w);
+    return true;
+  }
+  return false;
+}
+/** 在真实 06 world clock 中消费时间：炉火、饭点、气温与午夜按同一规则。 */
 function spend(w: World, minutes: number): boolean {
-  for (let i=0; i<minutes; i++) {
+  for (let i=0;i<minutes;i++) {
     if (!w.outing) return false;
     stepMinute(w);
-    const f=w.outing?.forest;
-    if (f) {
-      const weather=w.weather.today;
-      // v0.4 初始数值，非 02 新定稿；C 级天气比 A/B 明显冷。
-      f.warmth = Math.max(0, f.warmth - (weather==="C" ? 0.20 : weather==="B" ? 0.10 : 0.065));
-      if (f.warmth < 20) f.health = Math.max(0, f.health - (20 - f.warmth) / 150);
-      if (f.warmth<=0 || f.health<=0 || f.stamina<=0) {
-        collapse(w);
-        return false;
-      }
-    }
     if (outingMinute(w)) return false;
   }
   return !!w.outing;
