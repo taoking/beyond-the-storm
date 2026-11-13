@@ -52,6 +52,9 @@ P = dict(
     window=0, bedding=0, greenhouse=0, fence=0,
     storm_extra=1,
     project_cap=3.0, project_cap_indoor=5.0,
+    # 防风林枯枝的「影子存量」：只在验算里记，游戏里不设这个数。
+    # 用来回答「规则允许的天气下，折枯枝会不会折得比长得快」。取值依据见 03 第 2.6 节。
+    belt_cap=120, belt_regen_per_year=40,
 )
 BASE_REPAIRS = dict(wood_cap=120, food_cap=90, window=1, fence=1)
 EXT_REPAIRS = dict(greenhouse=1, bedding=1)
@@ -135,18 +138,25 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
     plots = [None] * p["plots"]; gh = [None, None]
     st = Counter(); per_season = Counter(); runs = []; cur_run = 0
     kinds = {}
+    belt = float(p["belt_cap"]); belt_min = belt; belt_empty_day = None
+    year_eave = []; ye = Counter()
     kind = force_year or pick_year(rng)
+    next_kind = kind
     today = "D" if worst else sky.draw(weather_table(0, kind), YEARS[kind]["bad"])
     for day in range(years * YEAR):
         if repairs_at and day in repairs_at:
             p.update(repairs_at[day])
         sname, sd, sn = season_of(day)
-        if day % YEAR == 0 and day > 0:
-            kind = force_year or pick_year(rng)
+        kind = next_kind
         yk = YEARS[kind]
+        if day % YEAR == 0 and day > 0:
+            year_eave.append(ye); ye = Counter()
+        belt = min(p["belt_cap"], belt + p["belt_regen_per_year"] / YEAR)
         w = today
-        nxt_kind = kind
-        tomorrow = "D" if worst else sky.draw(weather_table(day + 1, nxt_kind), yk["bad"])
+        # 明天的天气今天就定。明天是新年第一天的话，先抽新年的性格，用新年的参数
+        if (day + 1) % YEAR == 0:
+            next_kind = force_year or pick_year(rng)
+        tomorrow = "D" if worst else sky.draw(weather_table(day + 1, next_kind), YEARS[next_kind]["bad"])
         today = tomorrow
 
         wn = max(1, WOOD_USE[sname]["正常"] - p["window"] - p["bedding"])
@@ -173,7 +183,8 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
                 if w != "D":
                     left -= 1
                 if left <= 0:
-                    food = min(p["food_cap"], food + p["crop_yield"] + p["fence"] - (1 if frost else 0)); plots[i] = None
+                    y = p["crop_yield"] + p["fence"] - (1 if frost else 0)
+                    st["来源:菜地"] += y; food = min(p["food_cap"], food + y); plots[i] = None
                 else:
                     plots[i] = left
         if p["greenhouse"]:
@@ -183,7 +194,7 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
                 else:
                     left -= 1
                     if left <= 0:
-                        food = min(p["food_cap"], food + 4); gh[i] = None
+                        st["来源:暖棚"] += 4; food = min(p["food_cap"], food + 4); gh[i] = None
                     else:
                         gh[i] = left
 
@@ -205,8 +216,9 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
         proj = 0.0; did_chore = False; work = 0.0
         pcap = p["project_cap_indoor"] if w in "CD" else p["project_cap"]
         t = 6.0
-        while t < 22.0 - 1e-9:
+        while t < 22.0 - 1e-9 or t < busy_until - 1e-9:
             free = t >= busy_until - 1e-9
+            late = t >= 22.0 - 1e-9      # 过了 10 点：只把手上的事做完，不开新的
             if free and pending:
                 kind_, amt = pending; pending = None
                 if kind_ == "wood":
@@ -215,7 +227,7 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
                     food = min(p["food_cap"], food + amt)
             if free and burn <= 0 and wood >= 1:
                 wood -= 1; burn = stick_hours; ember = p["ember_hours"]; st["烧柴"] += 1
-            if free:
+            if free and not late:
                 act = None
                 # 1 没柴可添：先去檐下取柴
                 if burn <= 0 and wood == 0 and not eave_w:
@@ -262,9 +274,14 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
                     if act[0] == "eave_w":
                         eave_w = True; busy_until = t + p["eave_wood_hours"]; pending = ("wood", p["eave_wood"])
                         st["檐下取柴"] += 1; did_chore = True; work += p["eave_wood_hours"]
+                        st["来源:折枯枝"] += p["eave_wood"]; ye["柴"] += 1
+                        belt -= p["eave_wood"]; belt_min = min(belt_min, belt)
+                        if belt < 0 and belt_empty_day is None:
+                            belt_empty_day = day
                     elif act[0] == "eave_f":
                         eave_f = True; busy_until = t + p["eave_food_hours"]; pending = ("food", p["eave_food"])
                         st["檐下取粮"] += 1; did_chore = True; work += p["eave_food_hours"]
+                        st["来源:起鱼笼"] += p["eave_food"]; ye["粮"] += 1
                     elif act[0] == "eat":
                         food -= 1; eaten[act[1]] = True; busy_until = t + p["meal_hours"]; st["吃饭"] += 1
                     elif act[0] == "chore":
@@ -276,6 +293,7 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
                         amt = p["wood_yield"][w] if what == "wood" else p["food_yield"][sname][w]
                         busy_until = t + p["chore_hours"]; pending = (what, amt)
                         st["备柴" if what == "wood" else "备粮"] += 1; did_chore = True; work += p["chore_hours"]
+                        st["来源:备柴" if what == "wood" else ("来源:备粮(冬)" if sname == "冬" else "来源:备粮(春夏秋)")] += amt
             # 这半小时里的炉火
             if burn > 0:
                 burn -= STEP
@@ -284,7 +302,9 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
             else:
                 st["无火小时"] += STEP
             t += STEP
-        # 睡前：收尾、压火
+        # 睡前：到这里手上的事都已经做完（上面的循环会等它做完），入库后压火
+        overrun = max(0.0, t - 22.0)
+        st["晚睡小时"] += overrun
         if pending:
             kind_, amt = pending
             if kind_ == "wood":
@@ -295,23 +315,30 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
         n = min(night_n, wood)
         wood -= n; st["烧柴"] += n
         cover = p["night_hours"] * n / night_n + max(0.0, burn)
-        left = p["night_hours"]
+        left = max(0.0, p["night_hours"] - overrun)
         b = min(cover, left); left -= b
         e = min(p["ember_hours"] if (n or burn > 0) else ember, left); left -= e
         st["无火小时"] += left
-        burn = max(0.0, cover - p["night_hours"]); ember = max(0.0, p["ember_hours"] - e)
+        burn = max(0.0, cover - (p["night_hours"] - overrun)); ember = max(0.0, p["ember_hours"] - e)
         if did_chore:
             st["有活计的天"] += 1
         st["活计小时"] += work
     if cur_run:
         runs.append(cur_run)
-    return dict(st=st, per_season=per_season, runs=runs, days=years * YEAR, kinds=kinds)
+    year_eave.append(ye)
+    return dict(st=st, per_season=per_season, runs=runs, days=years * YEAR, kinds=kinds,
+                belt_min=belt_min, belt_empty_day=belt_empty_day, year_eave=year_eave)
 
 
 def report(title, runs_n, years, **kw):
     tot = Counter(); ps = Counter(); rr = []; days = 0; kinds = {}
+    belt_min = 1e9; empty = []; yw = []; yf = []
     for s in range(runs_n):
         r = run(years, s, **kw)
+        belt_min = min(belt_min, r["belt_min"])
+        if r["belt_empty_day"] is not None:
+            empty.append(r["belt_empty_day"])
+        yw += [c["柴"] for c in r["year_eave"]]; yf += [c["粮"] for c in r["year_eave"]]
         tot += r["st"]; ps += r["per_season"]; rr += r["runs"]; days += r["days"]
         for k, c in r["kinds"].items():
             kinds.setdefault(k, Counter()).update(c)
@@ -329,6 +356,18 @@ def report(title, runs_n, years, **kw):
         print("  没有出现俭")
     print(f"  缺餐 {tot['缺餐']} 次；无火 {tot['无火小时']:.1f} 小时（合 {days * 24} 小时里的 {tot['无火小时'] / (days * 24) * 100:.3f}%）")
     print(f"  有活计的日子 {tot['有活计的天'] / days * 100:.0f}%；活计每天平均 {tot['活计小时'] / days:.1f} 小时；项目每天平均 {tot['项目小时'] / days:.1f} 小时")
+    print(f"  为做完手上的事而晚睡：合计 {tot['晚睡小时']:.1f} 小时")
+    ny = days / YEAR
+    src = lambda k: tot["来源:" + k] / ny
+    print(f"  每个世界年的来源：柴 = 备柴 {src('备柴'):.0f} + 折枯枝 {src('折枯枝'):.1f} 根；"
+          f"粮 = 菜地 {src('菜地'):.0f} + 暖棚 {src('暖棚'):.0f} + 备粮(冬) {src('备粮(冬)'):.0f} + 备粮(春夏秋) {src('备粮(春夏秋)'):.0f} + 起鱼笼 {src('起鱼笼'):.1f} 餐")
+    yw.sort(); yf.sort()
+    print(f"  单个世界年里折枯枝的次数：平均 {sum(yw) / len(yw):.1f}，99% 不超过 {yw[int(len(yw) * .99)]}，最多 {yw[-1]}；"
+          f"起鱼笼：平均 {sum(yf) / len(yf):.1f}，99% 不超过 {yf[int(len(yf) * .99)]}，最多 {yf[-1]}")
+    if empty:
+        print(f"  林带影子存量（满 {P['belt_cap']} 根，每年长 {P['belt_regen_per_year']} 根）：{len(empty)} 次推演里见底，最早在第 {min(empty) + 1} 天")
+    else:
+        print(f"  林带影子存量（满 {P['belt_cap']} 根，每年长 {P['belt_regen_per_year']} 根）：没有见底，最低 {belt_min:.0f} 根")
     print(f"  每天平均烧柴 {tot['烧柴'] / days:.1f} 根、吃 {tot['吃饭'] / days:.1f} 餐；檐下取柴 {tot['檐下取柴'] / days * 100:.1f}% 的日子，取粮 {tot['檐下取粮'] / days * 100:.1f}%")
 
 
@@ -341,8 +380,12 @@ if __name__ == "__main__":
     report("开局，没有修缮", a.runs, a.years)
     report("基础修缮全修好（补窗缝、柴棚、地窖、篱笆）", a.runs, a.years, params=BASE_REPAIRS)
     report("再加暖棚、床褥窗帘", a.runs, a.years, params=full)
-    report("修缮在第 20、45、70、100 天陆续修好", a.runs, a.years,
-           repairs_at={20: dict(window=1), 45: dict(food_cap=90), 70: dict(wood_cap=120), 100: dict(fence=1)})
+    # 03 的顺序和工时：补窗缝 6、搭柴棚 18、整理地窖 15、修篱笆 8；按每天 2 工时
+    report("基础修缮按 03 的顺序在第 3、12、20、24 天修好", a.runs, a.years,
+           repairs_at={3: dict(window=1), 12: dict(wood_cap=120), 20: dict(food_cap=90), 24: dict(fence=1)})
+    report("只看头一个世界年：同上", a.runs, 1,
+           repairs_at={3: dict(window=1), 12: dict(wood_cap=120), 20: dict(food_cap=90), 24: dict(fence=1)})
+    report("只看头一个世界年：一件修缮都不做", a.runs, 1)
     report("压力：连着 8 个风雪年，没有修缮", a.runs, a.years, force_year="风雪年")
     report("压力：入冬第一天柴粮都是零、炉膛是空的", a.runs, 2, wood0=0, food0=0)
     report("结构：柴粮是零、炉膛是空的，一整年天天暴风雪", 1, 1, wood0=0, food0=0, worst=True)
