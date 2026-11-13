@@ -201,7 +201,12 @@ function renderPanel(){
  }
  else if(p==='ambient'){
  out='<div class="panel-box"><h3>真实世界与氛围演出</h3><p>选择非真实天气、季节或时间时，游戏世界冻结；专注计时仍可继续，资源和修缮不推进。</p></div>';
+ if(state.mode==='outdoor'||state.mode==='outdoor-focus'){
+ out+='<p class="panel-note">角色目前仍在野外。切换到空木屋只能暂停世界，不会把他送回家。</p>';
+ out+=hbtn('← 返回野外原地',"backOutdoor()",'selection');
+ }else{
  out+=hbtn('✦ 回到真实的今天 <span class="sub">冬 · 第 12 日 · 小雪，木屋继续正常生活</span>',"setMode('companion')",'selection'+(state.mode==='companion'?' current':''));
+ }
  out+='<div class="panel-title">独立氛围预览</div>';
  out+='<label class="field">季节<select id="seasonSelect"><option>冬</option><option>春</option><option>夏</option><option>秋</option></select></label>';
  out+='<label class="field">天气<select id="weatherSelect"><option>大雪</option><option>小雪</option><option>晴</option><option>阴</option><option>雨</option></select></label>';
@@ -219,11 +224,12 @@ function renderPanel(){
  }
  else if(p==='journal'){
  out='<div class="book-tabs">';
- [['real','现实专注'],['world','世界日记'],['projects','项目收藏'],['year','世界年册']].forEach(function(a){out+='<button class="'+(state.bookTab===a[0]?'on':'')+'" onclick="switchBookTab('"+a[0]+"')">'+a[1]+'</button>';});out+='</div>';
+ [['real','现实专注'],['world','世界日记'],['projects','项目收藏'],['year','世界年册']].forEach(function(a){out+='<button class="'+(state.bookTab===a[0]?'on':'')+'" onclick="switchBookTab('"+a[0]+"')">'+a[1]+'</button>';});out+='</div>';var journalTabs=out;
  if(state.bookTab==='world')out='<div class="entry"><small>世界第 12 日 · 冬 · 小雪</small><p>早上去泉屋提了水。午后把《观测员手册》翻到了下一章。炉火还暖着。</p></div>'+(state.eventCount?'<div class="entry"><small>新增 · 演示事件</small><p>他合上手里的书，烧了壶热水。窗台上的玻璃罐旁，多了一只杯子。</p></div>':'')+'<p class="panel-note">世界日记只记录真实运行过的事件。这里是演示文字，不是游戏实际存档。</p>';
  else if(state.bookTab==='real')out='<div class="entry"><small>现实专注 · 示例</small><p>今天 2 小时 10 分 · 编程学习 · 获得 '+state.share+' 份。</p></div><div class="entry"><small>隐私</small><p>小窗默认不显示具体任务名。个人任务与世界日志分开保存。</p></div>';
  else if(state.bookTab==='projects')out='<div class="entry"><small>木屋 · 真实施工阶段</small><p>补窗缝 · 第二阶段；他有空时继续做，专注的份数不会推进施工。</p></div><div class="entry"><small>已发现</small><p>《观测员手册》 · 旧搪瓷杯 · 松林地图。</p></div>';
  else out='<div class="entry"><small>世界年册 · 示例</small><p>第一年还在继续。待这一年真正结束，才会生成实际天气、修缮和探索总结。</p></div>';
+ out=journalTabs+out;
  }
  else if(p==='stove'){
  out='<div class="panel-box"><h3>炉火安稳</h3><p>木炉正在燃烧。你可以观察，但不能直接命令他添柴。他会根据生活需要自己决定。</p></div>';
@@ -263,10 +269,10 @@ window.openPanel=openPanel;
 window.openJournal=function(tab){state.bookTab=tab||'world';state.panel='';openPanel('journal')};
 window.switchBookTab=function(tab){state.bookTab=tab;renderPanel()};
 window.pickCamera=function(cam){state.camera=cam;render();renderPanel()};
-window.toggleCompact=function(){state.compact=!state.compact;if(state.compact){state.prevCamera=state.camera;state.camera='window'}else state.camera=state.prevCamera;render();setText('windowToggle',state.compact?'↗ 完整窗口':'↘ 小窗预览')};
+window.toggleCompact=function(){if(state.mode==='outdoor'&&!state.compact){openPanel('outdoor');return}state.compact=!state.compact;if(state.compact){state.prevCamera=state.camera;state.camera='window'}else state.camera=state.prevCamera;render();setText('windowToggle',state.compact?'↗ 完整窗口':'↘ 小窗预览')};
 window.toggleSound=function(){state.sound=!state.sound;setText('soundToggle',state.sound?'♫ 环境声':'♫ 已静音');if(state.panel==='ambient')renderPanel()};
-window.setMode=function(mode){if(state.mode==='outdoor'||state.mode==='outdoor-focus'){if(mode==='companion'){returnHome();return}}state.mode=mode;render();if(state.panel==='ambient')renderPanel()};
-window.applyAmbient=function(){state.season=el('seasonSelect').value;state.weather=el('weatherSelect').value;state.timeOfDay=el('timeSelect').value;state.mode=state.mode==='outdoor-focus'?'outdoor-focus':'ambient';render();close()};
+window.setMode=function(mode){if((state.mode==='outdoor'||state.mode==='outdoor-focus')&&mode==='companion'){backOutdoor();return}state.mode=mode;render();if(state.panel==='ambient')renderPanel()};
+window.applyAmbient=function(){state.season=el('seasonSelect').value;state.weather=el('weatherSelect').value;state.timeOfDay=el('timeSelect').value;state.mode=(state.mode==='outdoor'||state.mode==='outdoor-focus')?'outdoor-focus':'ambient';render();close()};
 window.chooseDuration=function(m){if(state.running)return;state.minutes=m;state.seconds=m*60;render();renderPanel()};
 window.resetTimer=function(){pause();state.seconds=state.minutes*60;render();renderPanel()};
 function pause(){if(state.running){state.seconds=Math.max(0,Math.ceil((state.timerDeadline-Date.now())/1000));clearInterval(state.timerId);state.running=false;state.timerId=null;}}
