@@ -323,7 +323,7 @@ window.setViewport=function(size){state.viewport=size;var g=el('game');g.classLi
 window.toggleToday=function(force){var card=el('todayCard');card.hidden=typeof force==='boolean'?!force:!card.hidden;updateUI()};
 window.showProjectHint=function(){el('todayEvents').textContent='搭柴棚 · 铺顶：下一次开工由角色自行选择；本演示不改变项目进度。'};
 window.closeSummary=function(){el('roundSummary').hidden=true};
-window.simulateFinish=function(gained,unlocked){state.running=false;var message='本轮 25 分钟'+(gained?' · 得 '+gained+' 份':' · 本轮没有新份')+(unlocked?' · 新样式：琥珀灯光':'');el('roundSummary').textContent=message;el('roundSummary').hidden=false;if(gained){state.shares=Math.min(9,state.shares+gained);state.pending+=gained}updateUI();paint(0)};
+window.simulateFinish=function(gained,unlocked){state.running=false;var message='本轮 25 分钟 · 已完成'+(gained?' · 得 '+gained+' 份':'')+(unlocked?' · 新样式：琥珀灯光':'');el('roundSummary').textContent=message;el('roundSummary').hidden=false;if(gained){state.shares=Math.min(9,state.shares+gained);state.pending+=gained}updateUI();paint(0)};
 window.setNotifications=function(v){state.notifications=!!v};
 
 window.selectCamera=function(name){if(state.mini){if(name==='wide'){state.mini=false;state.camera='wide'}else state.miniCamera=name}else state.camera=name;updateUI();paint(0)};
@@ -347,6 +347,14 @@ window.simulateLife=function(){if(state.mode!=='companion'){updateUI();paint(0);
 window.stopFocus=function(){state.running=false;updateUI()};
 window.toggleFocus=function(){if(state.mode==='outdoor')return;state.running=!state.running;window.closeSummary();updateUI()};
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!el('todayCard').hidden)window.toggleToday(false)});
+document.addEventListener('pointerdown',function(e){
+ var card=el('todayCard');
+ if(card.hidden)return;
+ if(card.contains(e.target))return;
+ var closer=e.target&&e.target.closest?e.target.closest('#todayButton,.text-link'):null;
+ if(closer)return;
+ window.toggleToday(false);
+});
 var last=Date.now(),frame=0;
 function loop(){var now=Date.now();if(now-last>125){frame++;last=now;if(state.running&&state.timer>0&&frame%8===0)state.timer--;if(state.timer<=0&&state.running){state.running=false;el('roundSummary').textContent='本轮已完成 · 专注时间以真实结算记录为准';el('roundSummary').hidden=false;}updateUI();paint(frame)}requestAnimationFrame(loop)}
 updateUI();paint(0);requestAnimationFrame(loop);
