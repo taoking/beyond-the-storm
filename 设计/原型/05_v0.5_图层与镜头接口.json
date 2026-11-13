@@ -1,0 +1,182 @@
+{
+  "schema": "beyond-the-storm.art-runtime-contract.v0.5",
+  "status": "prototype candidate; not approved final art or game rules",
+  "source": "设计/原型/05_雪夜木屋_高保真分层母场景_v0.4.svg",
+  "exports": {
+    "tool": "设计/原型/05_v0.5_透明图层导出.py",
+    "test": "设计/原型/05_v0.5_图层导出自检.py",
+    "logicalCanvas": [
+      480,
+      270
+    ],
+    "format": "transparent RGBA PNG with per-layer source-coordinate anchors",
+    "expectedSourceGroups": 19,
+    "separatedNestedLayers": [
+      "woodpile",
+      "jar_fill_example",
+      "hi_fi_knit_detail"
+    ]
+  },
+  "cameraModes": {
+    "legacy": {
+      "wide": [
+        0,
+        0,
+        480,
+        270
+      ],
+      "window": [
+        41,
+        98,
+        228,
+        128
+      ],
+      "hearth": [
+        309,
+        106,
+        165,
+        94
+      ]
+    },
+    "pixelAlignedCandidates": {
+      "320x180": {
+        "window": [
+          0,
+          52,
+          320,
+          180
+        ],
+        "hearth": [
+          160,
+          52,
+          320,
+          180
+        ],
+        "scale": 1
+      },
+      "480x270": {
+        "window": [
+          35,
+          94,
+          240,
+          135
+        ],
+        "hearth": [
+          240,
+          78,
+          240,
+          135
+        ],
+        "scale": 2
+      },
+      "1280x720": {
+        "window": [
+          0,
+          52,
+          320,
+          180
+        ],
+        "hearth": [
+          160,
+          52,
+          320,
+          180
+        ],
+        "scale": 4,
+        "wide": [
+          0,
+          0,
+          480,
+          270
+        ],
+        "wideScale": "noninteger unresolved"
+      }
+    },
+    "status": "visual comparison only; needs actual browser verification"
+  },
+  "sceneLayerFacts": [
+    {
+      "layerIds": [
+        "interior_base",
+        "hi_fi_wood_grain",
+        "window_frame",
+        "static_furniture"
+      ],
+      "source": "static cabin; repairs must use later separate state layers"
+    },
+    {
+      "layerIds": [
+        "window_weather",
+        "hi_fi_snowflakes",
+        "hi_fi_window_frost"
+      ],
+      "source": "real world weather or isolated ambience preview",
+      "snowOnlyOutside": true
+    },
+    {
+      "layerIds": [
+        "woodpile"
+      ],
+      "source": "actual wood stock tier",
+      "notRewardedByFocus": true
+    },
+    {
+      "layerIds": [
+        "jar_state",
+        "jar_fill_example"
+      ],
+      "source": "cones actually staged by actor, not immediately on focus award"
+    },
+    {
+      "layerIds": [
+        "hi_fi_station_props",
+        "desk_objects"
+      ],
+      "source": "item ownership, weather instrument state, actual actor activity",
+      "requiresFutureObjectSplit": true
+    },
+    {
+      "layerIds": [
+        "hi_fi_floor_fabrics"
+      ],
+      "source": "approved cosmetic state; otherwise concept-only"
+    },
+    {
+      "layerIds": [
+        "actor_indoor",
+        "hi_fi_knit_detail"
+      ],
+      "source": "one shared actor visibility, location, current action and indoor outfit",
+      "hideTogether": true
+    },
+    {
+      "layerIds": [
+        "stove_fire",
+        "hi_fi_light_pixels",
+        "lighting_overlay"
+      ],
+      "source": "real stove heat level, actual time of day, approved lamp style"
+    },
+    {
+      "layerIds": [
+        "far_worker_optional"
+      ],
+      "source": "actual visible-near-yard actor position; only after art and greybox review",
+      "defaultVisible": false
+    }
+  ],
+  "verification": {
+    "localSyntheticFixture": "7 independent RGBA layers including 3 nested variable groups, pixel-exact recomposition verified",
+    "realV04Screenshot": "pending; source file unavailable inside isolated test runtime",
+    "toolAndCameraPreviewCommitted": true,
+    "nextChecks": [
+      "320x180 window readability",
+      "480x270 2x pixel aligned crop",
+      "1280x720 wide noninteger scale choice",
+      "actor absent means no phantom sweater",
+      "ambience frozen state",
+      "fire and jar linked to real facts"
+    ]
+  },
+  "handoff": "Claude 06 consumes facts; GPT supplies assets and camera prototypes; interaction reviewed jointly"
+}
