@@ -112,8 +112,9 @@ export function outingMinute(w: World): boolean {
       meal.eaten = true;
       bump(w, "吃饭");
     } else {
-      // 没带干粮：这顿在外面没吃上。野外的体力以后由身体状态管，这里不记缺餐
+      // 没带干粮：这顿在外面没吃上。算不算缺餐是暂行的做法，见 IMPL.outingMealWithoutRationsIsMissed
       meal.skipped = true;
+      if (CONFIG.IMPL.outingMealWithoutRationsIsMissed) w.today.missedMeals += 1;
     }
   }
   if (t >= O.collapseMinute) {
@@ -138,10 +139,12 @@ export function travel(w: World, minutes: number, toward: "home" | "out"): boole
 export function arriveHome(w: World): void {
   const o = w.outing;
   if (!o) return;
-  const wood = o.bundles * O.sticksPerBundle;
-  w.stock.food = Math.min(foodCap(w), w.stock.food + o.rations);
-  w.stock.wood = Math.min(woodCap(w), w.stock.wood + wood);
-  bump(w, "带回的粮", o.rations);
+  // 装不下的部分不入库，也不记进来源（账要对得上）
+  const food = Math.max(0, Math.min(o.rations, foodCap(w) - w.stock.food));
+  const wood = Math.max(0, Math.min(o.bundles * O.sticksPerBundle, woodCap(w) - w.stock.wood));
+  w.stock.food += food;
+  w.stock.wood += wood;
+  bump(w, "带回的粮", food);
   bump(w, "带回的柴", wood);
   w.outing = null;
   w.actor.away = false;

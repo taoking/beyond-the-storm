@@ -492,13 +492,24 @@ describe("意向（02 第 6.4 节、第 14.1–14.2 条）", () => {
 
   it("他睡着、被你带出门时不能提；早点歇只在傍晚 6 点以后有效；放唱片要有修好的唱片机", () => {
     const s = readyToGoOut(1);
-    expect(cmdRequest(s.g, "earlyRest")).toEqual({ ok: false, reason: "天还早，他不肯睡" });
+    expect(cmdRequest(s.g, "earlyRest")).toEqual({ ok: false, reason: "天还早，傍晚再问他吧" });
     expect(cmdRequest(s.g, "playRecord")).toEqual({ ok: false, reason: "唱片机还没修好" });
     s.until((g) => g.world.actor.asleep);
     expect(cmdRequest(s.g, "tea").ok).toBe(false);
     const o = readyToGoOut(1);
     cmdDepart(o.g, o.wall, { rations: 0, bundles: 0 });
     expect(cmdRequest(o.g, "tea").ok).toBe(false);
+  });
+
+  it("今天早点歇的门槛正好在傍晚 6 点：5 点 59 分不接受也不记下，6 点整接受", () => {
+    const s = session(1);
+    s.until((g) => dayClock(g.world) === 18 * 60 - 1);
+    expect(cmdRequest(s.g, "earlyRest")).toEqual({ ok: false, reason: "天还早，傍晚再问他吧" });
+    expect(s.g.world.intents.request).toBeNull();
+    s.game(1);
+    expect(dayClock(s.g.world)).toBe(18 * 60);
+    expect(cmdRequest(s.g, "earlyRest").ok).toBe(true);
+    expect(s.g.world.intents.request?.kind).toBe("earlyRest");
   });
 
   it("今天早点歇：吃过晚饭、压好火就睡，不能用来连着跳日子", () => {

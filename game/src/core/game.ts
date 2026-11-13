@@ -442,7 +442,7 @@ export function cmdRequest(g: Game, kind: RequestKind): Result {
   const zone = zoneOf(w.actor.place);
   if (zone !== "indoor" && zone !== "yard") return no("他还在外面");
   if (w.intents.request) return no("已经说了一件");
-  if (kind === "earlyRest" && dayClock(w) < CONFIG.calendar.earlyRestFrom) return no("天还早，他不肯睡");
+  if (kind === "earlyRest" && dayClock(w) < CONFIG.calendar.earlyRestFrom) return no("天还早，傍晚再问他吧");
   if (kind === "playRecord" && !hasEffect(w, "gramophone")) return no("唱片机还没修好");
   w.intents.request = { kind, day: w.day };
   return OK;

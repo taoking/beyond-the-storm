@@ -2,9 +2,9 @@
 import { describe, expect, it } from "vitest";
 import { seasonOf } from "../src/core/calendar.ts";
 import { CONFIG } from "../src/core/config.ts";
-import { PROJECT_BY_ID } from "../src/core/content.ts";
+import { PROJECT_BY_ID, PROJECTS } from "../src/core/content.ts";
 import { CASES, runCase } from "../src/core/longrun.ts";
-import { advanceMinutes, createWorld, normalWoodUse, projectStatus, stepMinute } from "../src/core/sim.ts";
+import { activity, advanceMinutes, createWorld, foodCap, normalWoodUse, projectStatus, startActivity, stepMinute, woodCap } from "../src/core/sim.ts";
 import { dayClock, type World } from "../src/core/state.ts";
 
 /** 走到条件成立为止；超过上限就报错 */
@@ -265,6 +265,95 @@ describe("先取后用（02 第 5.6 节）", () => {
     // 压的火加上余烬撑到天亮
     expect(w.fire.burn + w.fire.ember).toBeGreaterThanOrEqual(8 * 60 - 30);
   });
+
+  it("柴堆空着要离开屋子：火要够烧到回来、再折一趟枯枝，不够就先去折枯枝；今天折过了就不能再折", () => {
+    const S = CONFIG.supply;
+    const away = 240;
+    const trip = () => activity("choreWood", "去备柴", "chore", [{ place: "forestEdge", minutes: away }], { slot: "m" });
+    // 烧到回来（加添柴的余量），再加回来以后折枯枝的 1 小时；余烬的 2 小时算在里面
+    const enough = away + CONFIG.IMPL.fireMarginMinutes + S.eaveWoodMinutes - CONFIG.fire.emberMinutes;
+    const world = (burn: number): World => {
+      const w = createWorld(41);
+      w.stock.wood = 0;
+      w.fire.burn = burn;
+      return w;
+    };
+    let w = world(enough);
+    startActivity(w, trip());
+    expect(w.actor.activity?.kind).toBe("choreWood");
+    // 差一分钟就不走：只算到回来的话这时还绰绰有余
+    w = world(enough - 1);
+    expect(enough - 1).toBeGreaterThan(away + CONFIG.IMPL.fireMarginMinutes - CONFIG.fire.emberMinutes);
+    startActivity(w, trip());
+    expect(w.actor.activity?.kind).toBe("eaveWood");
+    // 今天已经折过一次：不能为了守火再凭空多折一次，照原计划走
+    w = world(enough - 1);
+    w.today.eaveWood = true;
+    startActivity(w, trip());
+    expect(w.actor.activity?.kind).toBe("choreWood");
+    expect(w.stock.wood).toBe(0);
+    // 柴堆里有柴：添上再走，不去折枯枝
+    w = world(0);
+    w.stock.wood = 5;
+    startActivity(w, trip());
+    expect(w.actor.activity?.kind).toBe("choreWood");
+    expect(w.stock.wood).toBeLessThan(5);
+  });
+
+  it("到了饭点没吃上的那一顿，10 点以后补吃完再睡；只补这一顿，不加餐", () => {
+    const w = createWorld(6);
+    pauseAllProjects(w);
+    runToClock(w, 21 * 60 + 50);
+    const dinner = w.today.meals.find((m) => m.name === "dinner")!;
+    expect(dinner.eaten).toBe(true);
+    // 当成这顿被别的必需的事挤到了 10 点以后：手上这件事 10 点 05 分才做完
+    dinner.eaten = false;
+    startActivity(w, activity("drink", "在喝水", "necessity", [{ place: "stove", minutes: 15 }]));
+    const ate = w.tally["吃饭"];
+    const food = w.stock.food;
+    runUntil(w, (x) => dayClock(x) >= 22 * 60);
+    expect(dinner.eaten).toBe(false);
+    runUntil(w, (x) => x.actor.asleep);
+    expect(dinner.eaten).toBe(true);
+    expect(w.tally["吃饭"]).toBe(ate + 1);
+    expect(w.stock.food).toBe(food - 1);
+    expect(w.today.missedMeals).toBe(0);
+    expect(w.today.banked).toBe(true);
+    expect(dayClock(w)).toBeGreaterThanOrEqual(22 * 60);
+    expect(dayClock(w)).toBeLessThan(23 * 60 + 30);
+  });
+
+  it("入库不超过上限：秋天备货到装满为止，装不下的不入库，也不记成来源", () => {
+    const w = createWorld(43);
+    pauseAllProjects(w);
+    runUntil(w, (x) => seasonOf(x.day).season === "autumn", 50 * 1440);
+    w.stock.wood = woodCap(w) - 2;
+    w.stock.food = foodCap(w) - 1;
+    let truncated = false;
+    let gotWood = w.tally["柴:备柴"] ?? 0;
+    let gotFood = w.tally["粮:备粮"] ?? 0;
+    while (seasonOf(w.day).season === "autumn") {
+      const wood = w.stock.wood;
+      const food = w.stock.food;
+      stepMinute(w);
+      expect(w.stock.wood).toBeLessThanOrEqual(woodCap(w));
+      expect(w.stock.food).toBeLessThanOrEqual(foodCap(w));
+      const dw = (w.tally["柴:备柴"] ?? 0) - gotWood;
+      const df = (w.tally["粮:备粮"] ?? 0) - gotFood;
+      // 一次备柴最少 14 根、备粮最少 6 餐：入库的比这少，就是被上限截掉了，记进来源的也只有真入库的
+      if (dw > 0) {
+        expect(dw).toBeLessThanOrEqual(woodCap(w) - wood);
+        if (dw < 14) truncated = true;
+      }
+      if (df > 0) {
+        expect(df).toBeLessThanOrEqual(foodCap(w) - food);
+        if (df < 6) truncated = true;
+      }
+      gotWood += dw;
+      gotFood += df;
+    }
+    expect(truncated).toBe(true);
+  });
 });
 
 describe("验收目标（02 第 5.7 节）：不出门的无人值守长跑", () => {
@@ -391,6 +480,62 @@ describe("项目（02 第 7 节）", () => {
     expect(PROJECT_BY_ID.woodshed.where).toBe("yard");
     expect(w.projects.woodshed.minutesInStage).toBe(0);
     expect(projectStatus(w, "woodshed").status).toBe("needWeather");
+  });
+
+  it("动手的项目和在读的书各有各的进度；同一分钟只推进一件，晚上读的不占白天的工时", () => {
+    const w = createWorld(28);
+    const started = (id: string): boolean => {
+      const ps = w.projects[id];
+      return !ps.done && (ps.stage > 0 || ps.minutesInStage > 0);
+    };
+    let both = false;
+    let total = w.tally["项目分钟"] ?? 0;
+    while (w.day < 8) {
+      const day = w.today;
+      const before = day.projectMinutes + day.eveningReadMinutes;
+      stepMinute(w);
+      const now = w.tally["项目分钟"] ?? 0;
+      expect(now - total).toBeLessThanOrEqual(1);
+      if (w.today === day) expect(day.projectMinutes + day.eveningReadMinutes - before).toBe(now - total);
+      total = now;
+      const act = w.actor.activity;
+      if (act?.kind === "project" && act.data.evening) {
+        // 晚上在炉边做的只有读书
+        expect(PROJECT_BY_ID[act.data.id as string].kind).toBe("read");
+        expect(w.actor.place).toBe("armchair");
+      }
+      const hands = PROJECTS.some((p) => p.kind !== "read" && started(p.id));
+      const reading = PROJECTS.some((p) => p.kind === "read" && started(p.id));
+      if (hands && reading) both = true;
+    }
+    expect(both).toBe(true);
+  });
+
+  it("旧木料先留给基础修缮：你把暖棚置顶，它等材料并说明原因，五件基础修缮照样不出门做完", () => {
+    const w = createWorld(29);
+    w.intents.pinned = ["greenhouse"];
+    expect(w.stock.materials.lumber).toBe(18);
+    expect(projectStatus(w, "greenhouse")).toEqual({ status: "needMaterials", note: "等材料：旧木料先留给基础修缮，还差木料 3" });
+    const base = PROJECTS.filter((p) => p.base);
+    expect(base.map((p) => p.id)).toEqual(["windowGaps", "woodshed", "cellar", "fence", "dryingRack"]);
+    runUntil(w, (x) => base.every((p) => x.projects[p.id].done), 120 * 1440);
+    expect(w.projects.greenhouse.stage).toBe(0);
+    expect(w.projects.greenhouse.minutesInStage).toBe(0);
+    // 基础修缮用掉 17 根，剩下的 1 根不够暖棚第一阶段的 4 根；这时是单纯的缺货
+    expect(w.stock.materials.lumber).toBe(1);
+    expect(projectStatus(w, "greenhouse")).toEqual({ status: "needMaterials", note: "等材料：还差木料 3" });
+  });
+
+  it("带回来的木料是多出来的：暖棚可以先用它开工，基础修缮的那 17 根不受影响", () => {
+    const w = createWorld(29);
+    w.intents.pinned = ["greenhouse"];
+    w.stock.materials.lumber += 3; // 从松林工棚带回 3 根，连同多出的 1 根正好 4 根
+    expect(projectStatus(w, "greenhouse").status).toBe("queued");
+    const base = PROJECTS.filter((p) => p.base);
+    runUntil(w, (x) => x.projects.greenhouse.stage >= 1, 60 * 1440);
+    expect(base.every((p) => w.projects[p.id].done)).toBe(false);
+    runUntil(w, (x) => base.every((p) => x.projects[p.id].done), 120 * 1440);
+    expect(w.stock.materials.lumber).toBe(0);
   });
 });
 

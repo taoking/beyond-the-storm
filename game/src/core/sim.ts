@@ -588,7 +588,9 @@ export function projectStatus(w: World, id: string): { status: ProjectStatus; no
     const missing = missingMaterials(w, def, ps.stage);
     if (missing) {
       const parts = (Object.entries(missing) as [Material, number][]).map(([k, n]) => `${MATERIAL_NAME[k]} ${n}`);
-      return { status: "needMaterials", note: `等材料：还差${parts.join("、")}` };
+      // 木料堆里其实有，只是留给了基础修缮：照实说，不显示成单纯的缺货
+      const held = !def.base && missing.lumber !== undefined && lumberReservedForBase(w) > 0;
+      return { status: "needMaterials", note: `等材料：${held ? "旧木料先留给基础修缮，" : ""}还差${parts.join("、")}` };
     }
   }
   if (def.where === "yard" && !yardWeather(w)) return { status: "needWeather", note: "等天气" };

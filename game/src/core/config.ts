@@ -183,6 +183,11 @@ export const CONFIG = {
     projectBreakMinutes: 15,
     /** 木雕没被置顶时，他自己最多刻几件 */
     autoCarvings: 2,
+    /**
+     * 暂行（D6，等野外的体力、体温、背包做出来再定）：人在外面到了饭点，行囊里有干粮就吃一份；
+     * 没有干粮这顿就不吃。这里定的是那一顿算不算缺餐，现在不算。不代表野外可以一直不吃。
+     */
+    outingMealWithoutRationsIsMissed: false,
     /** 昏倒后背包里的柴粮丢掉的比例 */
     collapseLossRatio: 0.5,
     /** 世界手记保留最近多少个游戏日的逐条事件；更早的只留每日小结 */
