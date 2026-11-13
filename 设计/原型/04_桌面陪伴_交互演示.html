@@ -271,23 +271,23 @@ window.switchBookTab=function(tab){state.bookTab=tab;renderPanel()};
 window.pickCamera=function(cam){state.camera=cam;render();renderPanel()};
 window.toggleCompact=function(){if(state.mode==='outdoor'&&!state.compact){openPanel('outdoor');return}state.compact=!state.compact;if(state.compact){state.prevCamera=state.camera;state.camera='window'}else state.camera=state.prevCamera;render();setText('windowToggle',state.compact?'↗ 完整窗口':'↘ 小窗预览')};
 window.toggleSound=function(){state.sound=!state.sound;setText('soundToggle',state.sound?'♫ 环境声':'♫ 已静音');if(state.panel==='ambient')renderPanel()};
-window.setMode=function(mode){if((state.mode==='outdoor'||state.mode==='outdoor-focus')&&mode==='companion'){backOutdoor();return}state.mode=mode;render();if(state.panel==='ambient')renderPanel()};
+window.setMode=function(mode){if((state.mode==='outdoor'||state.mode==='outdoor-focus')&&mode==='companion'){window.backOutdoor();return}state.mode=mode;render();if(state.panel==='ambient')renderPanel()};
 window.applyAmbient=function(){state.season=el('seasonSelect').value;state.weather=el('weatherSelect').value;state.timeOfDay=el('timeSelect').value;state.mode=(state.mode==='outdoor'||state.mode==='outdoor-focus')?'outdoor-focus':'ambient';render();close()};
 window.chooseDuration=function(m){if(state.running)return;state.minutes=m;state.seconds=m*60;render();renderPanel()};
 window.resetTimer=function(){pause();state.seconds=state.minutes*60;render();renderPanel()};
 function pause(){if(state.running){state.seconds=Math.max(0,Math.ceil((state.timerDeadline-Date.now())/1000));clearInterval(state.timerId);state.running=false;state.timerId=null;}}
 window.toggleTimer=function(){
- if(state.mode==='outdoor'){enterOutdoorFocus();return}
+ if(state.mode==='outdoor'){window.enterOutdoorFocus();return}
  if(state.running){pause()}else{state.running=true;state.timerDeadline=Date.now()+state.seconds*1000;state.timerId=setInterval(function(){state.seconds=Math.max(0,Math.ceil((state.timerDeadline-Date.now())/1000));if(state.seconds<=0){pause();state.seconds=0;setText('timerDescription','本轮完成 · 演示计时');}render()},600)}
  render();if(state.panel==='tasks')renderPanel();
 };
-window.toggleTimerFromPanel=function(){if(el('taskName'))state.task=el('taskName').value.trim()||'未命名专注';toggleTimer()};
-window.outdoorAction=function(){if(state.mode==='outdoor'){returnHome()}else if(state.mode==='outdoor-focus'){backOutdoor()}else if(state.mode==='ambient'){setMode('companion');close()}else openPanel('pack')};
+window.toggleTimerFromPanel=function(){if(el('taskName'))state.task=el('taskName').value.trim()||'未命名专注';window.toggleTimer()};
+window.outdoorAction=function(){if(state.mode==='outdoor'){window.returnHome()}else if(state.mode==='outdoor-focus'){window.backOutdoor()}else if(state.mode==='ambient'){window.setMode('companion');close()}else openPanel('pack')};
 window.changePack=function(k,n){var key=k==='food'?'supplyFood':'supplyWood';state[key]=Math.max(0,Math.min(k==='food'?4:3,state[key]+n));renderPanel()};
 window.confirmOutdoor=function(){pause();state.mode='outdoor';state.camera='wide';render();openPanel('outdoor')};
 window.enterOutdoorFocus=function(){state.mode='outdoor-focus';state.camera='wide';render();close()};
 window.backOutdoor=function(){pause();state.mode='outdoor';render();openPanel('outdoor')};
-window.returnHome=function(){pause();state.mode='companion';state.camera='wide';state.eventCount++;state.activity='reading';render();openJournal('world')};
+window.returnHome=function(){pause();state.mode='companion';state.camera='wide';state.eventCount++;state.activity='reading';render();window.openJournal('world')};
 window.findSouvenir=function(){state.hasSouvenir=true;el('panelContent').insertAdjacentHTML('beforeend','<div class="entry"><small>演示发现</small><p>找到一卷旧胶卷。以后回家，它可以成为一个真实的慢事或收藏。</p></div>')};
 window.applyStyle=function(n){state.style=n;close()};
 window.simulateLife=function(){state.activity=state.activity==='reading'?'tea':'reading';state.eventCount++;render();if(state.panel==='journal')renderPanel()};
@@ -295,8 +295,8 @@ window.simulateShare=function(){state.share=Math.min(9,state.share+1);render();i
 document.addEventListener('keydown',function(e){
  var target=e.target;if(target&&['INPUT','TEXTAREA','SELECT'].indexOf(target.tagName)!==-1)return;
  if(e.key==='Escape'){if(state.panel)close();return}
- if(e.code==='Space'&&!e.repeat&&state.mode!=='outdoor'){e.preventDefault();toggleTimer()}
- if(e.key.toLowerCase()==='j'&&!e.ctrlKey&&!e.metaKey){openJournal('world')}
+ if(e.code==='Space'&&!e.repeat&&state.mode!=='outdoor'){e.preventDefault();window.toggleTimer()}
+ if(e.key.toLowerCase()==='j'&&!e.ctrlKey&&!e.metaKey){window.openJournal('world')}
 });
 render();
 })();
