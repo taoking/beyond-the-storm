@@ -2,6 +2,19 @@
 
 > **状态：04 v1.4 的交互演示＋05 v0.7 的目标美术规范并存；05 v0.6 的低保真结构已有真实 Chromium/PNG 验证，**仍非正式美术或游戏 Demo**。** GPT 负责视觉图片/资产、Claude 负责 06 真实游戏核心，UI/交互由双方共同评审。所有演示数据不得写入正式世界。
 
+
+## 最新：05 v1.0 真实 06 Snapshot → 只读美术状态桥接
+
+本轮的新增是**可以实际执行的视觉适配器，不是另一套世界模拟，也不是原型占位画的高保真完成声明**。
+
+- [只读 G2 adapter JavaScript](05_v1.0_G2只读视觉适配器.js) — 从 Claude 06 当前 Snapshot 输出 actor、fire、jar、weather、focus、today 等可绘制状态；不改状态、不追人、不造事件。
+- [16 条独立单元测试](05_v1.0_G2只读视觉适配器.test.cjs) — 测试空镜、冷炉、氛围展示字段缺失、已摆放球果和人物位置等条件。
+- [1,440 游戏分钟真实内核联动](05_v1.0_06真实快照冒烟.mjs) — 在真实 Claude 世界里读取 Snapshot，映射三个镜头 **4,320 次**。无世界状态写入。
+- [GitHub CI](../../.github/workflows/05-g2-visual-bridge.yml) — [完整成功记录](https://github.com/taoking/beyond-the-storm/actions/runs/43472167991)，新视觉测试 + 真实世界联动 + Claude 原有测试和打包全部通过。
+- [美术与 06 接口评审及缺口](../讨论记录/2026-11-14_05v1.0美术与06真实快照联调_GPT.md) — 下一步以真实高品质分层美术替换视觉原型，不增加新世界规则。
+
+另提供对话附件 `beyond_storm_05_v10_visual_reference.zip`：无人木屋全景与雪窗/炉边两个 480×270 构图参考。**画面仍烘焙火焰、天气、光照，不能当正式 clean plate；PNG 尚不在 GitHub**。正式无人无火无 UI 母图依然是未完成的 P0。
+
 ## 05 v0.9 统一交给 Claude 的完整美术 ZIP
 
 本次对话已另外制作 `beyond_storm_05_v09_claude_handoff.zip`，**一包包含**：
