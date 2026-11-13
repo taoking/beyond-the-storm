@@ -34,6 +34,10 @@ footer{margin:25px 0 0;color:#8ea4aa;font-size:11px}
 @media(prefers-reduced-motion:reduce){.game{transition:none}}
 
 /* UI v1.4 / visual v0.3: actual CSS-pixel outer frames; debugger remains outside */
+.page:has(.game.size-1280){max-width:1700px}
+.layout:has(.game.size-1280){display:block}
+.layout:has(.game.size-1280)>.side{max-width:830px;margin-top:20px}
+
 .layout{grid-template-columns:minmax(0,1fr) 302px}
 .scene{aspect-ratio:auto;flex:1;min-height:0}
 .game{width:min(100%,480px);height:270px;display:flex;flex-direction:column;border-radius:9px;max-width:none;transition:none}
