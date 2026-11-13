@@ -289,12 +289,12 @@ C.clearRect(0,0,W,H);
 if(state.mode==='outdoor')drawOutdoor(frame);else sceneFrame(frame);
 screen.fillStyle=P.dark;screen.fillRect(0,0,W,H);screen.imageSmoothingEnabled=false;
 var cam=state.mini?state.miniCamera:state.camera;
-var source=cam==='window'?{x:41,y:73,w:228,h:128}:cam==='hearth'?{x:309,y:106,w:165,h:94}:{x:0,y:0,w:480,h:270};
+var source=cam==='window'?{x:41,y:90,w:228,h:128}:cam==='hearth'?{x:309,y:106,w:165,h:94}:{x:0,y:0,w:480,h:270};
 if(state.mode==='outdoor')source={x:0,y:0,w:480,h:270};
 screen.drawImage(buffer,source.x,source.y,source.w,source.h,0,0,W,H);
 }
 function updateUI(){
-el('game').classList.toggle('mini',state.mini);
+el('game').classList.toggle('is-mini',state.mini);
 el('mode').textContent=state.mode==='companion'?'正常陪伴':state.mode==='ambient'?'独立氛围 · 世界暂停':state.mode==='outdoor'?'户外直控':'户外临时专注 · 世界暂停';
 el('mode').classList.toggle('frozen',state.mode==='ambient'||state.mode==='outdoor-focus');
 el('worldText').textContent=state.mode==='ambient'?'氛围预览':state.mode==='outdoor'?'松林 · 冬':'冬 · 第 12 天';
@@ -323,8 +323,8 @@ window.simulateFinish=function(gained,unlocked){state.running=false;var message=
 window.setNotifications=function(v){state.notifications=!!v};
 
 window.selectCamera=function(name){if(state.mini){if(name==='wide'){state.mini=false;state.camera='wide'}else state.miniCamera=name}else state.camera=name;updateUI();paint(0)};
-window.toggleMini=function(){state.mini=!state.mini;updateUI();paint(0)};
-window.miniNextCamera=function(){state.miniCamera=state.miniCamera==='window'?'hearth':'window';updateUI();paint(0)};
+window.toggleMini=function(){state.mini=!state.mini;var size=state.mini?320:1280;state.viewport=size;var g=el('game');g.classList.remove('size-320','size-480','size-1280');g.classList.add('size-'+size);g.dataset.size=String(size);state.camera=state.mini?'window':'wide';updateUI();paint(0)};
+window.miniNextCamera=function(){state.miniCamera=state.miniCamera==='window'?'hearth':'window';if(state.viewport!==1280)state.camera=state.miniCamera;updateUI();paint(0)};
 window.setMode=function(name){
  if(name==='outdoor'){state.location='outside';state.mode='outdoor';window.stopFocus()}
  else if(name==='outdoor-focus'){state.location='outside';state.mode='outdoor-focus'}
