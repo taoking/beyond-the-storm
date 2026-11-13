@@ -87,6 +87,8 @@ node --experimental-strip-types "设计/原型/05_v1.0_06真实快照冒烟.mjs"
 
 这还是**只验证规则与基本交互的灰盒**：没有兔子、野猪、动画、完整区域美术、点击自动寻路或 03 的全部工棚藏品。旧 `cmdTravelTo` 仍保留供 v0.3 的回归用例，不代表它是新可玩流程。
 
+**浏览器真实操作验收**：[Chromium CI 43482681669](https://github.com/taoking/beyond-the-storm/actions/runs/43482681669) 已通过实际 WASD 移动、采集 2 根枯枝、走回林口、返家入库和浏览器无异常测试。可下载 Actions 中的 `forest-v04-browser-smoke` 三张页面截图。自动化世界回归已有 **130 条测试通过**，05 美术契约 **16 条**通过。截图是灰盒，不是最终美术。
+
 新增源码：`src/core/forest.ts`；在 `game.ts` 中新增 `cmdEnterForest/cmdForestMove/cmdForestGather/cmdForestRest/cmdForestWarm/cmdForestReturn`，由 `present()` 的 `Snapshot.outing.forest` 显示地图和背包。身体/采集/重生数值全部仍是**待明天评审的原型值**。
 
 运行：`npm ci && npm run dev`；验证：`npm test && npm run build`，CI 还会复查 05 的真实世界只读画面映射。明天待讨论清单见 [06 v0.4 开发与评审记录](../设计/讨论记录/2026-11-14_06v0.4松林竖切与明日评审清单_GPT.md)。
