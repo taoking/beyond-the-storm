@@ -131,8 +131,15 @@ def run(input_path, output, scale=2, trim=False, add_crops=True):
         "logical_size": list(CANVAS), "scale": scale, "layers": [], "camera_crops": [],
     }
     for order, (name, group, parent) in enumerate(groups(svg)):
-        picture = raster(layer_doc(svg, group))
-        reconstructed = Image.alpha_composite(reconstructed, picture)
+        # Export deliberately hidden candidate art as visible standalone pixels;
+        # do NOT show it in the reconstructed default scene.
+        default_visible = group.get("display") != "none"
+        export_group = deepcopy(group)
+        if not default_visible:
+            export_group.attrib.pop("display", None)
+        picture = raster(layer_doc(svg, export_group))
+        if default_visible:
+            reconstructed = Image.alpha_composite(reconstructed, picture)
         filename = f"{order:02d}_{name}.png"
         save(picture, output / filename, scale)
         box = picture.getchannel("A").getbbox()
@@ -141,7 +148,8 @@ def run(input_path, output, scale=2, trim=False, add_crops=True):
                  "unscaled_alpha_bbox": list(box) if box else None,
                  "parent_from_svg": parent,
                  "state_inputs": group.get("data-inputs"),
-                 "candidate_status": group.get("data-status")}
+                 "candidate_status": group.get("data-status"),
+                 "default_visible": default_visible}
         if trim and box:
             filename2 = f"{order:02d}_{name}.trim.png"
             save(picture.crop(box), output / filename2, scale)
