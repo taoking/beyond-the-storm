@@ -1,0 +1,222 @@
+{
+  "schema": "beyond-the-storm.art06-snapshot-adapter.v0.8",
+  "status": "GPT proposal for read-only G2 adapter; not a change to Claude engine",
+  "claudeSource": {
+    "branch": "claude/06-greybox",
+    "commit": "e01849ee333e57774fdd5ba2c65bea1f53ddee5a",
+    "primary": "game/src/core/view.ts present(g,wall,cal): Snapshot",
+    "cameraAssumptions": "game/src/core/cameras.ts",
+    "debugScene": "game/src/app/scene.ts (960x270 greybox, NOT 05 art coordinates)"
+  },
+  "readOnlyInputs": [
+    {
+      "path": "Snapshot.mode",
+      "usedFor": "companion/ambience/outdoor/outdoorFocus visual state",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.frozen",
+      "usedFor": "freeze indicator, not creating world activities",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.world.look",
+      "usedFor": "actual weather wording and appearance",
+      "implemented": true,
+      "warning": "in ambience current Snapshot still exposes real world; add separate visual preview source"
+    },
+    {
+      "path": "Snapshot.world.dayPart",
+      "usedFor": "actual lighting phase",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.actor.place",
+      "usedFor": "true location and event captions",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.actor.placeName",
+      "usedFor": "gentle real location hint",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.actor.outfit",
+      "usedFor": "indoor knit vs outdoor attire",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.actor.asleep",
+      "usedFor": "sleeping pose/camera absence",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.actor.visible",
+      "usedFor": "current coarse camera place-inclusion metric",
+      "implemented": true,
+      "warning": "not pixel intersection; may conflict with ambience stage"
+    },
+    {
+      "path": "Snapshot.stage.show",
+      "usedFor": "whether a character should be drawn anywhere",
+      "implemented": true,
+      "warning": "not enough to determine if in selected camera"
+    },
+    {
+      "path": "Snapshot.stage.place",
+      "usedFor": "effective rendered position in current visual mode",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.stage.illusion",
+      "usedFor": "mark ambience only for visual freeze",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.stage.label",
+      "usedFor": "description of presentation state",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.fire.look",
+      "usedFor": "off/embers/small/medium/high five art states",
+      "implemented": true,
+      "values": [
+        "out",
+        "ember",
+        "low",
+        "mid",
+        "high"
+      ]
+    },
+    {
+      "path": "Snapshot.life.heater",
+      "usedFor": "kerosene heater visual if present",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.stock.wood",
+      "usedFor": "woodpile visible tier",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.jar.cones",
+      "usedFor": "already staged pinecones (not pending shares)",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.jar.pending",
+      "usedFor": "nonvisible awaiting staging, not jar fill",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.traces",
+      "usedFor": "actual lived-in objects with lifecycle",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.projects",
+      "usedFor": "verified facility stages and work in progress",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.today.top",
+      "usedFor": "real events in today card",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.today.more",
+      "usedFor": "additional real events on request",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.focus.bar",
+      "usedFor": "UI-only focus state, not scene art",
+      "implemented": true
+    },
+    {
+      "path": "Snapshot.focus.summaryText",
+      "usedFor": "nonmodal end-of-round summary",
+      "implemented": true
+    }
+  ],
+  "missingVisualProjectionRecommended": [
+    {
+      "name": "poseKey",
+      "reason": "Snapshot.actor.label and stage.label are Chinese text; do not infer sprite animation by parsing them",
+      "proposedSource": "derive from world.actor.activity.kind and current phase, using a stable map to read/tea/observe/sit/stand/idle",
+      "requires06change": "only read-only presentation adapter; no change to world simulation",
+      "confirmed": false
+    },
+    {
+      "name": "visualWeather",
+      "reason": "in ambience mode Snapshot.world.look still real weather",
+      "proposedSource": "Game.ambience.weather when mode ambience, otherwise actual World weather",
+      "requires06change": "presentation-only",
+      "confirmed": false
+    },
+    {
+      "name": "visualSeasonAndDayPart",
+      "reason": "ambience selected season/time must not mutate world, Snapshot uses actual dayPart",
+      "proposedSource": "Game.ambience.season/time when mode ambience",
+      "requires06change": "presentation-only",
+      "confirmed": false
+    },
+    {
+      "name": "perCameraPixelVisible",
+      "reason": "actor.visible is location membership, not sprite-bbox vs camera viewport",
+      "proposedSource": "adapter render anchor+bbox intersection and occlusion, not new game mechanic",
+      "requires06change": "G2 only",
+      "confirmed": false
+    },
+    {
+      "name": "visualPropOwnership",
+      "reason": "visual concept contains objects and furniture not all present at start",
+      "proposedSource": "combine Snapshot.projects, style selection, real inventory and stage facts; if insufficient add only readonly view fields",
+      "requires06change": "may need Snapshot enhancement after 03 check",
+      "confirmed": false
+    }
+  ],
+  "cameraPilot": {
+    "notFinal": true,
+    "existing06": {
+      "window": [
+        "window",
+        "windowsill",
+        "desk"
+      ],
+      "hearth": [
+        "hearth",
+        "armchair",
+        "stove",
+        "instruments"
+      ],
+      "wideIndoor": "all indoor places",
+      "wideYard": "all indoor and yard places"
+    },
+    "stageSceneCoordinateSystem": "05 production logical scene TBD; do not reuse game/src/app/scene.ts 960x270 debug positions as actual art anchors",
+    "currentMeasuredVisibleWhileAwake": {
+      "window": 0.188,
+      "hearth": 0.437,
+      "wideIndoor": 0.783,
+      "wideYard": 0.872
+    },
+    "sourceSample": "40 seeds × 60 world days; awake 2,319,331 minutes, no outings, no focus",
+    "nextCandidate": "visually coherent window-desk, armchair near hearth, distinct stove/cooking spot, full cabin no forced yard enlargement",
+    "sceneAcceptance": "camera viewport/sprite bounding-box/occlusion coverage recomputed using actual final art anchors"
+  },
+  "eventRules": {
+    "notablePerTwoRealHours": 0.7,
+    "actionTransitionsPerTwoRealHours": 17.1,
+    "todayCard": "up to 4 real events, fewer are okay; can show authentic ordinary moments, never invented story",
+    "focusSummary": "only at actual round completion and always source from Snapshot.focus.summaryText",
+    "weatherAmbient": "view-only, no simulation time or resource changes",
+    "location": "no auto-follow and no camera change can move character"
+  },
+  "decisionScope": {
+    "D1_D7": "user pending, leave gameplay untouched",
+    "sourceOfTruth": "Claude pure world/focus engine",
+    "uiVisualOwner": "GPT with Claude UI review",
+    "handoffMerge": "manual 00 reconciliation across diverged branches"
+  }
+}
