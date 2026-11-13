@@ -2,6 +2,17 @@
 
 > **状态：04 v1.4 的交互演示＋05 v0.7 的目标美术规范并存；05 v0.6 的低保真结构已有真实 Chromium/PNG 验证，**仍非正式美术或游戏 Demo**。** GPT 负责视觉图片/资产、Claude 负责 06 真实游戏核心，UI/交互由双方共同评审。所有演示数据不得写入正式世界。
 
+## 05 v0.9 统一交给 Claude 的完整美术 ZIP
+
+本次对话已另外制作 `beyond_storm_05_v09_claude_handoff.zip`，**一包包含**：
+
+- `reference/user_selected_visual_target.png`：用户认可的那张目标画面（Claude 此前尚未看到原图）；
+- `layout/`：甲乙布局、床/椅/灶台/工作台/路线、480 vs 640 参考图；
+- `sprite_studies/`：12 张参考姿态、5 种参考炉火、两个 atlas、`preview.html` 和 manifest；
+- `HANDOFF_README.md`：清楚区分目标、结构原型和正式资产。
+
+**仍未上传仓库中的 PNG**；ZIP 是对话附件，用户转给 Claude 后应先放在独立 `lookdev` 目录，绝不可把方案板/抠图当正式 clean plate 或投产 sprite。GPT/Claude 的 GitHub 分支仍维持各自职责。
+
 ## 05 v0.9 同步：正式木屋母图之前的两种布局与 480/640 美术采样
 
 Claude 最新反馈指出床、扶手椅、灶台、工作台和走路线路必须先确定。GPT 已制作**甲乙两案的俯视布局草稿**与**目标效果图同区采样的 480×270 / 640×360 细节对比**，供用户和 Claude 同步。
