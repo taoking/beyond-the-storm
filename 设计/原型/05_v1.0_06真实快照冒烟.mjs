@@ -44,14 +44,19 @@ for (let minute = 0; minute < 1440; minute++) {
   assert.equal(JSON.stringify(g), before, "Adapter must not change 06 game state");
 }
 
-// In ambience, 06's present() has not yet added a distinct projected look;
-// the visual layer must never fake it by displaying actual weather.
+// G2 now provides a distinct selected ambience look without changing the real world.
+const worldBeforePreview = JSON.stringify(g.world);
 g.mode = "ambience";
 g.ambience = {season:"winter",weather:"A",time:"night"};
-const a = adapt(actual(), "hearth");
+const preview = actual();
+assert.equal(preview.look.source, "ambience");
+assert.equal(preview.world.look, g.world.weather.look);
+assert.equal(preview.stage.pose, "sit");
+const a = adapt(preview, "hearth");
 assert.equal(a.worldFrozen, true);
-assert.equal(a.weather.source, "projection_missing");
-assert.equal(a.weather.weather, null);
+assert.equal(a.weather.source, "ambience_projection");
+assert.equal(a.weather.weather, preview.look.weatherLabel);
+assert.equal(JSON.stringify(g.world), worldBeforePreview);
 
 // Outdoor temporary-focus cabin scene is genuinely empty (no ghost sprite).
 g.mode = "outdoorFocus";
