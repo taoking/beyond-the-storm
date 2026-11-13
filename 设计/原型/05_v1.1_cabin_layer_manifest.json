@@ -1,0 +1,111 @@
+{
+  "schema": "beyond-the-storm.art-cabin-v1.1/1",
+  "status": "candidate_clean_plate_with_functional_layered_lookdev_not_final_animation",
+  "asset_zip_in_conversation": "beyond_storm_05_v11_art_layers.zip",
+  "binary_assets_uploaded_to_git": false,
+  "canvas": {
+    "width": 1672,
+    "height": 941
+  },
+  "layers": {
+    "base": "base/cabin_clean.png",
+    "windowRect": [
+      424,
+      220,
+      329,
+      235
+    ],
+    "windowMask": "window/glass_mask.png",
+    "windowSky": {
+      "night": "window/exterior_night.png",
+      "dawn": "window/exterior_dawn.png",
+      "day": "window/exterior_day.png"
+    },
+    "windowSnow": "window/snow_particles.png",
+    "fireRect": [
+      862,
+      517,
+      95,
+      65
+    ],
+    "fire": {
+      "out": "fire/out.png",
+      "ember": "fire/ember.png",
+      "low": "fire/low.png",
+      "mid": "fire/mid.png",
+      "high": "fire/high.png"
+    },
+    "fireGlow": "lighting/fire_glow_high.png",
+    "deskGlow": "lighting/desk_glow.png"
+  },
+  "anchor_candidates": {
+    "door": [
+      111,
+      624
+    ],
+    "desk": [
+      520,
+      588
+    ],
+    "armchair": [
+      1199,
+      698
+    ],
+    "bed": [
+      1533,
+      620
+    ],
+    "stove": [
+      911,
+      604
+    ],
+    "kitchen": [
+      1055,
+      516
+    ],
+    "workbench": [
+      1500,
+      795
+    ],
+    "bookshelf": [
+      1400,
+      440
+    ]
+  },
+  "camera_candidate_rects": {
+    "wide": [
+      0,
+      0,
+      1672,
+      941
+    ],
+    "window": [
+      302,
+      139,
+      780,
+      439
+    ],
+    "hearth": [
+      778,
+      315,
+      780,
+      439
+    ]
+  },
+  "engine_06_readonly": {
+    "fire": "Snapshot.fire.look",
+    "weather": "Snapshot.look",
+    "actor_later": "Snapshot.stage.pose/prop"
+  },
+  "verified": {
+    "asset_checks": 22,
+    "browser": "Chromium: image loading, sky, snow, fire, desk lamp, three cameras, snapshot missing-guard"
+  },
+  "not_yet_production": [
+    "window forest native paint",
+    "animated flame five states",
+    "original 640x360 art density decision",
+    "sprite animation and actual actor anchors",
+    "seasonal scene and mutable furniture art"
+  ]
+}
