@@ -3,6 +3,7 @@
 import { CAMERA_IDS, visibleIn, type CameraId } from "./cameras.ts";
 import { clockText, DAY_PART_NAME, dayPartOf, SEASON_NAME, seasonOf } from "./calendar.ts";
 import { CONFIG, type LifeTier } from "./config.ts";
+import { forestSnapshot, type ForestSnapshot } from "./forest.ts";
 import { CROP_BY_ID, PLACES, PROJECTS, STYLES, zoneOf, type PlaceId, type Zone } from "./content.ts";
 import { focusBarState, sharesToday, unlockedStyleCount, type Calendar, type FocusBarState, type RoundSummary } from "./focus.ts";
 import { frozen, type Game, type Mode, type Notice } from "./game.ts";
@@ -74,7 +75,7 @@ export interface Snapshot {
   /** 近况卡：今天到现在真实发生过的事，要紧的在前 */
   today: { top: WorldEvent[]; more: WorldEvent[] };
   traces: { type: string; place: PlaceId }[];
-  outing: { area: string | null; minutesFromDoor: number; rations: number; bundles: number; panel: string | null } | null;
+  outing: { area: string | null; minutesFromDoor: number; rations: number; bundles: number; panel: string | null; forest: ForestSnapshot | null } | null;
   focus: {
     bar: FocusBarState;
     text: string;
@@ -284,6 +285,7 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
           rations: w.outing.rations,
           bundles: w.outing.bundles,
           panel: g.outdoorPanel,
+          forest: forestSnapshot(w),
         }
       : null,
     focus: {
