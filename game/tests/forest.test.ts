@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { CONFIG } from "../src/core/config.ts";
 import { FOREST_GATE, FOREST_NODES, forestMap, forestPassable, shortestStepsToGate, slotCount } from "../src/core/forest.ts";
 import { advance, cmdDepart, cmdEnterForest, cmdForestGather, cmdForestMove,
-  cmdForestRest, cmdForestReturn, cmdHeadHome, cmdOutdoorPanel, cmdStartFocus,
+  cmdForestRest, cmdForestWarm, cmdForestReturn, cmdHeadHome, cmdOutdoorPanel, cmdStartFocus,
   cmdReturnToWild, newGame, type Game } from "../src/core/game.ts";
 import { fixedCalendar } from "../src/core/focus.ts";
 import { serialize, deserialize } from "../src/core/save.ts";
@@ -156,6 +156,20 @@ describe("06 v0.4 forest vertical slice",()=>{
     cmdReturnToWild(g);
     expect(g.mode).toBe("outdoor");
     expect(forest(g).x).toBe(2);
+  });
+  it("the one real campfire site consumes packed firewood and game minutes, not free warmth",()=>{
+    const g=ready(),w=g.world,o=w.outing!;
+    expect(cmdForestWarm(g).ok).toBe(false);
+    routeTo(g,"campRope");
+    forest(g).warmth=30;
+    const minute=w.minute, bundles=o.bundles, stocks=w.stock.wood;
+    expect(cmdForestWarm(g).ok).toBe(true);
+    expect(w.minute).toBe(minute+20);
+    expect(o.bundles).toBe(bundles-1);
+    expect(w.stock.wood).toBe(stocks); // already removed from home when departing
+    expect(forest(g).warmth).toBeGreaterThan(30);
+    expect(w.tally["松林篝火耗柴"]).toBe(3);
+    expect(cmdForestWarm(g).ok).toBe(false);
   });
   it("body decline during idle verified time eventually rescues without permanent death",()=>{
     const g=ready();
