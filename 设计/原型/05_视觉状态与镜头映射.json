@@ -1,0 +1,183 @@
+{
+  "schema": "beyond-the-storm.visual-study.v0.1",
+  "status": "concept-only",
+  "source": "设计/原型/05_像素场景_镜头与动作.html",
+  "nativeCanvas": {
+    "width": 480,
+    "height": 270,
+    "aspectRatio": "16:9",
+    "imageSmoothing": false,
+    "scaling": "integer preferred; nearest-neighbor",
+    "productionResolutionFixed": false
+  },
+  "cameras": {
+    "wide": {
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 480,
+        "height": 270
+      },
+      "role": "full-window default; no automatic tracking"
+    },
+    "window": {
+      "sourceRect": {
+        "x": 43,
+        "y": 30,
+        "width": 195,
+        "height": 111
+      },
+      "role": "small-window default; can contain no actor"
+    },
+    "hearth": {
+      "sourceRect": {
+        "x": 309,
+        "y": 106,
+        "width": 165,
+        "height": 94
+      },
+      "role": "small-window optional; fire and kettle"
+    }
+  },
+  "zones": [
+    {
+      "id": "door",
+      "x": [
+        0,
+        55
+      ],
+      "items": [
+        "entry",
+        "wood_storage"
+      ]
+    },
+    {
+      "id": "snow_window",
+      "x": [
+        56,
+        220
+      ],
+      "items": [
+        "real_weather",
+        "fir_trees",
+        "glass_jar"
+      ]
+    },
+    {
+      "id": "workspace",
+      "x": [
+        220,
+        325
+      ],
+      "items": [
+        "desk",
+        "bookcase",
+        "actor_read",
+        "actor_tea"
+      ]
+    },
+    {
+      "id": "hearth",
+      "x": [
+        325,
+        480
+      ],
+      "items": [
+        "stove",
+        "kettle",
+        "chair",
+        "weather_tools"
+      ]
+    }
+  ],
+  "actor": {
+    "states": {
+      "read": {
+        "visual": "seated at desk; book, small page turn",
+        "factRequired": "actor.action=reading",
+        "outcome": "no mandatory new task"
+      },
+      "tea": {
+        "visual": "mug lift and calm sitting",
+        "factRequired": "actor.action=tea",
+        "outcome": "visual trace expires after reasonable time"
+      },
+      "observe": {
+        "visual": "standing at window and reading instruments",
+        "factRequired": "actor.action=weather_observation",
+        "outcome": "world log only for actual observed event"
+      }
+    },
+    "demoAnimationFPS": 8,
+    "productionAnimationFPS": "to be tested",
+    "actorDisplay": {
+      "companion": "based on actor position and selected camera",
+      "ambient": "nonproductive idle illusion only",
+      "outdoor": "exterior world view",
+      "outdoor_focus": "hide character from cabin; actual outdoor position frozen"
+    }
+  },
+  "scene": {
+    "worldDriven": [
+      "season",
+      "time_of_day",
+      "weather",
+      "fire_state",
+      "inventory",
+      "project_stage",
+      "actor_pose",
+      "trace_lifetime"
+    ],
+    "presentationOnly": [
+      "camera",
+      "ambient_preview",
+      "small_window",
+      "reduced_motion"
+    ],
+    "worldFreezeModes": [
+      "ambient",
+      "outdoor_focus"
+    ],
+    "noOfflineCatchUp": true
+  },
+  "timeAndReward": {
+    "realDayReset": "00:00; only today's share count",
+    "maxSharesPerDay": 9,
+    "reward": "documented outside this art prototype",
+    "glassJar": "record shares immediately; jar staging occurs later when actor is idle",
+    "simulationDataMustNotWriteToGameSave": true
+  },
+  "interaction": {
+    "introFocus": "minimal controls on edge",
+    "smallWindow": {
+      "defaultCamera": "window",
+      "otherCamera": "hearth",
+      "independentPreference": true,
+      "privateTaskNamesHidden": true
+    },
+    "outdoor": {
+      "requiresReturnToDoor": true,
+      "ambientSwitch": "outdoor_focus when location=outside",
+      "noTeleport": true
+    }
+  },
+  "palette": {
+    "shadow": "#101820",
+    "dark": "#1e2d36",
+    "wall": "#35434b",
+    "wood": "#876448",
+    "woodHighlight": "#b28b63",
+    "winterSky": "#7193ac",
+    "snow": "#c7d8de",
+    "lamp": "#e4b276",
+    "fire": "#f7b05d",
+    "hat": "#a65049"
+  },
+  "limitations": [
+    "canvas generated pixel blocks rather than final sprite atlas",
+    "static world state and manual visual triggers; no gameplay engine",
+    "no genuine time-based reward accounting or persistent saves",
+    "no sampled final audio",
+    "no true Chrome/Safari visual acceptance yet"
+  ]
+}
