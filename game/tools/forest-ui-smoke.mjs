@@ -3,32 +3,31 @@
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
 import { chromium } from "playwright";
+import { newGame, cmdDepart, cmdEnterForest } from "../src/core/game.ts";
 
 const output=process.argv[2] ?? "artifacts/forest-browser";
 await mkdir(output,{recursive:true});
+const g=newGame(20261114);
+g.world.weather.today="A";
+g.world.actor.place="door";
+g.world.actor.asleep=false;
+g.world.actor.away=false;
+g.world.actor.activity=null;
+const depart=cmdDepart(g,Date.now(),{rations:2,bundles:1});
+const forest=cmdEnterForest(g);
+assert.equal(depart.ok,true);
+assert.equal(forest.ok,true);
+const saved=JSON.stringify({version:1,savedWall:Date.now(),game:g});
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
-const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
+const context=await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1});
+await context.addInitScript(({saved}) => {
+  if(location.host==="127.0.0.1:5173") localStorage.setItem("bts.save.v1",saved);
+},{saved});
+const page=await context.newPage();
 const errors=[];
 page.on("pageerror",e=>errors.push(e.message));
 try{
   await page.goto("http://127.0.0.1:5173",{waitUntil:"domcontentloaded"});
-  await page.waitForSelector("#inspect",{timeout:15000});
-  const outcome=await page.evaluate(async()=>{
-    const G=await import("/src/core/game.ts");
-    const g=G.newGame(20261114);
-    g.world.weather.today="A";
-    g.world.actor.place="door";
-    g.world.actor.asleep=false;
-    g.world.actor.away=false;
-    g.world.actor.activity=null;
-    const depart=G.cmdDepart(g,Date.now(),{rations:2,bundles:1});
-    const forest=G.cmdEnterForest(g);
-    if(!depart.ok || !forest.ok)throw new Error("Could not bootstrap forest fixture: "+JSON.stringify({depart,forest}));
-    localStorage.setItem("bts.save.v1",JSON.stringify({version:1,savedWall:Date.now(),game:g}));
-    return {depart,forest};
-  });
-  assert.equal(outcome.forest.ok,true);
-  await page.reload({waitUntil:"domcontentloaded"});
   await page.locator(".forest-panel").waitFor({timeout:20000});
   const pre=page.locator(".forest-map");
   assert.match(await pre.innerText(),/@/);
