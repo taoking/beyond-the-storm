@@ -289,7 +289,7 @@ function render(): void {
   if (showToday) card.innerHTML = renderToday(s);
   $("summaryRow").textContent = s.focus.summaryText;
   $("focusBar").innerHTML = renderFocus(s, g);
-  $("notices").textContent = s.notices.slice(-2).map((n) => n.text).join("　");
+  $("notices").textContent = [s.notices.slice(-2).map((n) => n.text).join("　"), rt.lastActionError].filter(Boolean).join("　");
   // 检查面板里有下拉框和输入框：鼠标或键盘正停在上面时不重画，免得打断操作
   const inspect = $("inspect");
   if ((s.outing?.forest || !inspect.matches(":hover")) && !inspect.contains(document.activeElement))
