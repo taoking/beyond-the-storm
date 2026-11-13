@@ -33,7 +33,7 @@ import {
   type OutingCheck,
 } from "./outing.ts";
 import { createWorld, hasEffect, stepMinute } from "./sim.ts";
-import { enterForest, moveForest, gatherForest, restForest, returnForest } from "./forest.ts";
+import { enterForest, moveForest, gatherForest, restForest, returnForest, warmForest } from "./forest.ts";
 import { dayClock, type NewWorldOptions, type RequestKind, type World } from "./state.ts";
 import { createTelemetry, sampleTelemetry, type Telemetry } from "./telemetry.ts";
 
@@ -376,6 +376,12 @@ export function cmdForestGather(g: Game, id: string): Result {
 export function cmdForestRest(g: Game): Result {
   if (g.mode !== "outdoor" || g.outdoorPanel) return no("先合上面板再休息。");
   const r=restForest(g.world);
+  afterCollapseOrArrival(g);
+  return r;
+}
+export function cmdForestWarm(g: Game): Result {
+  if (g.mode !== "outdoor" || g.outdoorPanel) return no("先合上面板再生火。");
+  const r=warmForest(g.world);
   afterCollapseOrArrival(g);
   return r;
 }
