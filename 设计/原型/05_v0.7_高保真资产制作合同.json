@@ -1,0 +1,236 @@
+{
+  "schema": "beyond-the-storm.art-production-brief.v0.7",
+  "status": "art-direction-approved-by-user-mood-only; no production assets claimed",
+  "effectiveDate": "2026-11-13",
+  "visualTarget": {
+    "identity": "snowy mountain weather station cabin: quiet independent life beyond the storm",
+    "quality": "rich hand-crafted 16-bit-style pixel scene with cold indigo snow and warm firelight",
+    "referenceProvenance": "user-approved screenshot is a TARGET look; current v0.7 crop comes from a generated direction board and is not separable game art",
+    "preserve": [
+      "large snowy window",
+      "wooden desk directly below window",
+      "cozy fire stove on right",
+      "natural seated occupant in plain indoor knitwear",
+      "weather-station books and verified instruments",
+      "warm-cold balance",
+      "distinct character silhouette at small window sizes"
+    ],
+    "exclude": [
+      "large always-on side HUD",
+      "health/hunger/mood bars in cabin",
+      "random cats or pets",
+      "unapproved new facilities or unlocks",
+      "world progress portrayed as real without simulation",
+      "text baked into the background",
+      "camera that follows actor automatically"
+    ]
+  },
+  "deliverableGates": [
+    {
+      "id": "A",
+      "name": "lookdev reference",
+      "required": [
+        "single clean composition with no UI",
+        "whole-cabin, window and stove studies",
+        "basic palette"
+      ],
+      "status": "reference package produced in conversation; not repository source"
+    },
+    {
+      "id": "B",
+      "name": "production-grade layered cabin",
+      "required": [
+        "editable room clean plate",
+        "window weather layers",
+        "separate actor with indoor outfit",
+        "fire stove states",
+        "verified independent object availability",
+        "accurate layer redraw at target quality"
+      ],
+      "status": "pending actual source authoring"
+    },
+    {
+      "id": "C",
+      "name": "actual window acceptance",
+      "required": [
+        "320x180 snapshot",
+        "480x270 snapshot",
+        "1280x720 snapshot",
+        "actor present and absent",
+        "breakdown of edge UI occlusion"
+      ],
+      "status": "pending with Gate B art"
+    },
+    {
+      "id": "D",
+      "name": "real game integration",
+      "required": [
+        "read-only world view model",
+        "actor location and action binding",
+        "weather and stove state binding",
+        "jar delayed-staging validation",
+        "freeze/resume and outdoor position consistency"
+      ],
+      "status": "pending Claude 06 greybox"
+    }
+  ],
+  "composition": [
+    {
+      "id": "wide",
+      "role": "full window, same mother scene",
+      "mustShow": [
+        "snow window",
+        "desk if actor actually present",
+        "stove fire according to actual state"
+      ],
+      "camera": "fixed, no auto tracking"
+    },
+    {
+      "id": "window",
+      "role": "default compact",
+      "mustShow": [
+        "snow / trees",
+        "sill & pinecone jar",
+        "desk",
+        "occupant if they are actually at desk"
+      ],
+      "camera": "fixed, no tracking"
+    },
+    {
+      "id": "hearth",
+      "role": "optional compact",
+      "mustShow": [
+        "stove face",
+        "kettle when genuinely placed",
+        "fire state",
+        "nearby room details"
+      ],
+      "camera": "fixed, no tracking"
+    }
+  ],
+  "productionArtifacts": [
+    {
+      "id": "cabin_clean",
+      "priority": "P0",
+      "format": "editable layered source + lossless RGBA exports",
+      "requiredVariants": [
+        "no person",
+        "stove body without fire",
+        "window aperture/mask"
+      ],
+      "status": "not produced"
+    },
+    {
+      "id": "window_weather",
+      "priority": "P0",
+      "format": "independent RGBA, mask anchored to window",
+      "requiredVariants": [
+        "quiet winter day",
+        "winter snow / night",
+        "heavy snow / night"
+      ],
+      "status": "not produced"
+    },
+    {
+      "id": "actor_indoor",
+      "priority": "P0",
+      "format": "unified sprite body, independently animated poses",
+      "requiredVariants": [
+        "idle sit",
+        "read",
+        "tea",
+        "weather observation",
+        "actor absent"
+      ],
+      "status": "visual concept poses only; no final atlas"
+    },
+    {
+      "id": "stove_fire",
+      "priority": "P0",
+      "format": "separable fire and light layers",
+      "requiredVariants": [
+        "off",
+        "embers",
+        "small",
+        "medium",
+        "strong"
+      ],
+      "status": "technical visualization only"
+    },
+    {
+      "id": "life_props",
+      "priority": "P1",
+      "format": "individual scene-anchored RGBA",
+      "requiredVariants": [
+        "pinecone jar empty / staged",
+        "book open/closed when factually appropriate",
+        "cup and steam with actual activity",
+        "wood tier tied to supply"
+      ],
+      "status": "needs detailed production separation"
+    },
+    {
+      "id": "repair_stages",
+      "priority": "P2",
+      "format": "facility-specific stage layers",
+      "requiredVariants": [
+        "verified 03 stage lists only"
+      ],
+      "status": "pending Claude condition and 03 verification"
+    },
+    {
+      "id": "ambience_audio",
+      "priority": "P2",
+      "format": "licensed/reproducible loop stems",
+      "requiredVariants": [
+        "soft wind",
+        "stove crackle",
+        "book page",
+        "kettle"
+      ],
+      "status": "not produced"
+    }
+  ],
+  "renderIntegrationContract": {
+    "worldStateOwner": "Claude 06",
+    "worldFactsReadOnly": true,
+    "cameraChangesDoNotAdvanceWorld": true,
+    "rendererNeverGrantsFocusRewards": true,
+    "rendererNeverCreatesLogs": true,
+    "visibleCharacterDep": "actor true position, action, and camera intersection",
+    "visibleFireDep": "actual stove combustion status or isolated frozen ambience preview",
+    "visiblePineconeJarDep": "actor has actually staged previously granted shares, not share award alone",
+    "optionalFarWorker": "off until actual within-yard actor position and visual review",
+    "noOfflineCatchup": true
+  },
+  "acceptanceRubric": {
+    "visual": [
+      "scene feels like user's preferred concept without HUD",
+      "cold outside / warm inside reads at a glance",
+      "book/hand/person readable at 480 compact",
+      "320 compact feels companionable, not noisy",
+      "material rich without artificial texture noise"
+    ],
+    "engineering": [
+      "transparent exports actually show intended pixels",
+      "show/hide actor leaves no phantom knit",
+      "stove off leaves no flame/glow",
+      "no snow outside aperture mask",
+      "project and item layers respect actual unlock/repair states",
+      "screenshots with actual browsers"
+    ],
+    "testNotYetProof": [
+      "CI of v0.6 demonstrates export/screenshot mechanics but not target-quality art",
+      "generated concept board not finished mother art",
+      "unverified future Claude state field names remain proposals"
+    ]
+  },
+  "reviewInputsNeededFromClaude": [
+    "actor actual location and actions emitted by greybox",
+    "fire status and day phase fields available or adapters needed",
+    "real world event / journal source",
+    "actor in-window visibility sample",
+    "object and repair stages existing in 06"
+  ],
+  "nextDecisionOwner": "user may accept the art direction but production acceptance needs visual review of real assets"
+}
