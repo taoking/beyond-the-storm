@@ -45,6 +45,7 @@ const COMMANDS: Record<string, (g: G.Game, wall: number, ...a: never[]) => unkno
   forestMove: (g, _wall, dx: number, dy: number) => G.cmdForestMove(g, dx, dy),
   forestGather: (g, _wall, id: string) => G.cmdForestGather(g, id),
   forestRest: (g) => G.cmdForestRest(g),
+  forestWarm: (g) => G.cmdForestWarm(g),
   forestReturn: (g) => G.cmdForestReturn(g),
   outdoorPanel: (g, _wall, panel: G.Game["outdoorPanel"]) => G.cmdOutdoorPanel(g, panel),
   pin: (g, _wall, id: string) => G.cmdPinProject(g, id),
