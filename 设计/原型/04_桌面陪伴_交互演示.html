@@ -40,6 +40,9 @@
 .app[data-mode="ambient"][data-time="夜"] #windowBlock{filter:brightness(.65) saturate(.8)}
 #fireFlame{transform-origin:930px 458px;animation:ember-breathe 4s ease-in-out infinite}
 #stoveSteam{animation:smoke-wisp 5s ease-in-out infinite}
+#windowSnow{animation:outside-snow 15s ease-in-out infinite;opacity:.63}
+.app[data-mode="ambient"][data-season="夏"] #windowSnow,.app[data-mode="ambient"][data-weather="晴"] #windowSnow{opacity:0}
+@keyframes outside-snow{0%,100%{transform:translate(0,-8px)}50%{transform:translate(-8px,13px)}}
 @keyframes ember-breathe{0%,100%{opacity:.94;transform:scale(1)}50%{opacity:1;transform:scale(1.014,.97)}}
 @keyframes smoke-wisp{0%,100%{opacity:.28;transform:translateY(1px)}50%{opacity:.45;transform:translateY(-8px)}}
 .compact-controls{display:none;position:absolute;z-index:5;right:12px;bottom:12px;align-items:center;gap:8px}
@@ -59,11 +62,11 @@
 .app.compact .weather-noise{display:none}
 .app.compact #modeBadge{max-width:102px;text-overflow:ellipsis;overflow:hidden}
 .app.compact #worldDay{font-size:11px}
-.weather-noise{pointer-events:none;position:absolute;inset:0;z-index:2;opacity:.13;background-image:radial-gradient(circle,#d7e9ef 1px,transparent 1.7px),radial-gradient(circle,#d8eaf1 1px,transparent 2px);background-size:112px 113px,173px 171px;background-position:12px 22px,60px 74px;mix-blend-mode:screen;animation:drift-snow 25s linear infinite}
+.weather-noise{display:none;pointer-events:none;position:absolute;inset:0;z-index:2;opacity:.13;background-image:radial-gradient(circle,#d7e9ef 1px,transparent 1.7px),radial-gradient(circle,#d8eaf1 1px,transparent 2px);background-size:112px 113px,173px 171px;background-position:12px 22px,60px 74px;mix-blend-mode:screen;animation:drift-snow 25s linear infinite}
 @keyframes drift-snow{to{background-position:110px 130px,230px 250px}}
 .app[data-mode="ambient"][data-weather="晴"] .weather-noise{opacity:0}
 .app[data-mode="ambient"][data-season="夏"] .weather-noise{opacity:0}
-.app[data-mode="outdoor"] .weather-noise{opacity:.21}
+.app[data-mode="outdoor"] .weather-noise{display:block;opacity:.21}
 .prototype-status{font-size:10px;color:#9cb4b2;padding:5px 8px;border-left:1px solid #79918a48}
 @media(max-width:880px){.prototype-status{display:none}.activity{width:min(330px,62vw)}}
 @media(max-width:560px){.page{padding:10px}.masthead{gap:5px}.mast-actions{gap:6px}.mast-actions .ghost-btn{font-size:11px;padding:7px 8px}.brand{gap:8px}.brand h1{font-size:16px;letter-spacing:1px}.brand small{font-size:7px}.stage{min-height:375px}.activity{width:min(290px,75vw)}.scene-controls{flex-direction:column}.stage-foot{align-items:end}.toolbar .timer .tool.primary{font-size:11px;padding:8px}.toolbar .time{font-size:21px}}
@@ -93,7 +96,7 @@
          <radialGradient id="fireGlow"><stop stop-color="#eeb274" stop-opacity=".46"/><stop offset="1" stop-color="#f3a452" stop-opacity="0"/></radialGradient>
          <linearGradient id="stoveBody"><stop stop-color="#374248"/><stop offset=".45" stop-color="#1c2429"/><stop offset="1" stop-color="#0c151c"/></linearGradient>
          <filter id="blur"><feGaussianBlur stdDeviation="9"/></filter>
-         <filter id="soft"><feGaussianBlur stdDeviation="4"/></filter>
+         <filter id="soft"><feGaussianBlur stdDeviation="4"/></filter><clipPath id="windowSnowClip"><rect x="100" y="110" width="380" height="248"/></clipPath>
         </defs>
         <rect width="1200" height="620" fill="url(#wall)"/>
         <g stroke="#6d747149" stroke-width="2"><path d="M0 62H1200M0 125H1200M0 190H1200M0 256H1200M0 323H1200M0 391H1200M0 452H1200"/></g>
@@ -108,7 +111,7 @@
          <path d="M98 349Q170 329 235 347T376 334T481 347V361H98Z" fill="#dce2de"/>
          <g fill="#314a51"><path d="M124 345l30-87 30 87zM135 315h39l-20-50z"/><path d="M388 346l35-105 37 105zM404 306h39l-21-57z"/></g>
          <g stroke="#9fbcc5" stroke-width="3" opacity=".8"><path d="M150 134l10 27M167 139l-14 15M244 173l7 17M347 137l12 14M461 217l-12 18M204 306l11 13"/></g>
-         <path d="M285 102V365M91 234H491" stroke="#988976" stroke-width="12"/>
+         <g id="windowSnow" clip-path="url(#windowSnowClip)" fill="#f3f7ef"><circle cx="111" cy="118" r="2.4"/><circle cx="185" cy="165" r="1.5"/><circle cx="259" cy="212" r="1.5"/><circle cx="294" cy="259" r="1.5"/><circle cx="368" cy="306" r="1.5"/><circle cx="403" cy="123" r="2.4"/><circle cx="122" cy="170" r="1.5"/><circle cx="157" cy="217" r="1.5"/><circle cx="231" cy="264" r="1.5"/><circle cx="305" cy="311" r="1.5"/><circle cx="340" cy="128" r="2.4"/><circle cx="414" cy="175" r="1.5"/><circle cx="449" cy="222" r="1.5"/><circle cx="168" cy="269" r="1.5"/><circle cx="203" cy="316" r="1.5"/><circle cx="277" cy="133" r="2.4"/><circle cx="351" cy="180" r="1.5"/><circle cx="386" cy="227" r="1.5"/><circle cx="460" cy="274" r="1.5"/><circle cx="140" cy="321" r="1.5"/><circle cx="214" cy="138" r="2.4"/><circle cx="249" cy="185" r="1.5"/><circle cx="323" cy="232" r="1.5"/><circle cx="358" cy="279" r="1.5"/><circle cx="432" cy="326" r="1.5"/><circle cx="151" cy="143" r="2.4"/><circle cx="186" cy="190" r="1.5"/><circle cx="260" cy="237" r="1.5"/><circle cx="295" cy="284" r="1.5"/><circle cx="369" cy="331" r="1.5"/></g><path d="M285 102V365M91 234H491" stroke="#988976" stroke-width="12"/>
          <path d="M96 103l35 0M99 137l18-20M468 111l-29 18M478 331l-40 18" stroke="#faf6e3" stroke-opacity=".42" stroke-width="5" stroke-linecap="round"/>
          <rect x="67" y="376" width="451" height="20" rx="3" fill="#98775a"/>
          <rect x="76" y="395" width="433" height="13" fill="#423a35"/>
