@@ -55,6 +55,11 @@ P = dict(
     # 防风林枯枝的「影子存量」：只在验算里记，游戏里不设这个数。
     # 用来回答「规则允许的天气下，折枯枝会不会折得比长得快」。取值依据见 03 第 2.6 节。
     belt_cap=120, belt_regen_per_year=40,
+    # 出门（玩家带他去野外）。trip_every=0 表示不出门。
+    # 每隔几天、遇到好天或一般的天气就在早上 8 点出门；三分之二是短的（下午 2 点回），三分之一是长的（傍晚 6 点回）。
+    # 行囊：短的带 1 餐干粮、1 捆柴（3 根），长的带 2 餐、2 捆；只能拿走够用 3 天以上的部分。
+    # trip_haul 是每趟带回的（柴，粮）。默认空手回来，是对家里最不利的假设。
+    trip_every=0, trip_haul=(0, 0), pack_floor_days=3,
 )
 BASE_REPAIRS = dict(wood_cap=120, food_cap=90, window=1, fence=1)
 EXT_REPAIRS = dict(greenhouse=1, bedding=1)
@@ -129,6 +134,7 @@ def weather_table(day, kind):
 
 def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=None, force_year=None):
     rng = random.Random(seed)
+    trip_rng = random.Random(seed + 100000)     # 出门用单独的随机序列，不影响天气
     p = dict(P); p.update(params or {})
     sky = Sky(rng)
     wood, food = wood0, food0
@@ -211,6 +217,9 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
         wtarget = p["wood_cap"] if autumn else min(p["wood_cap"], tdays * wn)
         ftarget = p["food_cap"] if autumn else min(p["food_cap"], tdays * 3)
 
+        trip = bool(p["trip_every"]) and day % p["trip_every"] == p["trip_every"] - 1 and w in "AB"
+        trip_end = (18.0 if trip_rng.random() < 1 / 3 else 14.0) if trip else 0.0
+        trip_state = 0      # 0 还没出门 1 在外面 2 回来了
         busy_until = 6.0; pending = None
         eave_w = eave_f = False; morning = afternoon = False
         proj = 0.0; did_chore = False; work = 0.0
@@ -219,6 +228,26 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
         while t < 22.0 - 1e-9 or t < busy_until - 1e-9:
             free = t >= busy_until - 1e-9
             late = t >= 22.0 - 1e-9      # 过了 10 点：只把手上的事做完，不开新的
+            if trip and trip_state == 0 and free and t >= 8.0 - 1e-9:
+                # 出门：收拾行囊（真扣库存，受下限限制），压火，走
+                trip_state = 1; st["出门"] += 1
+                long_ = trip_end > 15
+                want_w, want_f = (6, 2) if long_ else (3, 1)
+                take_w = int(max(0, min(want_w, wood - p["pack_floor_days"] * wn)))
+                take_f = int(max(0, min(want_f, food - p["pack_floor_days"] * 3)))
+                wood -= take_w; food -= take_f; st["行囊带走的柴"] += take_w; st["行囊带走的粮"] += take_f
+                n = min(night_n, wood); wood -= n; st["烧柴"] += n
+                burn = p["night_hours"] * n / night_n if n else max(burn, 0.0); ember = p["ember_hours"]
+                for i, mt in enumerate(meals):          # 在外面的那几顿吃干粮
+                    if 8.0 <= mt < trip_end:
+                        eaten[i] = True
+                busy_until = trip_end; free = False
+            if trip and trip_state == 1 and free:
+                trip_state = 2
+                wood = min(p["wood_cap"], wood + p["trip_haul"][0]); food = min(p["food_cap"], food + p["trip_haul"][1])
+                if burn <= 0 and ember <= 0:
+                    st["回家时火已经灭了"] += 1
+            away = trip_state == 1
             if free and pending:
                 kind_, amt = pending; pending = None
                 if kind_ == "wood":
@@ -246,8 +275,8 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
                     slot = None
                     if 8 <= t < 12 and not morning:
                         slot = "m"
-                    elif 14 <= t < 18 and not afternoon and mood == "俭":
-                        slot = "a"
+                    elif 14 <= t < 18 and not afternoon and (mood == "俭" or (trip and not morning)):
+                        slot = "a"      # 俭的时候下午也干；上午被出门占了，下午补
                     if slot:
                         wd, fd = wood / wn, food / 3
                         if w in "AB":
@@ -300,7 +329,7 @@ def run(years, seed, params=None, wood0=60, food0=45, worst=False, repairs_at=No
             elif ember > 0:
                 ember -= STEP
             else:
-                st["无火小时"] += STEP
+                st["离家时无火小时" if away else "无火小时"] += STEP
             t += STEP
         # 睡前：到这里手上的事都已经做完（上面的循环会等它做完），入库后压火
         overrun = max(0.0, t - 22.0)
@@ -354,10 +383,13 @@ def report(title, runs_n, years, **kw):
         print(f"  俭：每世界年 {len(rr) / (runs_n * years):.2f} 段，中位 {rr[len(rr) // 2]} 天，95% 不超过 {rr[int(len(rr) * .95)]} 天，最长 {rr[-1]} 天")
     else:
         print("  没有出现俭")
+    ny = days / YEAR
     print(f"  缺餐 {tot['缺餐']} 次；无火 {tot['无火小时']:.1f} 小时（合 {days * 24} 小时里的 {tot['无火小时'] / (days * 24) * 100:.3f}%）")
     print(f"  有活计的日子 {tot['有活计的天'] / days * 100:.0f}%；活计每天平均 {tot['活计小时'] / days:.1f} 小时；项目每天平均 {tot['项目小时'] / days:.1f} 小时")
     print(f"  为做完手上的事而晚睡：合计 {tot['晚睡小时']:.1f} 小时")
-    ny = days / YEAR
+    if tot["出门"]:
+        print(f"  出门：每个世界年 {tot['出门'] / ny:.1f} 趟；行囊每年带走柴 {tot['行囊带走的柴'] / ny:.0f} 根、粮 {tot['行囊带走的粮'] / ny:.0f} 餐；"
+              f"回家时火已经灭了 {tot['回家时火已经灭了']} 次；人不在时屋里无火 {tot['离家时无火小时']:.0f} 小时")
     src = lambda k: tot["来源:" + k] / ny
     print(f"  每个世界年的来源：柴 = 备柴 {src('备柴'):.0f} + 折枯枝 {src('折枯枝'):.1f} 根；"
           f"粮 = 菜地 {src('菜地'):.0f} + 暖棚 {src('暖棚'):.0f} + 备粮(冬) {src('备粮(冬)'):.0f} + 备粮(春夏秋) {src('备粮(春夏秋)'):.0f} + 起鱼笼 {src('起鱼笼'):.1f} 餐")
@@ -386,6 +418,11 @@ if __name__ == "__main__":
     report("只看头一个世界年：同上", a.runs, 1,
            repairs_at={3: dict(window=1), 12: dict(wood_cap=120), 20: dict(food_cap=90), 24: dict(fence=1)})
     report("只看头一个世界年：一件修缮都不做", a.runs, 1)
+    report("出门：每 3 天一趟，空手回来，没有修缮", a.runs, a.years, params=dict(trip_every=3))
+    report("出门：每 2 天一趟，空手回来，没有修缮", a.runs, a.years, params=dict(trip_every=2))
+    report("出门：每 3 天一趟，每趟带回柴 6 根、粮 2 餐，没有修缮", a.runs, a.years, params=dict(trip_every=3, trip_haul=(6, 2)))
+    t3 = dict(BASE_REPAIRS); t3.update(trip_every=3)
+    report("出门：每 3 天一趟，空手回来，基础修缮全修好", a.runs, a.years, params=t3)
     report("压力：连着 8 个风雪年，没有修缮", a.runs, a.years, force_year="风雪年")
     report("压力：入冬第一天柴粮都是零、炉膛是空的", a.runs, 2, wood0=0, food0=0)
     report("结构：柴粮是零、炉膛是空的，一整年天天暴风雪", 1, 1, wood0=0, food0=0, worst=True)
