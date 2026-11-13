@@ -35,6 +35,13 @@ def validate(manifest_path: Path, screenshot_report: Path):
     if not REQUIRED_LAYERS.issubset(ids):
         raise AssertionError(f"Missing layers: {sorted(REQUIRED_LAYERS - set(ids))}")
 
+    hidden_candidates = [layer for layer in layers if layer.get("default_visible") is False]
+    for layer in hidden_candidates:
+        p = export_dir / layer["file"]
+        with Image.open(p) as candidate:
+            if candidate.getchannel("A").getbbox() is None:
+                raise AssertionError(f"Hidden optional layer must still carry usable pixels: {p.name}")
+
     for layer in layers:
         p = export_dir / layer["file"]
         if not p.is_file():
@@ -91,6 +98,7 @@ def validate(manifest_path: Path, screenshot_report: Path):
         "source_sha256": m["source_sha256"],
         "layers_exported": len(layers),
         "required_layers_found": len(REQUIRED_LAYERS),
+        "hidden_candidates_exported_with_pixels": len(hidden_candidates),
         "recomposition": fidelity,
         "channel_abs_mean": [round(v, 4) for v in mean],
         "channel_abs_max": extrema,
