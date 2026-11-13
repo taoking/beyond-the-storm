@@ -1,0 +1,40 @@
+name: 06 G2 read-only presentation
+
+on:
+  push:
+    branches:
+      - gpt/06-g2-readonly-presentation-20261114
+    paths:
+      - "game/**"
+      - "设计/原型/05_v1.0_G2只读视觉适配器*"
+      - "设计/原型/05_v1.0_06真实快照冒烟.mjs"
+      - ".github/workflows/06-g2-presentation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  projection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: game/package-lock.json
+      - name: Install current 06 dependencies
+        working-directory: game
+        run: npm ci
+      - name: World, focus and G2 visual projection tests
+        working-directory: game
+        run: npm test
+      - name: Typecheck and production build
+        working-directory: game
+        run: npm run build
+      - name: Original 05 visual contract tests
+        run: node "设计/原型/05_v1.0_G2只读视觉适配器.test.cjs"
+      - name: Real world 1440-minute / 4320-frame projection integration
+        run: node --experimental-strip-types "设计/原型/05_v1.0_06真实快照冒烟.mjs"
