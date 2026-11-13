@@ -68,6 +68,8 @@ export interface Runtime {
   leader: boolean;
   /** 最近一次心跳的判定，给调试面板看 */
   lastVerdict: string;
+  /** 仅供灰盒界面展示最近一次操作被拒绝的原因，不进入游戏手记。 */
+  lastActionError: string;
   dispatch(name: string, ...args: unknown[]): void;
   reset(): void;
   onChange: () => void;
@@ -99,6 +101,7 @@ export function startRuntime(): Runtime {
     game: null,
     leader: false,
     lastVerdict: "",
+    lastActionError: "",
     onChange: () => {},
     dispatch(name, ...args) {
       if (!rt.leader) {
@@ -123,9 +126,10 @@ export function startRuntime(): Runtime {
     if (!g || !fn) return;
     beat(); // 先把到这一刻为止的时间结清，再执行操作
     const result = (fn as (g: G.Game, wall: number, ...a: unknown[]) => unknown)(g, Date.now(), ...cmd.args);
-    if (result && typeof result === "object" && "ok" in result && !(result as G.Result).ok) {
-      console.info(`[${cmd.name}]`, (result as G.Result).reason);
-    }
+    rt.lastActionError = result && typeof result === "object" && "ok" in result && !(result as G.Result).ok
+      ? (result as G.Result).reason ?? "现在做不了这件事。"
+      : "";
+    if (rt.lastActionError) console.info(`[${cmd.name}]`, rt.lastActionError);
     save(true);
     broadcast();
     rt.onChange();
