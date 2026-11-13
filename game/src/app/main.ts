@@ -28,10 +28,16 @@ function presetOf(value: string): FocusPreset {
 
 function renderTop(s: Snapshot): string {
   const dots = "●".repeat(s.focus.dots) + "○".repeat(CONFIG.shares.perDay - s.focus.dots);
+  const projected = s.look.source === "ambience";
+  const headline = projected ? `氛围 · ${s.look.seasonLabel ?? ""}` : s.world.dayLabel;
+  const weather = s.look.source === "missing" ? "氛围未选择" :
+    (s.look.weatherLabel ?? s.world.look);
+  const part = s.look.dayPart ?? s.world.dayPart;
   return `
-    <strong>${esc(s.world.dayLabel)}</strong>
-    <span>${esc(s.world.look)}</span>
-    <span class="dim">${esc(s.world.dayPart)}${s.mode === "outdoor" ? ` ${s.world.clock}` : ""}</span>
+    <strong>${esc(headline)}</strong>
+    <span>${esc(weather)}</span>
+    <span class="dim">${esc(part)}${s.mode === "outdoor" ? ` ${s.world.clock}` : ""}</span>
+    ${projected ? `<span class="dim">真实世界暂停在 ${esc(s.world.dayLabel)}</span>` : ""}
     ${s.world.omen ? '<span class="dim">气压在掉</span>' : ""}
     ${s.world.tomorrow ? `<span class="dim">明天：${esc(s.world.tomorrow)}</span>` : ""}
     <span class="mode${s.frozen ? " frozen" : ""}">${esc(s.modeLine)}</span>
@@ -205,6 +211,7 @@ function renderDebug(s: Snapshot, g: Game): string {
     <div>到站第 ${s.world.stationDay} 天 ${s.world.clock} · 天气档 ${w.weather.today}→明天 ${w.weather.tomorrow}</div>
     <div>年份：${w.yearKind} · 炉膛 ${s.fire.burn}+${s.fire.ember} 分钟</div>
     <div>${esc(PLACES[w.actor.place].name)} · ${esc(w.actor.activity?.kind ?? "—")} · 还剩 ${w.actor.activity?.left ?? 0} 分</div>
+    <div>G2：${esc(s.stage.pose ?? "—")} / ${esc(s.stage.prop ?? "—")} · 镜头演出：${esc(s.stage.place ?? "空屋")} · 天气来源：${esc(s.look.source)}</div>
     <div class="row">${btn("快进 1 小时", "debugSkip", [60])}${btn("快进 1 天", "debugSkip", [1440])}${btn("快进 12 天", "debugSkip", [1440 * 12])}</div>
     <div class="row">${btn("模拟休眠回来", "debugInterrupt", ["sleep", 0])}${btn("模拟 23 分钟断档", "debugInterrupt", ["gap", 23 * 60_000])}</div>
     <div class="row"><button data-ui="reset">删档重开</button></div>
