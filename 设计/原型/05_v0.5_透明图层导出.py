@@ -153,7 +153,7 @@ def run(input_path, output, scale=2, trim=False, add_crops=True):
     difference = ImageChops.difference(source_image, reconstructed)
     stats = ImageStat.Stat(difference)
     manifest["verification"] = {
-        "exact_rgba_match": difference.getbbox() is None,
+        "exact_rgba_match": all(ch.getextrema() == (0, 0) for ch in difference.split()),
         "mean_channel_abs_diff": [round(v, 5) for v in stats.mean],
         "max_channel_abs_diff": [max(x.getextrema()) for x in difference.split()],
         "note": "Antialiasing and alpha can produce minor differences on separate-layer composite",
