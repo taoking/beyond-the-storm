@@ -33,6 +33,7 @@ import {
   type OutingCheck,
 } from "./outing.ts";
 import { createWorld, hasEffect, stepMinute } from "./sim.ts";
+import { enterForest, moveForest, gatherForest, restForest, returnForest } from "./forest.ts";
 import { dayClock, type NewWorldOptions, type RequestKind, type World } from "./state.ts";
 import { createTelemetry, sampleTelemetry, type Telemetry } from "./telemetry.ts";
 
@@ -353,11 +354,45 @@ export function cmdTravelTo(g: Game, wall: number, areaId: string): Result {
   return OK;
 }
 
-/** 走回家门。回到家门口就是回家：背包入库，换回便服，专注不会自动恢复。 */
+/** 06 v0.4 新松林：先走 20 分钟林道，再进入可直接操控的真实网格。 */
+export function cmdEnterForest(g: Game): Result {
+  if (g.mode !== "outdoor" || g.outdoorPanel) return no("先回到野外并合上面板。");
+  const r=enterForest(g.world);
+  afterCollapseOrArrival(g);
+  return r;
+}
+export function cmdForestMove(g: Game, dx: number, dy: number): Result {
+  if (g.mode !== "outdoor" || g.outdoorPanel) return no("先合上面板再走。");
+  const r=moveForest(g.world,dx,dy);
+  afterCollapseOrArrival(g);
+  return r;
+}
+export function cmdForestGather(g: Game, id: string): Result {
+  if (g.mode !== "outdoor" || g.outdoorPanel) return no("先合上面板再采集。");
+  const r=gatherForest(g.world,id);
+  afterCollapseOrArrival(g);
+  return r;
+}
+export function cmdForestRest(g: Game): Result {
+  if (g.mode !== "outdoor" || g.outdoorPanel) return no("先合上面板再休息。");
+  const r=restForest(g.world);
+  afterCollapseOrArrival(g);
+  return r;
+}
+export function cmdForestReturn(g: Game): Result {
+  if (g.mode !== "outdoor" || g.outdoorPanel) return no("先合上面板再回家。");
+  const r=returnForest(g.world);
+  afterCollapseOrArrival(g);
+  if(r.ok)g.carry=0;
+  return r;
+}
+
+/** 旧灰盒的旅途调试命令仍供 v0.3 旧测试使用；真正的松林网格必须从林口返家。 */
 export function cmdHeadHome(g: Game): Result {
   const w = g.world;
   if (g.mode !== "outdoor" || !w.outing) return no("没有在野外");
   if (g.outdoorPanel) return no("先合上面板");
+  if(w.outing.forest) return no("沿小路走回松林入口，才能回家。");
   w.outing.area = null;
   if (travel(w, w.outing.minutesFromDoor, "home")) arriveHome(w);
   afterCollapseOrArrival(g);
