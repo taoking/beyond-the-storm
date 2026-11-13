@@ -1,0 +1,47 @@
+name: 06 v0.4 forest Chromium smoke
+
+on:
+  push:
+    branches:
+      - gpt/06-v0.4-forest-slice-20261114
+    paths:
+      - "game/**"
+      - ".github/workflows/06-v04-forest-ui.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-forest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: game/package-lock.json
+      - name: Install 06 and isolated browser smoke dependency
+        working-directory: game
+        run: |
+          npm ci
+          npm install --no-save --package-lock=false playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Play forest with real keyboard, gather, and walk home
+        working-directory: game
+        run: |
+          npm run dev -- --host 127.0.0.1 > /tmp/bts-vite.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 4
+          node tools/forest-ui-smoke.mjs ../artifacts/forest-browser
+      - name: Upload real Chromium forest UI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forest-v04-browser-smoke
+          path: artifacts/forest-browser/
+          if-no-files-found: warn
+          retention-days: 14
