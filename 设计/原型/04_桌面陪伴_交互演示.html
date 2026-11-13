@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10171d">
+<title>风雪之外 · UI / Interaction Concept</title>
+<style>
+:root{--bg:#0c1218;--panel:#15202a;--panel2:#1b2933;--stroke:#30414a;--text:#f0ecdf;--muted:#a9b4b8;--gold:#e7b77a;--gold2:#bf8353;--mint:#91c4ae;--danger:#d99583;--radius:17px;--shadow:0 22px 75px #02070cbf;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft Yahei",sans-serif;color:var(--text)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 65% 0%,#263542 0%,transparent 50%),linear-gradient(150deg,#10181f,#070d12);font-size:14px}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:3px}button:disabled{opacity:.43;cursor:not-allowed}::selection{background:#7d6349}
+.page{max-width:1490px;padding:28px 30px 60px;margin:auto}.masthead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:14px}.mark{width:40px;height:40px;border:1px solid #aab8ba70;border-radius:12px;display:grid;place-items:center;background:#182630;font-size:25px;color:var(--gold)}.brand h1{margin:0;font-size:22px;letter-spacing:3px;font-weight:620}.brand small{display:block;margin-top:4px;letter-spacing:1.8px;color:#abb9bd;font-size:10px}.mast-actions{display:flex;align-items:center;gap:10px}.hint-pill,.ghost-btn,.chip{border:1px solid #5260698c;border-radius:30px;background:#15202aab;color:#cbd5d6;padding:9px 13px}.hint-pill{font-size:11px;letter-spacing:.3px;opacity:.88}.ghost-btn:hover,.chip:hover{border-color:#e0b57f;color:#fff}.ghost-btn.active{border-color:#ddae76;color:var(--gold)}.section-note{display:flex;justify-content:space-between;gap:20px;align-items:center;margin:0 0 12px;color:#a0adb1;font-size:12px}.section-note strong{color:#d7e1df;font-weight:500}.app{border:1px solid #52626a88;border-radius:20px;overflow:hidden;background:#141f28;box-shadow:var(--shadow);position:relative;min-height:690px}.app-top{height:61px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 22px;border-bottom:1px solid #5f6b724c;background:linear-gradient(90deg,#1c2933,#17242c);position:relative;z-index:4}.world-status{display:flex;align-items:center;gap:11px;font-size:12px}.world-status .time-bullet{color:#d5af7f;font-size:20px}.world-status .world-caption{color:#a0adb2}.mode-label{font-size:11px;border:1px solid #67817880;background:#33524c4d;color:#a8d9ca;border-radius:20px;padding:5px 10px;white-space:nowrap}.rewards{display:flex;align-items:center;gap:9px}.rewards small{color:#95a7ae}.dots{display:flex;gap:6px}.dots i{width:8px;height:8px;border-radius:50%;border:1px solid #79858b;background:transparent;display:inline-block;transition:background .3s}.dots i.on{background:#e5b580;border-color:#e5b580;box-shadow:0 0 7px #e6b78050}.app-body{display:grid;grid-template-columns:minmax(0,1fr);min-height:547px;position:relative}.app.has-drawer .app-body{grid-template-columns:minmax(0,1fr) 330px}.stage{position:relative;min-width:0;min-height:520px;background:#101b22;overflow:hidden;isolation:isolate}.stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 65%,#121c27be 100%);z-index:2}.illustration{position:absolute;width:100%;height:100%;inset:0;display:block}.illustration svg{width:100%;height:100%;display:block}.illustration.outdoor{display:none}.app[data-mode=outdoor] .illustration.cabin{display:none}.app[data-mode=outdoor] .illustration.outdoor{display:block}.app[data-mode=outdoor] .stage:after{background:linear-gradient(0deg,#14202d9b,transparent 45%)}.room-frost{position:absolute;inset:0;pointer-events:none;background:#afcfde25;display:none;z-index:1}.app[data-mode=ambient] .room-frost{display:block;background:#a9c7e819}.app[data-mode=outdoor-focus] #cabinCharacter{display:none}.scene-label{position:absolute;z-index:3;top:22px;left:23px;display:flex;align-items:center;gap:9px;background:#121d268e;backdrop-filter:blur(8px);border:1px solid #c7d4da35;border-radius:30px;padding:9px 13px;color:#e1e9e7;font-size:12px}.scene-label b{width:6px;height:6px;border-radius:50%;background:#a7c8b6;display:inline-block}.scene-label.frozen b{background:#f4c18b}.scene-label.frozen{color:#f4d3a9}.stage-foot{position:absolute;z-index:3;left:22px;right:22px;bottom:20px;display:flex;justify-content:space-between;align-items:end;gap:20px}.activity{min-width:210px;max-width:425px;background:#121b25c7;border:1px solid #cad4d641;border-radius:13px;padding:13px 14px;backdrop-filter:blur(10px);box-shadow:0 12px 30px #0106083d}.activity .eyebrow{display:block;font-size:10px;letter-spacing:1px;color:#adc0bf;margin-bottom:6px}.activity strong{font-size:13px;font-weight:550;line-height:1.5}.activity button{padding:0;margin-top:7px;background:transparent;border:none;color:var(--gold);font-size:12px}.activity button:hover{text-decoration:underline}.scene-controls{display:flex;align-items:center;gap:8px}.round{width:40px;height:40px;border:1px solid #bdc4c660;background:#19252fbc;color:#e6e9e7;border-radius:12px;backdrop-filter:blur(8px);font-size:16px}.round:hover{border-color:var(--gold);background:#3b403d}.round:disabled{opacity:.45}.toolbar{display:flex;align-items:center;gap:7px;padding:14px 17px;min-height:74px;background:#17232b;border-top:1px solid #78828a43;position:relative;z-index:4}.tool{color:#d4dddd;border:1px solid transparent;background:transparent;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;white-space:nowrap}.tool:hover,.tool[aria-pressed=true]{background:#283843;border-color:#566f78}.tool.primary{background:#dbad78;color:#18212a;border-color:#e6bd88;font-weight:650;padding:10px 15px}.tool.primary:hover{background:#ecc590}.tool .muted{color:#c1d0d0}.timer{display:flex;align-items:center;gap:7px;padding:3px 10px;margin-left:auto;border-left:1px solid #53636c5c}.time{font-size:25px;font-variant-numeric:tabular-nums;letter-spacing:.4px;font-weight:450;color:#f0dec8;min-width:78px;text-align:right}.timer-mini{color:#9fadb2;font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.timer .tool.primary{font-size:12px}.drawer{border-left:1px solid #77818945;background:linear-gradient(180deg,#1a2831,#141e27);min-width:0;display:none;flex-direction:column;max-height:620px}.app.has-drawer .drawer{display:flex}.drawer-head{padding:23px 22px 17px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid #62707836}.drawer-head small{font-size:10px;color:#b9a17b;letter-spacing:2px}.drawer-head h2{font-size:20px;margin:5px 0 0;font-weight:580}.drawer-body{padding:19px 21px;overflow-y:auto;flex:1}.close-x{color:#aebbbd;background:transparent;border:0;font-size:19px;padding:3px 7px}.close-x:hover{color:white}.panel-note{color:#a9b6b9;font-size:12px;line-height:1.75}.panel-box{border:1px solid #58707970;background:#22313b80;border-radius:12px;padding:15px;margin:0 0 13px}.panel-box h3{font-size:13px;margin:0 0 7px;color:#e4ddcf;font-weight:600}.panel-box p{color:#aab8bb;line-height:1.7;margin:6px 0;font-size:12px}.panel-title{font-size:11px;letter-spacing:1px;color:#c2af8c;margin:14px 0 10px}.choice,.selection{width:100%;text-align:left;border:1px solid #53666f7c;background:#25343e;padding:11px 12px;color:#e0e8e6;border-radius:10px;margin-bottom:8px;font-size:12px}.choice:hover,.selection:hover{border-color:#cfb188;background:#2d424e}.selection.current{border-color:#c9a879;background:#423d34}.choice .sub{display:block;font-size:11px;color:#9dacb0;margin-top:5px}.choice:disabled{opacity:.55}.mini-row{display:flex;gap:7px;flex-wrap:wrap}.mini-row .choice{width:auto;flex:1}.seg-btn{background:#283944;border:1px solid #566771;color:#c8d3d4;border-radius:8px;padding:9px 13px;min-width:43px}.seg-btn.on{background:#b8976b;color:#13212a;border-color:#c9a87e}.wide-btn{width:100%;border:none;border-radius:10px;background:#ddb17a;color:#19222b;padding:12px 16px;font-weight:650;margin:10px 0}.wide-btn:hover{background:#f0c38d}.outline-btn{width:100%;border:1px solid #75838a89;border-radius:10px;background:#202f39;color:#e0e5e4;padding:11px 14px;margin:7px 0}.outline-btn:hover{border-color:#ddb17a}.field{display:block;color:#a4b2b7;font-size:11px;margin:15px 0 8px}.field input,.field select{width:100%;color:#e2e7e4;background:#101b25;border:1px solid #61747c;border-radius:9px;padding:10px;outline:none}.field input:focus,.field select:focus{border-color:var(--gold)}.stat{display:flex;justify-content:space-between;gap:12px;margin:10px 0;font-size:12px}.stat b{font-weight:600;color:#e9d7b7}.divider{border-top:1px solid #52656a6b;margin:17px 0}.book-tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:16px}.book-tabs button{background:#24353f;border:1px solid #58707878;color:#c8d4d2;border-radius:8px;padding:8px;font-size:12px}.book-tabs button.on{background:#50493e;border-color:#a58b6b;color:#edca9d}.entry{border-left:2px solid #bd9870;padding:3px 0 4px 13px;margin-bottom:17px}.entry small{color:#adbeBF;font-size:10px}.entry p{font-size:12px;line-height:1.75;margin:5px 0;color:#e2e8e3}.mock-label{padding:14px 3px 0;color:#8e9da3;font-size:11px;line-height:1.7;max-width:1030px;margin:0 auto}.mock-label strong{color:#d9c39f}.app.compact{max-width:455px;min-height:0;margin:auto}.app.compact .app-top{height:48px;padding:0 12px}.app.compact .app-body{min-height:265px;display:block}.app.compact .stage{min-height:265px;height:265px}.app.compact .drawer,.app.compact .world-caption,.app.compact #weatherMeta,.app.compact .activity,.app.compact .rewards small,.app.compact .toolbar .tool:not(.primary),.app.compact .scene-controls{display:none!important}.app.compact .toolbar{min-height:53px;padding:7px 10px}.app.compact .timer{margin-left:auto;padding:0;border:0}.app.compact .time{font-size:20px}.app.compact .scene-label{top:12px;left:12px;padding:6px 10px;font-size:10px}.app.compact .dots{gap:3px}.app.compact .dots i{width:6px;height:6px}.app.compact .toolbar .compact-restore{display:flex!important}.compact-restore{display:none!important}.app.compact .tool.primary{font-size:11px}.app.compact .stage:after{background:linear-gradient(180deg,transparent 65%,#111a22a6)}.app.compact .room-frost{display:none}footer{font-size:11px;color:#9caab1;padding:19px 4px;display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap}.footer-link{border:0;background:transparent;color:#d3b995;padding:0;text-decoration:underline;text-underline-offset:4px}.app[data-mode=outdoor] #cabinHotspots{display:none}.app[data-mode=outdoor] .activity{max-width:300px}.app[data-mode=ambient] .outdoor-control{opacity:.5}
+@media(max-width:1080px){.page{padding:15px}.app.has-drawer .app-body{grid-template-columns:minmax(0,1fr) 275px}.toolbar .tool{padding:8px}.timer{padding:0;margin-left:auto}.stage{min-height:450px}.app{min-height:0}.drawer{max-height:560px}}
+@media(max-width:760px){.page{padding:10px}.masthead{align-items:flex-start}.hint-pill{display:none}.brand h1{font-size:18px}.app-top{padding:0 12px}.world-status{gap:5px}.world-status .world-caption{display:none}.app.has-drawer .app-body{grid-template-columns:1fr}.app.has-drawer .drawer{position:absolute;z-index:8;right:0;top:0;bottom:0;width:min(90%,365px);max-height:none;box-shadow:-20px 0 40px #0006}.stage{min-height:420px}.stage-foot{left:12px;right:12px;bottom:12px}.scene-controls{gap:4px}.round{width:34px;height:34px}.toolbar{flex-wrap:wrap;gap:0}.timer{margin-left:auto}.tool{font-size:12px}.rewards small{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="page">
+ <header class="masthead">
+  <div class="brand"><div class="mark">❄</div><div><h1>风雪之外</h1><small>BEYOND THE STORM · INTERACTION STUDY</small></div></div>
+  <div class="mast-actions"><span class="hint-pill">04 / UI & INTERACTION</span><span class="hint-pill">交互演示 · 非真实存档</span><button id="soundToggle" class="ghost-btn" onclick="toggleSound()">♫ 环境声</button><button id="windowToggle" class="ghost-btn" onclick="toggleCompact()">↘ 小窗预览</button></div>
+ </header>
+ <div class="section-note"><span><strong>把时间留给现实，把生活留给木屋。</strong></span><span>概念验证 · 点击下面的控件体验四种世界状态</span></div>
+ <div id="app" class="app" data-mode="companion">
+   <div class="app-top">
+    <div class="world-status"><span class="time-bullet">✦</span><span id="worldDay">世界第 12 日 · 冬</span><span id="weatherMeta" class="world-caption">· 小雪</span><span id="modeBadge" class="mode-label">正常陪伴</span></div>
+    <div class="rewards"><small>今日的份</small><span id="dotBox" class="dots" aria-label="今日已获得三份"></span></div>
+   </div>
+   <div class="app-body">
+    <div class="stage" id="stage">
+      <div class="illustration cabin">
+       <svg id="cabinSvg" viewBox="0 0 1200 620" preserveAspectRatio="xMidYMid slice" role="img" aria-label="雪夜气象站木屋，温暖的炉火、雪窗与阅读的人">
+        <defs>
+         <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#33434b"/><stop offset="1" stop-color="#202e38"/></linearGradient>
+         <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#43372f"/><stop offset="1" stop-color="#282b2b"/></linearGradient>
+         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#718b9d"/><stop offset=".55" stop-color="#adc4cd"/><stop offset="1" stop-color="#d3dcdb"/></linearGradient>
+         <radialGradient id="fireGlow"><stop stop-color="#eeb274" stop-opacity=".46"/><stop offset="1" stop-color="#f3a452" stop-opacity="0"/></radialGradient>
+         <linearGradient id="stoveBody"><stop stop-color="#374248"/><stop offset=".45" stop-color="#1c2429"/><stop offset="1" stop-color="#0c151c"/></linearGradient>
+         <filter id="blur"><feGaussianBlur stdDeviation="9"/></filter>
+         <filter id="soft"><feGaussianBlur stdDeviation="4"/></filter>
+        </defs>
+        <rect width="1200" height="620" fill="url(#wall)"/>
+        <g stroke="#6d747149" stroke-width="2"><path d="M0 62H1200M0 125H1200M0 190H1200M0 256H1200M0 323H1200M0 391H1200M0 452H1200"/></g>
+        <g stroke="#d7b78a32" stroke-width="17"><path d="M44 0V500M1180 0V500M0 16H1200M0 468H1200"/></g>
+        <rect x="0" y="473" width="1200" height="147" fill="url(#floor)"/>
+        <g stroke="#a77a5150" stroke-width="3"><path d="M0 501H1200M0 548H1200M0 599H1200M160 475L110 620M525 475L485 620M900 475L930 620"/></g>
+        <g id="windowBlock">
+         <rect x="76" y="86" width="428" height="295" rx="5" fill="#192935" stroke="#a18f78" stroke-width="18"/>
+         <rect x="99" y="108" width="382" height="250" fill="url(#sky)"/>
+         <path d="M98 301L185 200L260 270L355 177L487 310V360H99Z" fill="#91a9b4"/>
+         <path d="M98 331L165 262L245 308L318 245L429 298L481 321V360H99Z" fill="#c5d2d7"/>
+         <path d="M98 349Q170 329 235 347T376 334T481 347V361H98Z" fill="#dce2de"/>
+         <g fill="#314a51"><path d="M124 345l30-87 30 87zM135 315h39l-20-50z"/><path d="M388 346l35-105 37 105zM404 306h39l-21-57z"/></g>
+         <g stroke="#9fbcc5" stroke-width="3" opacity=".8"><path d="M150 134l10 27M167 139l-14 15M244 173l7 17M347 137l12 14M461 217l-12 18M204 306l11 13"/></g>
+         <path d="M285 102V365M91 234H491" stroke="#988976" stroke-width="12"/>
+         <path d="M96 103l35 0M99 137l18-20M468 111l-29 18M478 331l-40 18" stroke="#faf6e3" stroke-opacity=".42" stroke-width="5" stroke-linecap="round"/>
+         <rect x="67" y="376" width="451" height="20" rx="3" fill="#98775a"/>
+         <rect x="76" y="395" width="433" height="13" fill="#423a35"/>
+        </g>
+        <g id="windowJar">
+         <rect x="393" y="328" width="54" height="47" rx="6" fill="#c2d6d0" fill-opacity=".27" stroke="#d9e8dc" stroke-opacity=".8" stroke-width="3"/>
+         <rect x="390" y="323" width="59" height="9" rx="2" fill="#b59a75"/>
+         <g id="jarSeeds" fill="#a0764c"><circle cx="402" cy="363" r="6"/><circle cx="414" cy="365" r="6"/><circle cx="428" cy="363" r="7"/><circle cx="409" cy="354" r="5"/></g>
+        </g>
+        <g id="bookshelf"><rect x="536" y="119" width="169" height="234" fill="#443f3a" stroke="#a07a5e" stroke-width="10"/><path d="M544 186H697M544 252H697" stroke="#a07a5e" stroke-width="9"/><g fill="#b3a28b"><rect x="555" y="140" width="15" height="42"/><rect x="573" y="132" width="18" height="50" fill="#72877d"/><rect x="594" y="145" width="12" height="37" fill="#b08d70"/><rect x="609" y="138" width="20" height="44" fill="#897a70"/><rect x="639" y="131" width="11" height="51" fill="#bca586"/><rect x="555" y="206" width="13" height="43"/><rect x="572" y="214" width="21" height="35" fill="#7b927f"/><rect x="599" y="199" width="17" height="50"/><rect x="620" y="212" width="16" height="37" fill="#b58972"/></g><rect x="652" y="210" width="31" height="36" rx="4" fill="#7c6355"/><circle cx="667" cy="227" r="10" fill="#debe8f"/></g>
+        <g id="desk">
+         <rect x="351" y="422" width="295" height="18" rx="3" fill="#997658"/>
+         <path d="M368 439l-10 109h24l15-109M605 439l5 109h26l-9-109" fill="#605043"/>
+         <path d="M471 413l55-14 42 15-49 13z" fill="#e9d0ac"/><path d="M512 402l12 19" stroke="#9a7651" stroke-width="3"/>
+         <rect x="607" y="402" width="20" height="22" rx="3" fill="#bdb8a2"/><path d="M626 408q20-5 17 10t-18 2" fill="none" stroke="#bdb8a2" stroke-width="4"/>
+         <path d="M381 421v-76m0 0q-2-22 22-22t24 22" fill="none" stroke="#6c786f" stroke-width="8"/><path d="M409 321q-34 2-37 26h72q-6-27-35-26" fill="#c5ad85"/>
+         <circle cx="403" cy="345" r="20" fill="#eebd79" opacity=".3" filter="url(#soft)"/>
+        </g>
+        <g id="cabinCharacter" transform="translate(0 0)">
+         <path d="M551 433l-40 4-5 90h101l-7-90z" fill="#3e5360"/>
+         <path d="M541 426l-31-28 9-36 30-12 45 8 11 40-17 27z" fill="#5f777f"/>
+         <path d="M533 358q-14-34 18-47t48 17l-3 38-19 24-33-8z" fill="#ddad87"/>
+         <path d="M524 336q8-39 51-43t47 43q-21 3-49-5t-49 5" fill="#a85248"/>
+         <rect x="516" y="335" width="104" height="12" rx="6" fill="#d17860"/>
+         <path d="M543 379q23 25 48-6l14 19-31 25-40-17z" fill="#bf8967"/>
+         <path d="M526 392l-29 45 28 11 34-46M597 394l22 28-18 15-36-38" fill="#7a9392"/>
+         <path d="M539 529v20h26v-22M577 527v22h30v-25" fill="#232a2f"/>
+        </g>
+        <g id="stove">
+         <ellipse cx="936" cy="423" rx="250" ry="185" fill="url(#fireGlow)"/>
+         <rect x="839" y="15" width="50" height="315" rx="5" fill="#26323a" stroke="#556067" stroke-width="8"/>
+         <rect x="782" y="318" width="280" height="207" rx="18" fill="url(#stoveBody)" stroke="#78817f" stroke-width="9"/>
+         <rect x="813" y="345" width="212" height="143" rx="8" fill="#101a1e" stroke="#777c76" stroke-width="7"/>
+         <ellipse cx="918" cy="466" rx="91" ry="45" fill="#ad4827" opacity=".65" filter="url(#blur)"/>
+         <path d="M860 470q-5-40 29-76 8 28 24 34 13-54 43-74 0 45 20 60 23 16 16 56z" fill="#ec8c44"/>
+         <path d="M888 469q-9-25 11-40 15 12 19 20 11-34 30-49 3 35 18 44 6 8 4 25z" fill="#f7cd79"/>
+         <path d="M827 476h193" stroke="#7c4d34" stroke-width="13"/>
+         <rect x="799" y="523" width="35" height="24" fill="#303b40"/><rect x="1016" y="523" width="33" height="24" fill="#303b40"/>
+         <circle cx="1042" cy="406" r="7" fill="#c2ac85"/>
+         <rect x="857" y="294" width="155" height="24" rx="8" fill="#526069"/>
+         <path d="M883 290q-8-40 38-42 46 2 44 40z" fill="#858984"/><path d="M918 248v-23" stroke="#a7aeaa" stroke-width="7"/><path d="M951 267q20 0 20-16" fill="none" stroke="#b1b7ab" stroke-width="8"/>
+         <path d="M903 215q-12-20 2-37M932 212q15-20 0-40" stroke="#e3e1d5" stroke-opacity=".32" stroke-width="7" fill="none"/>
+        </g>
+        <g id="woodpile" fill="#977453" stroke="#48362c" stroke-width="3">
+         <rect x="1071" y="476" width="68" height="22" rx="9"/><rect x="1090" y="453" width="69" height="22" rx="9"/><rect x="1063" y="430" width="72" height="22" rx="9"/><circle cx="1116" cy="464" r="8" fill="none" stroke="#d0a780"/><circle cx="1107" cy="487" r="8" fill="none" stroke="#d0a780"/>
+        </g>
+        <rect x="90" y="535" width="250" height="52" rx="26" fill="#50605a" fill-opacity=".5"/>
+        <g id="smallFootprint" fill="#d4b18b" opacity=".5"><ellipse cx="677" cy="558" rx="19" ry="7"/><ellipse cx="719" cy="565" rx="19" ry="7"/></g>
+       </svg>
+      </div>
+      <div class="illustration outdoor">
+       <svg viewBox="0 0 1200 620" preserveAspectRatio="xMidYMid slice" role="img" aria-label="山间雪林探索的概念画面">
+        <defs><linearGradient id="outsideSky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#283f56"/><stop offset=".6" stop-color="#7b9baa"/><stop offset="1" stop-color="#b1c6c8"/></linearGradient></defs>
+        <rect width="1200" height="620" fill="url(#outsideSky)"/>
+        <circle cx="931" cy="130" r="61" fill="#e5eff0" opacity=".7"/>
+        <path d="M0 398L165 194L303 366L452 166L635 394L811 212L1005 405L1200 250V620H0Z" fill="#6b8290"/>
+        <path d="M0 439L120 279L317 420L486 267L671 444L799 327L930 442L1200 336V620H0Z" fill="#92aab3"/>
+        <path d="M0 468Q205 392 377 463T715 462T1200 434V620H0Z" fill="#c5d7d7"/>
+        <path d="M0 533Q175 478 360 541T790 507T1200 515V620H0Z" fill="#dae2dc"/>
+        <g fill="#29464c"><path d="M80 520l58-210 60 210zM102 474h82l-47-147zM230 523l41-166 43 166zM774 512l52-200 61 200zM958 515l60-224 65 224zM1082 518l42-168 50 168z"/></g>
+        <path d="M0 587Q340 540 552 583T1200 571" fill="none" stroke="#e9eee8" stroke-width="26" opacity=".65"/>
+        <g transform="translate(550 393)">
+         <ellipse cx="36" cy="181" rx="65" ry="15" fill="#546977" opacity=".3"/>
+         <path d="M25 54h52l16 116H11z" fill="#58717c"/><path d="M9 62l-30 79 25 8 43-63M75 67l30 58-18 16-37-42" fill="#667c80"/>
+         <circle cx="49" cy="45" r="30" fill="#ddb19b"/><path d="M18 43q0-43 30-44t34 44H18z" fill="#ae584b"/><path d="M11 41H85v11H11" fill="#d07565"/>
+         <path d="M27 171v15h24v-15M60 171v15h24v-15" fill="#252f38"/>
+         <path d="M-2 156l-16 34" stroke="#9b8975" stroke-width="7"/>
+        </g>
+        <g><rect x="262" y="414" width="118" height="95" fill="#526775"/><path d="M246 417l71-65 81 65" fill="#4c565e"/><rect x="293" y="459" width="24" height="50" fill="#2b3944"/><rect x="341" y="443" width="23" height="20" fill="#f0c88b" opacity=".82"/><path d="M345 362V328" stroke="#5d636a" stroke-width="13"/></g>
+        <g fill="#e6ece8" opacity=".55"><circle cx="150" cy="152" r="3"/><circle cx="440" cy="112" r="2.4"/><circle cx="610" cy="165" r="3"/><circle cx="751" cy="125" r="2"/><circle cx="1010" cy="203" r="4"/><circle cx="1111" cy="96" r="2"/></g>
+       </svg>
+      </div>
+      <div class="room-frost"></div>
+      <div id="sceneLabel" class="scene-label"><b></b><span id="sceneLabelText">真实的今天 · 世界继续</span></div>
+      <div class="stage-foot">
+       <div id="activityBox" class="activity"><span class="eyebrow">ANOTHER LIFE · 另一种生活</span><strong id="activityText">他正在读《观测员手册》</strong><div><button id="journalShortcut" onclick="openJournal('world')">看看今天 →</button></div></div>
+       <div class="scene-controls">
+        <button class="round" title="镜头" aria-label="选择镜头" onclick="openPanel('camera')">⌗</button>
+        <button class="round" title="环境和声音" aria-label="环境与声音" onclick="openPanel('ambient')">☼</button>
+        <button class="round" title="查看炉火状态" aria-label="炉火" onclick="openPanel('stove')">♨</button>
+       </div>
+      </div>
+    </div>
+    <aside id="drawer" class="drawer"><div class="drawer-head"><div><small id="panelKicker">WORLD / DETAIL</small><h2 id="panelHeading">手记</h2></div><button class="close-x" onclick="closePanel()" aria-label="关闭面板">✕</button></div><div id="panelContent" class="drawer-body"></div></aside>
+   </div>
+   <nav class="toolbar">
+     <button class="tool" onclick="openPanel('camera')">⌗ <span>镜头</span></button>
+     <button class="tool" onclick="openPanel('ambient')">☼ <span>氛围</span></button>
+     <button class="tool" onclick="openJournal('world')">▤ <span>手记</span></button>
+     <button id="goOutdoor" class="tool" onclick="outdoorAction()">♧ <span id="outdoorButtonLabel">出门走走</span></button>
+     <button class="tool" onclick="openPanel('tasks')">☰ <span>任务</span></button>
+     <div class="timer">
+       <div><div id="timerDisplay" class="time">25:00</div><div id="timerDescription" class="timer-mini">电脑前的专注</div></div>
+       <button id="timerButton" class="tool primary" onclick="toggleTimer()">▶ 开始专注</button>
+     </div>
+     <button class="tool compact-restore" onclick="toggleCompact()">↗ 展开完整窗口</button>
+   </nav>
+ </div>
+ <div class="mock-label"><strong>原型说明：</strong>此页面演示信息结构、可操作控件和四种世界状态；角色行为、天气、库存和「份」都是示例，不代表正式游戏模拟、真实存档或最终像素美术。你可以试着开始计时、切换氛围、打开手记、出门和户外临时专注。</div>
+ <footer><span>GPT · UI/Interaction Direction v1.1 · 2026.11.13</span><span><button class="footer-link" onclick="simulateLife()">模拟一件真实世界事件（演示）</button>　·　<button class="footer-link" onclick="simulateShare()">演示获得一份</button>　·　所有数据仅在页面内暂存</span></footer>
+</div>
+<script>
+(function(){
+'use strict';
+var state={mode:'companion',panel:'',camera:'wide',prevCamera:'wide',compact:false,sound:true,share:3,seconds:1500,minutes:25,running:false,timerDeadline:0,timerId:null,task:'学习 Java',activity:'reading',eventCount:0,season:'冬',weather:'大雪',timeOfDay:'夜',bookTab:'world',wood:60,food:45,supplyWood:1,supplyFood:1,hasSouvenir:false,soundLevel:65,style:'暖黄灯光',status:'正常陪伴'};
+function el(id){return document.getElementById(id)}
+function esc(s){return String(s).replace(/[&<>"']/g,function(x){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]})}
+function pad(n){return String(n).padStart(2,'0')}
+function setText(id,v){el(id).textContent=v}
+function close(){state.panel='';el('app').classList.remove('has-drawer')}
+function appendNote(s){var log=el('activityText');if(log)log.textContent=s}
+function render(){
+ var app=el('app');app.dataset.mode=state.mode;app.classList.toggle('compact',state.compact);if(state.compact)close();
+ setText('modeBadge',state.mode==='companion'?'正常陪伴':state.mode==='ambient'?'独立氛围':state.mode==='outdoor'?'户外直控':'户外临时专注');
+ setText('sceneLabelText',state.mode==='companion'?'真实的今天 · 世界继续':state.mode==='ambient'?'氛围预览 · 世界暂停':state.mode==='outdoor'?'松林步道 · 主动探索':'户外暂停 · 角色停在原地');
+ el('sceneLabel').classList.toggle('frozen',state.mode==='ambient'||state.mode==='outdoor-focus');
+ setText('worldDay',state.mode==='ambient'?'自选氛围 · '+state.season:state.mode==='outdoor'?'松林 · 冬':'世界第 12 日 · 冬');
+ setText('weatherMeta',state.mode==='ambient'?'· '+state.weather+' · '+state.timeOfDay:state.mode==='outdoor'?'· 小雪 · 10:40':'· 小雪');
+ setText('outdoorButtonLabel',state.mode==='outdoor'?'模拟走到家门':state.mode==='outdoor-focus'?'返回野外':state.mode==='ambient'?'回到今天':'出门走走');
+ var d='';for(var i=0;i<9;i++)d+='<i class="'+(i<state.share?'on':'')+'"></i>';el('dotBox').innerHTML=d;el('dotBox').setAttribute('aria-label','演示数据：今天'+state.share+'份');
+ setText('timerDisplay',pad(Math.floor(state.seconds/60))+':'+pad(state.seconds%60));
+ setText('timerDescription',state.running?'正在专注 · '+state.task:state.mode==='outdoor'?'户外直控不累计专注':state.task);
+ setText('timerButton',state.running?'Ⅱ 暂停':'▶ 开始专注');
+ el('timerButton').disabled=state.mode==='outdoor';
+ el('cabinCharacter').style.display=state.mode==='outdoor-focus'?'none':'';
+ var roomSvg=el('cabinSvg');var cam=state.camera;
+ roomSvg.setAttribute('viewBox',cam==='window'?'54 80 490 355':cam==='stove'?'720 160 450 350':cam==='desk'?'327 112 410 390':'0 0 1200 620');
+ if(state.mode==='outdoor'){appendNote('天气尚好，可以沿着林间路慢慢走。')}else if(state.mode==='outdoor-focus'){appendNote('他留在松林原地。木屋是空的，世界暂停。')}else if(state.mode==='ambient'){appendNote('只是一幅你喜欢的风雪画面。真实世界暂停。')}else if(state.activity==='tea'){appendNote('他把书合上，正打算泡杯茶。')}else{appendNote('他正在读《观测员手册》。')}
+ el('cabinCharacter').setAttribute('transform',state.activity==='tea'?'translate(238 0)':'translate(0 0)');
+ if(state.compact){state.camera='window';roomSvg.setAttribute('viewBox','54 80 490 355')}
+}
+function openPanel(name){
+ if(state.compact){state.compact=false;render();}
+ if(state.panel===name){close();return}
+ state.panel=name;el('app').classList.add('has-drawer');
+ var titles={journal:'时光手记',tasks:'现实专注',ambient:'天气与氛围',camera:'镜头与取景',stove:'炉火与生活',pack:'出门准备',outdoor:'松林 · 行走',styles:'样式与摆放'};
+ var meta={journal:'TWO TIMES / 两条时间',tasks:'FOCUS / REAL LIFE',ambient:'ATMOSPHERE / WORLD',camera:'SCENE / CAMERA',stove:'HOME / STATUS',pack:'OUTING / PACK',outdoor:'OUTSIDE / EXPLORATION',styles:'MEMORIES / STYLES'};
+ setText('panelHeading',titles[name]||name);setText('panelKicker',meta[name]||'DETAIL');renderPanel();
+}
+function hbtn(text,fn,cls,extra){return '<button class="'+(cls||'choice')+'" onclick="'+fn+'" '+(extra||'')+'>'+text+'</button>'}
+function renderPanel(){
+ var p=state.panel,out='';
+ if(p==='camera'){
+ out='<p class="panel-note">镜头只是看见世界的方式，不改变他真实所在的位置。小窗默认使用雪窗特写，完整窗默认全景。</p>';
+ [['wide','全景','屋内与院子的关系'],['window','雪窗','安静地看天气与窗台'],['stove','炉边','炉火、茶壶和生活'],['desk','书桌','书本、手记与阅读']].forEach(function(a){out+=hbtn((state.camera===a[0]?'● ':'○ ')+a[1]+'<span class="sub">'+a[2]+'</span>',"pickCamera('"+a[0]+"')",'selection'+(state.camera===a[0]?' current':''));});
+ }
+ else if(p==='ambient'){
+ out='<div class="panel-box"><h3>真实世界与氛围演出</h3><p>选择非真实天气、季节或时间时，游戏世界冻结；专注计时仍可继续，资源和修缮不推进。</p></div>';
+ out+=hbtn('✦ 回到真实的今天 <span class="sub">冬 · 第 12 日 · 小雪，木屋继续正常生活</span>',"setMode('companion')",'selection'+(state.mode==='companion'?' current':''));
+ out+='<div class="panel-title">独立氛围预览</div>';
+ out+='<label class="field">季节<select id="seasonSelect"><option>冬</option><option>春</option><option>夏</option><option>秋</option></select></label>';
+ out+='<label class="field">天气<select id="weatherSelect"><option>大雪</option><option>小雪</option><option>晴</option><option>阴</option><option>雨</option></select></label>';
+ out+='<label class="field">时段<select id="timeSelect"><option>夜</option><option>清晨</option><option>午后</option><option>黄昏</option></select></label>';
+ out+=hbtn('进入独立氛围 · 世界暂停',"applyAmbient()",'wide-btn');
+ out+='<div class="divider"></div>'+hbtn((state.sound?'♫ 关闭':'♫ 开启')+'演示环境声',"toggleSound()",'outline-btn');
+ }
+ else if(p==='tasks'){
+ out='<p class="panel-note">专注可以单独使用，不需要让角色做任务，也不需要选择任务名称。</p><div class="panel-title">选择专注时长</div><div class="mini-row">';
+ [25,45,50].forEach(function(m){out+='<button class="seg-btn '+(state.minutes===m?'on':'')+'" onclick="chooseDuration('+m+')">'+m+' 分</button>';});out+='</div>';
+ out+='<label class="field">任务名称（可选）<input id="taskName" type="text" maxlength="80" value="'+esc(state.task)+'" placeholder="例如：阅读、编程、复习"></label>';
+ out+=hbtn(state.running?'Ⅱ 暂停这轮专注':'▶ 开始 / 继续专注',"toggleTimerFromPanel()",'wide-btn');
+ out+=hbtn('⟳ 重新设置当前预设',"resetTimer()",'outline-btn');
+ out+='<div class="divider"></div><div class="stat"><span>今日有效专注（演示）</span><b>2 小时 10 分</b></div><div class="stat"><span>今日的份（演示）</span><b>'+state.share+' / 9</b></div><p class="panel-note">现实日 00:00 只刷新当日份数。此页面不连接真实奖励算法或数据存储。</p>';
+ }
+ else if(p==='journal'){
+ out='<div class="book-tabs">';
+ [['real','现实专注'],['world','世界日记'],['projects','项目收藏'],['year','世界年册']].forEach(function(a){out+='<button class="'+(state.bookTab===a[0]?'on':'')+'" onclick="switchBookTab('"+a[0]+"')">'+a[1]+'</button>';});out+='</div>';
+ if(state.bookTab==='world')out='<div class="entry"><small>世界第 12 日 · 冬 · 小雪</small><p>早上去泉屋提了水。午后把《观测员手册》翻到了下一章。炉火还暖着。</p></div>'+(state.eventCount?'<div class="entry"><small>新增 · 演示事件</small><p>他合上手里的书，烧了壶热水。窗台上的玻璃罐旁，多了一只杯子。</p></div>':'')+'<p class="panel-note">世界日记只记录真实运行过的事件。这里是演示文字，不是游戏实际存档。</p>';
+ else if(state.bookTab==='real')out='<div class="entry"><small>现实专注 · 示例</small><p>今天 2 小时 10 分 · 编程学习 · 获得 '+state.share+' 份。</p></div><div class="entry"><small>隐私</small><p>小窗默认不显示具体任务名。个人任务与世界日志分开保存。</p></div>';
+ else if(state.bookTab==='projects')out='<div class="entry"><small>木屋 · 真实施工阶段</small><p>补窗缝 · 第二阶段；他有空时继续做，专注的份数不会推进施工。</p></div><div class="entry"><small>已发现</small><p>《观测员手册》 · 旧搪瓷杯 · 松林地图。</p></div>';
+ else out='<div class="entry"><small>世界年册 · 示例</small><p>第一年还在继续。待这一年真正结束，才会生成实际天气、修缮和探索总结。</p></div>';
+ }
+ else if(p==='stove'){
+ out='<div class="panel-box"><h3>炉火安稳</h3><p>木炉正在燃烧。你可以观察，但不能直接命令他添柴。他会根据生活需要自己决定。</p></div>';
+ out+='<div class="stat"><span>今日生活状态</span><b>正常</b></div><div class="stat"><span>柴</span><b>'+state.wood+' 根（演示）</b></div><div class="stat"><span>粮</span><b>'+state.food+' 餐（演示）</b></div>';
+ out+='<div class="divider"></div>'+hbtn('查看今日真实生活记录',"openJournal('world')",'outline-btn')+hbtn('查看样式与摆放',"openPanel('styles')",'outline-btn')+'<p class="panel-note">没有立即添柴、强制做饭、要求备粮的按钮。这些都是角色自己的事。</p>';
+ }
+ else if(p==='styles'){
+ out='<p class="panel-note">获得样式、满足设施条件、由角色更换，是三件不同的事。</p>';
+ out+='<div class="panel-box"><h3>✓ 琥珀灯光 · 已解锁、可使用</h3><p>即时改变光线，不影响炉火或资源消耗。</p>'+hbtn('应用琥珀灯光',"applyStyle('暖黄灯光')",'outline-btn')+'</div>';
+ out+='<div class="panel-box"><h3>◌ 亚麻白窗帘 · 已拥有、待设施</h3><p>还要完成「挂窗帘」，不能通过选择样式凭空修好设施。</p></div>';
+ out+='<div class="panel-box"><h3>⏳ 旧搪瓷杯 · 已选择、待摆放</h3><p>人物会在空闲时自然摆放，不因为用户点一下就强行中断其生活。</p></div>';
+ }
+ else if(p==='pack'){
+ out='<div class="panel-box"><h3>天气适合短途</h3><p>今日小雪。可以去松林走一走；他会先把手头事情收好。出门前的压火要真实扣账。</p></div>';
+ out+='<div class="stat"><span>当前地点</span><b>气象站门口</b></div><div class="stat"><span>目的地（演示）</span><b>松林</b></div>';
+ out+='<div class="divider"></div><div class="stat"><span>干粮（每份消耗一餐）</span><b>'+state.supplyFood+' 份</b></div>';
+ out+='<div class="mini-row">'+hbtn('－',"changePack('food',-1)",'seg-btn')+hbtn('＋',"changePack('food',1)",'seg-btn')+'</div>';
+ out+='<div class="stat"><span>柴捆（每捆三根柴）</span><b>'+state.supplyWood+' 捆</b></div>';
+ out+='<div class="mini-row">'+hbtn('－',"changePack('wood',-1)",'seg-btn')+hbtn('＋',"changePack('wood',1)",'seg-btn')+'</div>';
+ out+='<p class="panel-note">必须给家里留下至少三天柴粮。这里仅演示数量按钮，真正的库存扣账由 02/06 的游戏引擎完成。</p>';
+ out+=hbtn('出门，暂停当前专注',"confirmOutdoor()",'wide-btn')+hbtn('先不出门',"closePanel()",'outline-btn');
+ }
+ else if(p==='outdoor'){
+ out='<div class="panel-box"><h3>松林步道 · 冬季短途</h3><p>这里是出门界面的交互演示。角色原本的位置会一直保留；切到木屋专注不是传送回家。</p></div>';
+ out+='<div class="stat"><span>体温</span><b>温暖</b></div><div class="stat"><span>体力</span><b>充足</b></div><div class="stat"><span>生命</span><b>健康</b></div>';
+ out+=hbtn('◇ 演示发现一件旧物',"findSouvenir()",'outline-btn');
+ out+=hbtn('✦ 在野外打开专注（世界冻结）',"enterOutdoorFocus()",'wide-btn');
+ out+=hbtn('⌂ 模拟走到家门口并返家',"returnHome()",'outline-btn');
+ out+='<p class="panel-note">原版里必须在地图上真实走到家门，不能通过面板瞬间返家。这里的按钮仅用于测试状态切换。</p>';
+ }
+ else out='<p class="panel-note">选择一个可交互的设施或功能。</p>';
+ el('panelContent').innerHTML=out;
+ if(p==='ambient'){el('seasonSelect').value=state.season;el('weatherSelect').value=state.weather;el('timeSelect').value=state.timeOfDay;}
+}
+window.closePanel=function(){close()};
+window.openPanel=openPanel;
+window.openJournal=function(tab){state.bookTab=tab||'world';state.panel='';openPanel('journal')};
+window.switchBookTab=function(tab){state.bookTab=tab;renderPanel()};
+window.pickCamera=function(cam){state.camera=cam;render();renderPanel()};
+window.toggleCompact=function(){state.compact=!state.compact;if(state.compact){state.prevCamera=state.camera;state.camera='window'}else state.camera=state.prevCamera;render();setText('windowToggle',state.compact?'↗ 完整窗口':'↘ 小窗预览')};
+window.toggleSound=function(){state.sound=!state.sound;setText('soundToggle',state.sound?'♫ 环境声':'♫ 已静音');if(state.panel==='ambient')renderPanel()};
+window.setMode=function(mode){if(state.mode==='outdoor'||state.mode==='outdoor-focus'){if(mode==='companion'){returnHome();return}}state.mode=mode;render();if(state.panel==='ambient')renderPanel()};
+window.applyAmbient=function(){state.season=el('seasonSelect').value;state.weather=el('weatherSelect').value;state.timeOfDay=el('timeSelect').value;state.mode=state.mode==='outdoor-focus'?'outdoor-focus':'ambient';render();close()};
+window.chooseDuration=function(m){if(state.running)return;state.minutes=m;state.seconds=m*60;render();renderPanel()};
+window.resetTimer=function(){pause();state.seconds=state.minutes*60;render();renderPanel()};
+function pause(){if(state.running){state.seconds=Math.max(0,Math.ceil((state.timerDeadline-Date.now())/1000));clearInterval(state.timerId);state.running=false;state.timerId=null;}}
+window.toggleTimer=function(){
+ if(state.mode==='outdoor'){enterOutdoorFocus();return}
+ if(state.running){pause()}else{state.running=true;state.timerDeadline=Date.now()+state.seconds*1000;state.timerId=setInterval(function(){state.seconds=Math.max(0,Math.ceil((state.timerDeadline-Date.now())/1000));if(state.seconds<=0){pause();state.seconds=0;setText('timerDescription','本轮完成 · 演示计时');}render()},600)}
+ render();if(state.panel==='tasks')renderPanel();
+};
+window.toggleTimerFromPanel=function(){if(el('taskName'))state.task=el('taskName').value.trim()||'未命名专注';toggleTimer()};
+window.outdoorAction=function(){if(state.mode==='outdoor'){returnHome()}else if(state.mode==='outdoor-focus'){backOutdoor()}else if(state.mode==='ambient'){setMode('companion');close()}else openPanel('pack')};
+window.changePack=function(k,n){var key=k==='food'?'supplyFood':'supplyWood';state[key]=Math.max(0,Math.min(k==='food'?4:3,state[key]+n));renderPanel()};
+window.confirmOutdoor=function(){pause();state.mode='outdoor';state.camera='wide';render();openPanel('outdoor')};
+window.enterOutdoorFocus=function(){state.mode='outdoor-focus';state.camera='wide';render();close()};
+window.backOutdoor=function(){pause();state.mode='outdoor';render();openPanel('outdoor')};
+window.returnHome=function(){pause();state.mode='companion';state.camera='wide';state.eventCount++;state.activity='reading';render();openJournal('world')};
+window.findSouvenir=function(){state.hasSouvenir=true;el('panelContent').insertAdjacentHTML('beforeend','<div class="entry"><small>演示发现</small><p>找到一卷旧胶卷。以后回家，它可以成为一个真实的慢事或收藏。</p></div>')};
+window.applyStyle=function(n){state.style=n;close()};
+window.simulateLife=function(){state.activity=state.activity==='reading'?'tea':'reading';state.eventCount++;render();if(state.panel==='journal')renderPanel()};
+window.simulateShare=function(){state.share=Math.min(9,state.share+1);render();if(state.panel==='journal'||state.panel==='tasks')renderPanel()};
+document.addEventListener('keydown',function(e){
+ var target=e.target;if(target&&['INPUT','TEXTAREA','SELECT'].indexOf(target.tagName)!==-1)return;
+ if(e.key==='Escape'){if(state.panel)close();return}
+ if(e.code==='Space'&&!e.repeat&&state.mode!=='outdoor'){e.preventDefault();toggleTimer()}
+ if(e.key.toLowerCase()==='j'&&!e.ctrlKey&&!e.metaKey){openJournal('world')}
+});
+render();
+})();
+</script>
+</body>
+</html>
