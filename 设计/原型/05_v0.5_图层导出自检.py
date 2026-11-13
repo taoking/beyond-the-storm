@@ -49,6 +49,9 @@ def fixture_svg():
     r(g, 205, 90, 48, 110, "#819085")
     nested = group("hi_fi_knit_detail", g)
     r(nested, 211, 110, 28, 2, "#decca5")
+    g = group("far_worker_optional")
+    g.set("display", "none")
+    r(g, 340, 90, 8, 20, "#ac564b")
     return etree.tostring(root, encoding="utf-8", xml_declaration=True)
 
 
@@ -61,7 +64,8 @@ def main():
         result = exporter.run(source, directory / "out", scale=2, trim=True, add_crops=True)
         expected = [
             "interior_base", "static_furniture", "woodpile",
-            "jar_state", "jar_fill_example", "actor_indoor", "hi_fi_knit_detail"
+            "jar_state", "jar_fill_example", "actor_indoor", "hi_fi_knit_detail",
+            "far_worker_optional"
         ]
         actual = [row["id"] for row in result["layers"]]
         assert actual == expected, (actual, expected)
@@ -69,6 +73,10 @@ def main():
         assert len(result["camera_crops"]) == 6
         assert all((directory / "out" / row["file"]).exists() for row in result["layers"])
         assert all(row["unscaled_alpha_bbox"] is not None for row in result["layers"])
+        optional = next(row for row in result["layers"] if row["id"] == "far_worker_optional")
+        assert optional["default_visible"] is False
+        assert (directory / "out" / optional["file"]).exists()
+        assert Image.open(directory / "out" / optional["file"]).getchannel("A").getbbox()
         merged = Image.open(directory / "out" / "recomposed_preview.png")
         source_img = Image.open(directory / "out" / "source_preview.png")
         assert merged.size == (960, 540) == source_img.size
@@ -78,7 +86,7 @@ def main():
                 cropped = Image.open(directory / "out" / row["trim_file"])
                 assert cropped.width > 0 and cropped.height > 0
                 assert row["trim_anchor_scaled"][0] >= 0
-    print("PASS: 7 independent transparent layers + nested variable layers")
+    print("PASS: 8 independent transparent layers, including invisible-but-exportable optional art")
     print("PASS: 2x RGBA pixel recomposition, anchors and 6 camera test crops")
 
 
