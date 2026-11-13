@@ -80,6 +80,9 @@ function drawForestScene(ctx: CanvasRenderingContext2D, snap: Snapshot): void {
     const px=ox+x*unit,py=oy+y*unit;
     ctx.fillStyle=tile==="#" ? "#283631" : tile==="G" ? "#8b7460" : (x+y)%3===0 ? "#294238" : "#20372e";
     ctx.fillRect(px,py,unit-1,unit-1);
+    if(x===f.fireSpot.x && y===f.fireSpot.y){
+      ctx.fillStyle="#d28b54";ctx.beginPath();ctx.arc(px+unit/2,py+unit/2,Math.max(3,unit/5),0,Math.PI*2);ctx.fill();
+    }
     const n=nodes.get(x+","+y);
     if(n){
       ctx.fillStyle=n.ready ? (n.unique ? "#efbd72" : "#95c5a4") : "#526257";
