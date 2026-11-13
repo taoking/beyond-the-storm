@@ -42,6 +42,11 @@ jobs:
             --html "设计/原型/05_v0.4_雪夜木屋_镜头与分层检视.html" \
             --output "artifacts/05-browser-screens" \
             --browsers chromium
+      - name: Compare balanced real-image camera candidates in Chromium
+        run: |
+          python "设计/原型/05_v0.6_候选镜头截图.py" \
+            --html "设计/原型/05_v0.6_真实截图后的小窗镜头比较.html" \
+            --output "artifacts/05-v06-candidate-screens"
       - name: Validate exported asset inventory and real scene integrity
         run: |
           python "设计/原型/05_v0.6_实际资产验收.py" \
