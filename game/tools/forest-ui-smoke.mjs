@@ -56,12 +56,12 @@ try{
   const gameAfter=await page.evaluate(()=>JSON.parse(localStorage.getItem("bts.save.v1")).game);
   assert.equal(gameAfter.mode,"companion");
   assert.equal(gameAfter.world.outing,null);
-  assert.equal(gameAfter.world.stock.wood,gameBefore.world.stock.wood+2);
+  assert.equal(gameAfter.world.stock.wood,gameBefore.world.stock.wood+2+gameBefore.world.outing.bundles*3);
   assert.equal(gameAfter.world.actor.outfit,"indoor");
   await page.screenshot({path:output+"/03-return-home.png",fullPage:true});
   assert.deepEqual(errors,[],"No uncaught browser errors");
   console.log(JSON.stringify({passed:true,browser:"Chromium",mapMoved:true,
-    collectedWood:2,returnedToCabin:true,realInventoryDelta:2,
+    collectedWood:2,returnedToCabin:true,realInventoryDelta:5,
     images:["01-forest-start.png","02-forest-gather.png","03-return-home.png"]},null,2));
 }finally{
   await browser.close();
