@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark"><title>风雪之外｜像素场景与角色动作实验</title>
+<style>
+:root{--bg:#0e1820;--panel:#1b2831;--border:#47565e;--gold:#e4b276;--txt:#efeadd;--muted:#9aaeb7;--ice:#a6c3d3}
+*{box-sizing:border-box}body{font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse at 62% 0%,#283740,#0f171e 58%,#0a1118);color:var(--txt);margin:0;min-height:100vh}
+button,select{font:inherit}button{cursor:pointer;border:1px solid #65727b;border-radius:9px;padding:10px 14px;background:#253640;color:var(--txt)}button:hover{background:#304753;border-color:var(--gold)}button:focus-visible,select:focus-visible{outline:2px solid #f0c998;outline-offset:3px}button:disabled{cursor:not-allowed;opacity:.5}button.primary{background:#dfb178;color:#19222a;border-color:#ecc58d;font-weight:650}button.primary:hover{background:#efc68e}button.on{border-color:#d1a76f;background:#4b4033;color:#f5d6aa}
+h1,h2,h3,p{margin-top:0}.page{max-width:1420px;margin:auto;padding:26px 24px 36px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:19px}.head h1{font-size:25px;font-weight:550;letter-spacing:3px;margin:0}.head small{color:var(--muted);font-size:11px;letter-spacing:2px}.pill{border:1px solid #657e7e;border-radius:30px;padding:8px 13px;color:#b8c9c8;font-size:11px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:17px;align-items:start}
+.game{border:1px solid #7b7c78;border-radius:14px;background:#151e27;overflow:hidden;box-shadow:0 25px 72px #040c13a8;min-width:0;max-width:1050px;transition:max-width .25s}
+.game.mini{max-width:438px;margin:8px auto}
+.game-top{height:52px;display:flex;justify-content:space-between;align-items:center;background:#1c2933;border-bottom:1px solid #68777877;padding:0 13px;gap:10px}
+.world{display:flex;align-items:center;gap:9px;white-space:nowrap;font-size:12px;color:#ecddc6}.world small{color:#98b1bb;font-size:11px}.mode{border:1px solid #77918d;border-radius:40px;padding:4px 9px;color:#b7dad0;font-size:10px;letter-spacing:.4px}
+.mode.frozen{border-color:#ad9274;color:#dfba93}
+.scene{position:relative;background:#1b2933;overflow:hidden;line-height:0;aspect-ratio:16/9}.scene canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+.scene .bottom-indicator{position:absolute;left:12px;bottom:11px;background:#13232cdb;border:1px solid #88a5a56c;color:#f6ead9;border-radius:5px;padding:8px 10px;font-size:11px;line-height:1.5;max-width:min(75%,440px)}
+.scene .bottom-indicator span{display:block;font-size:10px;color:#b8cacc}
+.scene .corner{position:absolute;top:12px;left:12px;background:#192b34dd;border:1px solid #8d9a98a8;color:#e8cfa8;border-radius:5px;padding:7px 9px;font-size:11px;line-height:1.4}
+.game-tools{display:flex;align-items:center;gap:8px;padding:12px 13px;background:#1b2830;border-top:1px solid #596a6a8a;flex-wrap:wrap}
+.timer{margin-left:auto;display:flex;align-items:center;gap:10px}.time{font-size:23px;letter-spacing:1px;font-variant-numeric:tabular-nums;color:#f1d6b6}.dots{display:flex;gap:5px}.dots i{width:7px;height:7px;border-radius:50%;border:1px solid #70838b}.dots i.on{background:#e5b077;border-color:#eac393}
+.side{background:linear-gradient(180deg,#22333c,#192630);border:1px solid #556b72;border-radius:14px;padding:19px;box-shadow:0 18px 40px #050c1272}.side h2{font-size:18px;font-weight:550;letter-spacing:.7px;margin-bottom:9px}.side p{color:#a9bbc0;font-size:12px;line-height:1.8}.cap{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c5ab82;margin:17px 0 8px}.control{display:flex;gap:7px;flex-wrap:wrap}.control button{padding:9px 11px;font-size:12px}.divider{border-top:1px solid #4c606a;margin:17px 0}
+select{width:100%;background:#15222b;color:#e1e4db;padding:9px;border:1px solid #6c7d83;border-radius:9px;margin:4px 0 7px}
+.event{font-size:12px;color:#c6d0ca;background:#172630;border-left:2px solid #c4a377;padding:9px 11px;margin:8px 0;line-height:1.7}
+.sublabel{color:#9fb1b3;font-size:11px}.game.mini .game-top{height:42px;padding:0 9px}.game.mini .world small,.game.mini .bottom-indicator,.game.mini .corner,.game.mini .game-tools .minor{display:none}.game.mini .scene{aspect-ratio:16/10}.game.mini .game-tools{padding:8px 9px}.game.mini .time{font-size:18px}.game.mini .game-tools button{font-size:11px;padding:8px}.game.mini .mode{max-width:120px;overflow:hidden;text-overflow:ellipsis}
+.mini-action{display:none}.game.mini .mini-action{display:inline-block}
+.legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.legend article{border:1px solid #52636b;border-radius:12px;background:#192731b8;padding:14px}.legend h3{font-weight:550;font-size:13px;margin:0 0 6px}.legend p{color:#a5b8bd;font-size:12px;line-height:1.75;margin:0}
+footer{margin:25px 0 0;color:#8ea4aa;font-size:11px}
+@media(max-width:1010px){.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}.side>h2,.side>p,.side>.divider,.side>.event{grid-column:1/-1}}
+@media(max-width:590px){.page{padding:12px 10px 26px}.head{flex-wrap:wrap}.head h1{font-size:20px}.pill{font-size:10px}.side{display:block}.legend{grid-template-columns:1fr}.world{font-size:11px}.game-tools{gap:4px}.game-tools button{padding:7px 9px;font-size:11px}.time{font-size:18px}.scene .bottom-indicator{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.game{transition:none}}
+</style>
+</head>
+<body><main class="page">
+<header class="head"><div><h1>风雪之外 <small>BEYOND THE STORM</small></h1><small>PIXEL SCENE · VISUAL DIRECTION STUDY / 05 · v0.1</small></div><span class="pill">可操作构图演示 · 非真实游戏存档</span></header>
+<div class="layout">
+<section>
+<div id="game" class="game">
+ <div class="game-top"><div class="world">❄ <span id="worldText">世界第 12 日 · 冬 · 小雪</span><small id="worldNote">16:27</small></div><span id="mode" class="mode">正常陪伴</span><div id="dots" class="dots" aria-label="今日份数演示"></div></div>
+ <div class="scene"><canvas id="scene" width="480" height="270" aria-label="像素气象站木屋，雪窗、炉火和自主生活的角色" role="img"></canvas><div id="cameraTag" class="corner">全景 WIDE</div><div class="bottom-indicator"><span id="activityKind">ANOTHER LIFE · 另一种生活</span><strong id="activity">他正在读《观测员手册》</strong></div></div>
+ <div class="game-tools">
+  <button class="minor" onclick="selectCamera('wide')" id="btnWide">全景</button>
+  <button class="minor" onclick="selectCamera('window')" id="btnWindow">雪窗</button>
+  <button class="minor" onclick="selectCamera('hearth')" id="btnHearth">炉边</button>
+  <button onclick="toggleMini()" id="miniBtn">↘ 小窗</button>
+  <button class="mini-action" onclick="miniNextCamera()">⌗ 换镜头</button>
+  <div class="timer"><span class="time" id="clock">25:00</span><button id="focusButton" class="primary" onclick="toggleFocus()">▶ 开始专注</button></div>
+ </div>
+</div>
+<div class="legend">
+ <article><h3>同一个真实木屋</h3><p>所有镜头来自一份 480×270 母场景。切换镜头不移动角色，也不改变炉火、物件或世界时间。</p></article>
+ <article><h3>三类可辨认的日常</h3><p>阅读、喝茶、气象观测用同一人物和空间。按钮仅为导演测试，正式游戏由自主行为决定。</p></article>
+ <article><h3>两条独立时间线</h3><p>现实专注仍在木屋旁安静计时；独立氛围态冻结世界，户外临时专注也不会把人物瞬移回家。</p></article>
+</div>
+</section>
+<aside class="side">
+<h2>画面导演台</h2><p>这是视觉设计试验台，不是玩家命令菜单。用它检查镜头裁切和角色动作的辨识度，再由正式角色状态接管。</p>
+<div class="cap">人物状态 · DEMO POSES</div>
+<div class="control"><button onclick="setAction('read')" id="actionRead">📖 阅读</button><button onclick="setAction('tea')" id="actionTea">☕ 喝茶</button><button onclick="setAction('observe')" id="actionObserve">⌗ 观测天气</button></div>
+<div class="cap">场景镜头 · CAMERA</div>
+<div class="control"><button onclick="selectCamera('wide')">全景</button><button onclick="selectCamera('window')">雪窗特写</button><button onclick="selectCamera('hearth')">炉边特写</button></div>
+<div class="divider"></div>
+<div class="cap">世界状态 · MODE</div>
+<div class="control"><button onclick="setMode('companion')" id="modeCompanion">真实陪伴</button><button onclick="setMode('ambient')" id="modeAmbient">氛围预览</button><button onclick="setMode('outdoor')" id="modeOutdoor">户外探索</button><button onclick="setMode('outdoor-focus')" id="modeOutdoorFocus">户外临时专注</button></div>
+<div class="cap">氛围演出 · 不推进世界</div>
+<select id="weather" onchange="changeWeather()" aria-label="氛围天气"><option value="snow">冬夜 · 小雪</option><option value="storm">冬夜 · 大雪</option><option value="clear">冬季 · 晴天</option><option value="spring">春融 · 清晨</option><option value="summer">短夏 · 午后</option><option value="autumn">初霜 · 黄昏</option></select>
+<p class="sublabel">切换氛围时只改演示画面；真实世界暂停、不生产、不消耗、不写世界日志。</p>
+<div class="divider"></div>
+<div class="cap">回访反馈 · REVISIT</div>
+<div class="control"><button onclick="simulateShare()">演示获得一份</button><button onclick="simulateLife()">演示一次生活事件</button></div>
+<div id="traceHint" class="event">今日已获得 3 份；窗台罐内 3 颗球果。人物正专心做自己的事。</div>
+<p class="sublabel">得份即时记入现实记录；角色下次有空，才把对应的象征性球果放到罐子里。世界冻结时不会暗中摆放。</p>
+</aside>
+</div>
+<footer>交互与美术方向由 GPT 负责；Claude 可按 02/03 正式规则接入状态与事件。本站演示不使用正式游戏资源数据，不自动跨日发份，也没有持久化存档。</footer>
+</main>
+<script>
+(function(){
+'use strict';
+var W=480,H=270,el=function(id){return document.getElementById(id)},canvas=el('scene'),screen=canvas.getContext('2d',{alpha:false}),buffer=document.createElement('canvas');buffer.width=W;buffer.height=H;
+var C=buffer.getContext('2d',{alpha:false});screen.imageSmoothingEnabled=false;C.imageSmoothingEnabled=false;
+var state={mode:'companion',camera:'wide',miniCamera:'window',mini:false,action:'read',weather:'snow',shares:3,jar:3,pending:0,life:0,timer:1500,running:false,lastTick:0,events:['上午的雪渐渐小了。他在桌边翻看观测员手册。']};
+var P={shadow:'#101820',dark:'#1e2d36',wall:'#35434b',wall2:'#2a3942',beam:'#634a3c',wood:'#876448',woodLite:'#b28b63',blue:'#7193ac',blueLite:'#a7bfcb',snow:'#c7d8de',snowLite:'#eef3ed',gold:'#e4b276',cream:'#f6d49a',fire:'#f7b05d',fireDark:'#a9482e',hat:'#a65049',coat:'#667b80'};
+var snow=Array.from({length:74},function(_,i){return{x:69+(i*71+i*i*11)%139,y:40+(i*43+i*i*7)%129,s:1+i%2,phase:i%5}});
+function rect(x,y,w,h,col){C.fillStyle=col;C.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
+function poly(pts,col){C.fillStyle=col;C.beginPath();C.moveTo(pts[0][0],pts[0][1]);for(var i=1;i<pts.length;i++)C.lineTo(pts[i][0],pts[i][1]);C.closePath();C.fill()}
+function strokeRect(x,y,w,h,col,t){rect(x,y,w,t,col);rect(x,y+h-t,w,t,col);rect(x,y,t,h,col);rect(x+w-t,y,t,h,col)}
+function pxText(s,x,y,color,size){C.font='bold '+(size||8)+'px monospace';C.fillStyle=color;C.fillText(s,x,y)}
+function seed(i){return ((i*1237+71)*(i*977+13))%997}
+function drawWall(){
+rect(0,0,W,H,P.wall);
+for(var y=13;y<201;y+=30){rect(0,y,W,2,P.wall2);for(var x=(y%2)*34;x<W;x+=95)rect(x,y+3,2,19,'#40505a')}
+rect(0,0,W,11,P.beam);rect(0,6,W,4,P.woodLite);rect(0,200,W,8,'#564435');rect(0,208,W,H-208,'#453b34');
+for(var f=0;f<9;f++){rect(f*59,208,2,62,'#332f2e');rect(f*59+13,233,22,1,'#675143')}
+rect(10,11,11,196,'#483832');rect(13,11,3,196,'#947150');rect(464,8,11,200,P.beam);rect(0,195,480,5,P.woodLite);
+for(var k=0;k<25;k++){var sx=25+seed(k)%440,sy=23+seed(k+49)%154;if(sx>230&&sx<325||sx>55&&sx<230&&sy<180)continue;rect(sx,sy,8,1,'#495057')}
+}
+function drawWindow(frame){
+rect(46,26,179,166,'#1a2730');strokeRect(45,25,182,169,'#94704e',6);rect(52,32,169,155,'#182d42');
+C.save();C.beginPath();C.rect(54,34,165,151);C.clip();
+var weather=state.mode==='ambient'?state.weather:'snow',isWarm=weather==='spring'||weather==='summer'||weather==='autumn',isClear=weather==='clear',night=weather==='snow'||weather==='storm';
+rect(54,34,165,151,night?'#425e77':weather==='summer'?'#84b6c8':weather==='autumn'?'#92a3aa':'#acc8d4');
+rect(54,34,165,52,night?'#4d6c86':'#b6d4d8');
+poly([[54,135],[80,90],[115,119],[147,72],[189,118],[219,96],[219,185],[54,185]],night?'#718ba3':'#8ba5b3');
+poly([[54,147],[83,117],[117,137],[151,102],[180,132],[219,110],[219,187],[54,187]],isWarm?'#819da1':'#a5b8c5');
+poly([[54,159],[92,144],[129,155],[165,133],[219,153],[219,187],[54,187]],isWarm?'#8a9f83':'#d4dee1');
+for(var i=0;i<15;i++){var tx=60+(i*41)%162,ty=126+(i*19)%40,height=11+(i%4)*7;if(isWarm){rect(tx,ty-height,3,height,'#405c50');rect(tx-5,ty-height,13,8,'#527563');rect(tx-3,ty-height-5,9,8,'#66876e')}else{poly([[tx-7,ty],[tx,ty-height],[tx+7,ty]],'#314d58');poly([[tx-6,ty-6],[tx,ty-height-7],[tx+6,ty-6]],'#45616d');rect(tx,ty-height-3,2,4,P.snowLite)}}
+rect(54,170,165,17,isWarm?'#758969':'#e0e7e5');
+if(!isWarm&&!isClear){for(var n=0;n<(weather==='storm'?55:23);n++){var fl=snow[n],drift=(frame*0.8+(fl.phase*19))%136;rect(54+(fl.x+drift-54)%165,34+(fl.y+drift*1.3-34)%149,fl.s,fl.s,P.snowLite)}}
+C.restore();
+rect(128,30,6,160,'#8b6a4b');rect(51,107,169,5,'#917051');rect(52,32,169,3,'#a88260');rect(49,185,177,10,'#a38160');rect(47,194,185,5,'#43352c');
+rect(57,37,16,2,'#dce8e9');rect(59,39,4,12,'#c5d9df');rect(208,49,3,17,'#dce7e6');
+for(var q=0;q<7;q++){rect(48+q*9,26,9,4,'#69554a');rect(48+q*9,32,6,3,'#8a7562')}
+}
+function drawJar(){
+rect(186,165,20,20,'#80979c');rect(189,164,15,2,P.cream);rect(188,167,15,16,'#aac4c5');rect(187,164,18,3,'#99795b');
+var count=Math.min(30,state.jar);for(var k=0;k<count;k++){var px=190+k%4*3,py=181-Math.floor(k/4)*2;rect(px,py,2,2,k%2?'#986341':'#a57b52')}
+}
+function drawWoodDetails(){
+rect(15,169,29,9,'#544038');rect(16,179,25,5,'#906748');
+for(var i=0;i<6;i++){var x=14+(i%3)*11,y=175+Math.floor(i/3)*11;rect(x,y,11,8,'#76573f');rect(x+2,y+1,5,5,'#b29066');rect(x+3,y+2,3,3,'#6f5439')}
+rect(226,20,87,103,'#3b3430');strokeRect(222,19,96,110,P.wood,5);
+rect(228,51,84,5,P.woodLite);rect(228,88,84,5,P.woodLite);
+for(var j=0;j<18;j++){var bx=231+(j%8)*10,by=j<8?31:68,h=12+seed(j)%17;rect(bx,by+h%4,6,h,j%4===0?'#967c65':j%3===0?'#667c75':'#a38667');rect(bx+1,by+h%4+2,1,h-3,'#d2ac7b')}
+rect(244,100,39,15,'#3b4646');rect(247,102,33,11,'#5e7071');rect(250,105,28,2,'#a4b7aa');rect(268,93,16,7,'#d3b48b');
+}
+function drawDeskAndChair(){
+rect(182,171,145,10,'#9c7450');rect(182,169,145,4,'#c09a6d');
+rect(191,181,9,63,'#684632');rect(312,180,9,64,'#684632');rect(206,205,96,2,'#6a4c37');
+rect(236,187,11,51,'#5b5244');rect(222,226,47,7,'#675445');
+rect(194,158,34,3,'#d7be94');rect(194,158,17,2,'#f1ddb6');rect(229,160,12,3,'#a57e58');rect(201,159,1,6,'#8f674a');
+rect(302,157,12,12,'#d6c8a8');rect(311,159,4,6,'#b39b78');rect(298,154,18,3,'#695140');
+}
+function drawStove(frame){
+for(var i=4;i>=0;i--){var scale=i*7;rect(352-scale/2,108-scale/2,108+scale,104+scale/2,i%2?'#70553b20':'#8b60343a')}
+rect(375,0,23,121,'#1c2830');rect(379,0,15,117,'#394148');rect(379,4,3,114,'#656468');
+rect(338,110,119,103,'#151b22');strokeRect(336,109,123,106,'#657477',4);rect(346,119,105,84,'#20282b');rect(352,124,92,69,'#111a1c');strokeRect(352,124,93,70,'#6c7572',3);
+rect(359,177,78,13,'#42342b');rect(367,166,56,16,'#8b4830');
+var sway=Math.floor(frame/3)%3;
+poly([[369,183],[370,164],[383,149+sway],[386,174],[397,138],[409,160],[415,150],[428,175],[423,185]],P.fireDark);
+poly([[377,184],[385,157],[392,171],[401,149+sway],[410,174],[418,161],[422,185]],P.fire);
+poly([[386,184],[395,168],[400,180],[404,158+sway],[413,183]],P.cream);
+rect(361,187,72,3,'#8c6250');rect(349,205,11,17,'#202830');rect(439,205,11,17,'#202830');
+rect(339,100,103,10,'#57666b');rect(340,95,16,8,'#323b42');
+rect(363,83,46,14,'#8c8b7c');rect(373,79,25,9,'#9da493');rect(380,76,10,4,'#c1b99b');rect(410,87,10,4,'#a6a28d');
+if(frame%12<8){rect(381,65-frame%6,2,5,'#a8c7c0');rect(392,60-frame%6,2,7,'#b8ced1');}
+for(var z=0;z<4;z++){rect(351+z*25,223,20,9,'#7b5941');rect(357+z*25,225,7,4,'#b48b62')}
+}
+function drawWeatherTools(){
+rect(438,43,28,32,'#625246');strokeRect(438,43,28,32,'#9d8266',2);
+rect(446,51,12,12,'#d9d1b7');rect(451,50,2,15,'#624d42');rect(443,55,18,2,'#624d42');
+rect(447,81,3,25,'#9c846a');rect(443,87,12,3,'#b59a7a');
+rect(450,92,18,6,'#7a8a88');rect(457,85,6,11,'#a6b4ad');
+rect(439,108,27,6,'#7a5b47');rect(447,112,14,3,'#564436');
+}
+function drawLighting(){
+rect(311,134,17,30,'#5c5245');rect(313,135,13,22,'#e7b575');rect(315,137,9,15,'#ffdd99');rect(309,130,21,5,'#83654a');rect(316,125,6,6,'#b8aa83');rect(318,122,2,6,'#7a6a56');
+rect(330,186,10,2,'#c19b6f');
+}
+function drawActor(frame){
+if(state.mode==='outdoor-focus')return;
+var pose=state.action,obs=pose==='observe',baseX=obs?148:239,baseY=obs?104:128,bob=Math.floor(frame/11)%2;
+C.save();C.translate(baseX,baseY);
+rect(3,54+(obs?6:0),8,27,P.dark);rect(22,55+(obs?6:0),9,27,P.dark);
+rect(1,74+(obs?6:0),15,6,'#282a2b');rect(19,74+(obs?6:0),15,6,'#282a2b');
+rect(-2,19,39,40,P.coat);rect(-3,27,6,32,'#3d515e');rect(26,23,8,35,'#445767');
+rect(4,36,28,4,'#869696');rect(7,18,23,19,'#bf977b');
+rect(10,14,20,17,'#c8a384');rect(8,10,25,10,'#ad5b4f');rect(5,7,30,6,P.hat);rect(12,3,20,7,P.hat);rect(24,0,8,8,'#8e443e');rect(10,23,3,2,'#373d44');
+rect(18,33,21,7,'#a75a51');rect(23,38,11,4,'#8d473f');
+if(pose==='read'){
+rect(24,42+bob,16,7,'#d7b18f');rect(32,38+bob,19,11,'#e1c39d');
+rect(30,41+bob,19,3,'#f4e0bc');rect(39,39+bob,2,10,'#9f7858');
+}else if(pose==='tea'){
+rect(24,32-bob,15,7,'#c9ad8d');rect(33,27-bob,10,10,'#d9d0b3');rect(42,29-bob,5,6,'#ddc2a0');
+rect(35,19-bob,2,5,'#b7c7b5');
+}else{
+rect(17,28,23,7,'#cfaa8a');rect(28,23+bob,6,15,'#ddbe9d');rect(33,16+bob,2,7,'#e8d7b8');
+rect(27,41,22,4,'#b79b78');rect(33,39,16,3,'#e2c49e');
+}
+C.restore();
+}
+function drawTrace(){
+if(!state.life)return;
+rect(276,155,13,13,'#cfb48a');rect(288,158,4,5,'#b7a181');rect(280,152,7,3,'#ded3b7');rect(281,149,1,3,'#b4c3b5');
+}
+function drawOutdoor(frame){
+rect(0,0,W,H,'#4c7187');rect(0,0,W,65,'#6d90a8');
+poly([[0,175],[65,70],[124,148],[218,58],[330,179],[403,81],[480,152],[480,270],[0,270]],'#8daab8');
+poly([[0,207],[103,130],[180,207],[260,119],[370,213],[480,148],[480,270],[0,270]],'#b5c6ca');
+rect(0,221,480,49,'#e1e9e4');
+for(var k=0;k<27;k++){var x=seed(k+50)%480,y=191+seed(k+92)%39,hh=24+seed(k+12)%55;poly([[x-10,y],[x,y-hh],[x+11,y]],'#365961');poly([[x-7,y-13],[x,y-hh-12],[x+8,y-13]],'#436974');rect(x,y,3,15,'#575b5a')}
+poly([[0,247],[120,213],[233,240],[350,226],[480,245],[480,270],[0,270]],'#eef1e9');
+for(var i=0;i<42;i++){var fl=snow[i];rect((fl.x*3+frame)%480,(fl.y*2+frame*2)%270,fl.s,fl.s,P.snowLite)}
+rect(237,164,23,27,P.coat);rect(237,153,24,11,P.hat);rect(242,145,15,16,'#d1ac8f');rect(234,190,8,21,P.dark);rect(254,190,7,21,P.dark);
+rect(260,168,16,25,'#866b4f');rect(235,169,4,20,'#d6ba8f');
+}
+function sceneFrame(frame){
+drawWall();drawWindow(frame);drawWoodDetails();drawDeskAndChair();drawLighting();drawWeatherTools();drawJar();drawStove(frame);drawActor(frame);drawTrace();
+}
+function paint(frame){
+C.clearRect(0,0,W,H);
+if(state.mode==='outdoor')drawOutdoor(frame);else sceneFrame(frame);
+screen.fillStyle=P.dark;screen.fillRect(0,0,W,H);screen.imageSmoothingEnabled=false;
+var cam=state.mini?state.miniCamera:state.camera;
+var source=cam==='window'?{x:43,y:30,w:195,h:111}:cam==='hearth'?{x:309,y:106,w:165,h:94}:{x:0,y:0,w:480,h:270};
+if(state.mode==='outdoor')source={x:0,y:0,w:480,h:270};
+screen.drawImage(buffer,source.x,source.y,source.w,source.h,0,0,W,H);
+}
+function updateUI(){
+el('game').classList.toggle('mini',state.mini);
+el('mode').textContent=state.mode==='companion'?'正常陪伴':state.mode==='ambient'?'独立氛围 · 世界暂停':state.mode==='outdoor'?'户外直控':'户外临时专注 · 世界暂停';
+el('mode').classList.toggle('frozen',state.mode==='ambient'||state.mode==='outdoor-focus');
+el('worldText').textContent=state.mode==='ambient'?'氛围预览 · 非真实天气':state.mode==='outdoor'?'松林 · 冬 · 小雪':'世界第 12 日 · 冬 · 小雪';
+el('worldNote').textContent=state.mode==='ambient'?'世界冻结':state.mode==='outdoor-focus'?'位置已冻结':'16:27';
+var cam=state.mini?state.miniCamera:state.camera,labels={wide:'全景 WIDE',window:'雪窗 WINDOW',hearth:'炉边 HEARTH'};
+el('cameraTag').textContent=labels[cam];el('miniBtn').textContent=state.mini?'↗ 完整窗口':'↘ 小窗';
+el('activity').textContent=state.mode==='outdoor-focus'?'他还留在松林原地；木屋是空的':state.mode==='outdoor'?'松林里可以慢慢探索':state.mode==='ambient'?'这里是演出画面；真实世界已暂停':state.action==='read'?'他正在读《观测员手册》':state.action==='tea'?'他正在安静地喝茶':'他在窗边观测天气';
+el('actionRead').classList.toggle('on',state.action==='read');el('actionTea').classList.toggle('on',state.action==='tea');el('actionObserve').classList.toggle('on',state.action==='observe');
+el('modeCompanion').classList.toggle('on',state.mode==='companion');el('modeAmbient').classList.toggle('on',state.mode==='ambient');el('modeOutdoor').classList.toggle('on',state.mode==='outdoor');el('modeOutdoorFocus').classList.toggle('on',state.mode==='outdoor-focus');
+el('btnWide').classList.toggle('on',!state.mini&&state.camera==='wide');el('btnWindow').classList.toggle('on',!state.mini&&state.camera==='window');el('btnHearth').classList.toggle('on',!state.mini&&state.camera==='hearth');
+el('clock').textContent=String(Math.floor(state.timer/60)).padStart(2,'0')+':'+String(state.timer%60).padStart(2,'0');el('focusButton').textContent=state.running?'Ⅱ 暂停':'▶ 开始专注';
+el('focusButton').disabled=state.mode==='outdoor';
+var dots='';for(var i=0;i<9;i++)dots+='<i class="'+(i<state.shares?'on':'')+'"></i>';el('dots').innerHTML=dots;
+el('traceHint').textContent='现实手记：已记 '+state.shares+' 份；窗台罐内 '+state.jar+' 颗球果。'+(state.pending?'还有 '+state.pending+' 颗等待人物空闲整理。':'')+' 这只是演示数据。';
+}
+window.setAction=function(name){state.action=name;updateUI();paint(0)};
+window.selectCamera=function(name){if(state.mini){if(name==='wide'){state.mini=false;state.camera='wide'}else state.miniCamera=name}else state.camera=name;updateUI();paint(0)};
+window.toggleMini=function(){state.mini=!state.mini;updateUI();paint(0)};
+window.miniNextCamera=function(){state.miniCamera=state.miniCamera==='window'?'hearth':'window';updateUI();paint(0)};
+window.setMode=function(name){state.mode=name;if(name==='outdoor')window.stopFocus();updateUI();paint(0)};
+window.changeWeather=function(){state.weather=el('weather').value;state.mode=state.mode==='outdoor-focus'?'outdoor-focus':'ambient';updateUI();paint(0)};
+window.simulateShare=function(){if(state.shares<9){state.shares++;state.pending++}updateUI();paint(0)};
+window.simulateLife=function(){state.life++;if(state.mode==='companion'){state.jar=Math.min(30,state.jar+state.pending);state.pending=0;state.action=state.action==='read'?'tea':'read';state.events.push('一件生活小事发生了。')}updateUI();paint(0)};
+window.stopFocus=function(){state.running=false;updateUI()};
+window.toggleFocus=function(){if(state.mode==='outdoor')return;state.running=!state.running;updateUI()};
+var last=Date.now(),frame=0;
+function loop(){var now=Date.now();if(now-last>125){frame++;last=now;if(state.running&&state.timer>0&&frame%8===0)state.timer--;if(state.timer<=0)state.running=false;updateUI();paint(frame)}requestAnimationFrame(loop)}
+updateUI();paint(0);requestAnimationFrame(loop);
+})();
+</script>
+</body></html>
