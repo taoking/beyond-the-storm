@@ -83,6 +83,11 @@ const LOOKS: Record<Season, Record<WeatherTier, [string, number][]>> = {
   },
 };
 
+/** 独立氛围展示的固定代表画面；纯查表，不抽随机数、不推进真实天气。 */
+export function previewLook(season: Season, tier: WeatherTier): string {
+  return LOOKS[season][tier][0][0];
+}
+
 export function pickLook(rng: Rng, season: Season, tier: WeatherTier): string {
   return pickWeighted(rng, LOOKS[season][tier]);
 }
