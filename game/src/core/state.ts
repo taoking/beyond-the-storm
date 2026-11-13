@@ -10,6 +10,7 @@ import {
   type TaskCategory,
 } from "./content.ts";
 import { makeRng, type Rng } from "./rng.ts";
+import type { ForestMemory, ForestVisit } from "./forest.ts";
 import { drawWeather, makeSky, pickLook, pickYearKind, weatherSeason, type SkyState } from "./weather.ts";
 
 export type ActivityKind =
@@ -182,6 +183,8 @@ export interface OutingState {
   departedAt: number;
   /** 已经提过的返家提示，一趟里每种只提一次 */
   reminded: { dusk: boolean; night: boolean; late: boolean };
+  /** v0.4 新松林地图：旧灰盒/旧存档无此字段时仍可读取。 */
+  forest?: ForestVisit;
 }
 
 export interface World {
@@ -229,6 +232,8 @@ export interface World {
   /** 现实这边传进来的轻推，只影响他闲暇时爱做什么 */
   nudge: { category: TaskCategory | null; onBreak: boolean };
   outing: OutingState | null;
+  /** 野外独一份发现和自然资源采集日的存档记忆（旧存档可缺省）。 */
+  forestMemory?: ForestMemory;
   events: WorldEvent[];
   nextEventId: number;
   summaries: DaySummary[];
