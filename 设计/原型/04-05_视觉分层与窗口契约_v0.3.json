@@ -1,0 +1,361 @@
+{
+  "schema": "beyond-the-storm.ui-art-handoff.v0.3",
+  "status": "concept-prototype-not-final-assets",
+  "authors": {
+    "visual_ui": "GPT",
+    "implementation": "Claude",
+    "interaction_decisions": "joint review"
+  },
+  "references": {
+    "base_gameplay": "设计/02_玩法.md §14",
+    "content": "设计/03_主要内容.md",
+    "ui": "设计/04_UI与交互.md §19-20",
+    "art": "设计/05_美术与音频.md §9-10",
+    "prototype": "设计/原型/04-05_窗下书桌_窗口体验原型.html",
+    "layeredSvgMotherScene": "设计/原型/05_窗下书桌_像素分层母场景.svg",
+    "indoorActorSpriteStudy": "设计/原型/05_室内角色_三动作像素试片.svg"
+  },
+  "scene": {
+    "logicalWidth": 480,
+    "logicalHeight": 270,
+    "coordinateOrigin": "top-left",
+    "scaling": "nearest-neighbor, no stretching",
+    "realWindowCssSizes": [
+      {
+        "width": 320,
+        "height": 180
+      },
+      {
+        "width": 480,
+        "height": 270
+      },
+      {
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "independentSmallWindowCamera": true,
+    "cameras": {
+      "wide": {
+        "source": [
+          0,
+          0,
+          480,
+          270
+        ],
+        "target": "1280x720",
+        "tracking": false
+      },
+      "window": {
+        "source": [
+          41,
+          98,
+          228,
+          128
+        ],
+        "target": [
+          "320x180",
+          "480x270"
+        ],
+        "tracking": false,
+        "composition": [
+          "snowy window",
+          "windowsill jar",
+          "desk",
+          "seated indoor actor"
+        ],
+        "note": "prototype crop; adapt after real browser images"
+      },
+      "hearth": {
+        "source": [
+          309,
+          106,
+          165,
+          94
+        ],
+        "target": [
+          "320x180",
+          "480x270"
+        ],
+        "tracking": false,
+        "composition": [
+          "stove",
+          "kettle",
+          "chair/mug optional"
+        ]
+      }
+    },
+    "worldVisualZones": [
+      {
+        "id": "window",
+        "bounds": [
+          45,
+          25,
+          182,
+          169
+        ],
+        "layer": "window_world",
+        "hitTarget": "weather details"
+      },
+      {
+        "id": "jar",
+        "bounds": [
+          78,
+          164,
+          20,
+          20
+        ],
+        "layer": "glass_jar",
+        "hitTarget": "real focus record"
+      },
+      {
+        "id": "under_window_desk",
+        "bounds": [
+          85,
+          166,
+          152,
+          77
+        ],
+        "layer": "desk_and_books",
+        "hitTarget": "projects / journal"
+      },
+      {
+        "id": "stove",
+        "bounds": [
+          336,
+          109,
+          123,
+          106
+        ],
+        "layer": "stove",
+        "hitTarget": "hearth facts"
+      },
+      {
+        "id": "far_worker",
+        "bounds": [
+          154,
+          128,
+          8,
+          16
+        ],
+        "layer": "far_worker_optional",
+        "hitTarget": null
+      }
+    ]
+  },
+  "layers": [
+    {
+      "id": "interior_base",
+      "z": 10,
+      "static": true,
+      "draws": [
+        "wall",
+        "beams",
+        "floor"
+      ],
+      "inputs": []
+    },
+    {
+      "id": "window_weather",
+      "z": 20,
+      "static": false,
+      "mask": "window aperture",
+      "draws": [
+        "sky",
+        "mountains",
+        "trees",
+        "snow"
+      ],
+      "inputs": [
+        "worldSeason",
+        "worldWeather",
+        "worldDayPhase"
+      ],
+      "mode": "use real facts in companion, pure preview in ambient"
+    },
+    {
+      "id": "window_frame",
+      "z": 30,
+      "static": true,
+      "draws": [
+        "frame",
+        "sill"
+      ]
+    },
+    {
+      "id": "furniture",
+      "z": 40,
+      "static": true,
+      "draws": [
+        "desk",
+        "shelves",
+        "chair"
+      ],
+      "inputs": []
+    },
+    {
+      "id": "objects",
+      "z": 50,
+      "static": false,
+      "draws": [
+        "jar",
+        "book",
+        "mug",
+        "repair stages",
+        "display positions"
+      ],
+      "inputs": [
+        "actualProjectState",
+        "displayStyle",
+        "realFocusShareStagedByActor"
+      ]
+    },
+    {
+      "id": "actor_indoor",
+      "z": 60,
+      "static": false,
+      "draws": [
+        "knit jumper",
+        "hair",
+        "read",
+        "tea",
+        "observe"
+      ],
+      "inputs": [
+        "actorPosition",
+        "actorActivity"
+      ],
+      "warning": "not wearing outdoor hat or scarf indoors"
+    },
+    {
+      "id": "far_worker_optional",
+      "z": 25,
+      "static": false,
+      "draws": [
+        "small worker silhouette",
+        "tracks"
+      ],
+      "inputs": [
+        "actorPosition",
+        "actualNearYardActivity"
+      ],
+      "status": "conditional proposal, never fabricate offscreen presence"
+    },
+    {
+      "id": "stove_fire",
+      "z": 70,
+      "static": false,
+      "draws": [
+        "five stove states",
+        "steam"
+      ],
+      "inputs": [
+        "actualFireState"
+      ]
+    },
+    {
+      "id": "lighting",
+      "z": 80,
+      "static": false,
+      "draws": [
+        "lamp",
+        "warm fire glow"
+      ],
+      "inputs": [
+        "worldDayPhase",
+        "lampStyle",
+        "actualFireState"
+      ]
+    }
+  ],
+  "uiBehavior": {
+    "summary": {
+      "visibility": "only at actual real focus round end",
+      "background": true,
+      "nonmodal": true,
+      "collect": [
+        "realRoundDuration",
+        "shareEventsInThisRound",
+        "styleUnlocksInThisRound"
+      ],
+      "neverPredictSharesFromDuration": true,
+      "autoDismiss": true,
+      "notifications": {
+        "defaultEnabled": false,
+        "content": "only focus/break time"
+      }
+    },
+    "todayCard": {
+      "trigger": "user action",
+      "source": "world events only",
+      "itemsDefaultMax": 4,
+      "itemsExpandedMax": 6,
+      "includes": [
+        "actor location/activity",
+        "events this world day so far",
+        "warm stock description",
+        "active project stage"
+      ],
+      "close": [
+        "button",
+        "Escape",
+        "outside click"
+      ],
+      "noAutoPopup": true
+    },
+    "pause": {
+      "ambient": "freeze world, real focus continues",
+      "outdoor_focus": "freeze world, real focus continues",
+      "outdoor_inventory": "freeze world, no effective focus",
+      "outdoor_direct_control": "no real focus awards"
+    },
+    "environment": "actor may be out of shot; camera never auto-follows"
+  },
+  "implementationInterfacesProposedNotFinal": {
+    "sceneFrame": "render(viewport,camera,worldFacts,actorFacts,uiState)",
+    "actorVisibility": "isActorVisible(camera,actorCoordinates,drawnLayerBounds)",
+    "gameEvents": "world-driven only, user demo buttons excluded",
+    "assetFormat": "lossless transparent layers or vector pixel-aligned groups; preserve anchors",
+    "debugMetrics": "awake time, in-shot time, evidence of real events visible after 2-4 hours"
+  },
+  "validation": {
+    "mockDOMTests": 22,
+    "renderedChromiumScreenshots": "pending, screenshot test script committed",
+    "realFocusEngine": "not implemented here",
+    "worldSimulation": "not implemented here",
+    "svgStudiesAdded": true
+  },
+  "assetDeliverables": [
+    {
+      "file": "05_窗下书桌_像素分层母场景.svg",
+      "kind": "editable pixel-aligned layered SVG",
+      "layers": [
+        "interior_base",
+        "window_weather",
+        "window_frame",
+        "static_furniture",
+        "jar_state",
+        "desk_objects",
+        "actor_indoor",
+        "stove_fire",
+        "lighting_overlay",
+        "far_worker_optional"
+      ],
+      "status": "visual study; not production atlas"
+    },
+    {
+      "file": "05_室内角色_三动作像素试片.svg",
+      "kind": "transparent shared-body sprite sheet study",
+      "cellSize": [
+        60,
+        96
+      ],
+      "poses": [
+        "read",
+        "tea",
+        "observe"
+      ],
+      "status": "visual study; not final animated frames"
+    }
+  ]
+}
