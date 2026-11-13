@@ -1,0 +1,22 @@
+{
+  "name": "beyond-the-storm",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "《风雪之外》正式版：世界模拟内核、专注时钟和灰盒界面",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "longrun": "node tools/longrun.ts",
+    "sample": "node tools/sample.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}

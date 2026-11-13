@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>风雪之外 · 灰盒</title>
+    <link rel="stylesheet" href="/src/app/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <main id="game">
+        <header id="topbar"></header>
+        <canvas id="scene" width="960" height="270"></canvas>
+        <div id="actionRow"></div>
+        <div id="todayCard" hidden></div>
+        <div id="summaryRow"></div>
+        <div id="focusBar"></div>
+        <div id="taskRow">
+          <select id="preset">
+            <option value="25/5">25/5</option>
+            <option value="45/10">45/10</option>
+            <option value="50/10">50/10</option>
+            <option value="up">正向计时</option>
+            <option value="1/1">1/1（调试）</option>
+          </select>
+          <select id="category">
+            <option value="study">学习阅读</option>
+            <option value="code">编程工作</option>
+            <option value="write">写作创作</option>
+            <option value="other">其他</option>
+          </select>
+          <select id="taskPick"><option value="">不选任务</option></select>
+          <input id="taskName" placeholder="新任务的名字" size="14" />
+          <button data-ui="addTask">加任务</button>
+          <input id="note" placeholder="写一句（回车保存）" size="18" />
+        </div>
+        <div id="notices"></div>
+        <section id="compact">
+          <figure><canvas id="small320" width="320" height="180"></canvas><figcaption id="cap320"></figcaption></figure>
+          <figure><canvas id="small480" width="480" height="270"></canvas><figcaption id="cap480"></figcaption></figure>
+        </section>
+      </main>
+      <aside id="inspect"></aside>
+      <aside id="debug"></aside>
+    </div>
+    <script type="module" src="/src/app/main.ts"></script>
+  </body>
+</html>

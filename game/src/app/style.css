@@ -1,0 +1,32 @@
+/* 灰盒：色块和文字。这不是 04/05 的界面，以后整个换掉。 */
+:root { color-scheme: dark; --bg: #151a1e; --panel: #1e262c; --line: #33414a; --text: #d5dde2; --dim: #8a9aa5; --warm: #e4b276; --cold: #7193ac; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.5 -apple-system, "PingFang SC", sans-serif; }
+#app { display: grid; grid-template-columns: minmax(0, 900px) minmax(360px, 1fr) 240px; gap: 12px; padding: 12px; align-items: start; }
+#game { background: var(--panel); border: 1px solid var(--line); padding: 10px; }
+#topbar { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; margin-bottom: 6px; }
+#topbar .mode { color: var(--warm); }
+#topbar .mode.frozen { color: var(--cold); border: 1px solid var(--cold); padding: 0 6px; }
+#topbar .dots { margin-left: auto; letter-spacing: 3px; cursor: default; }
+canvas { display: block; max-width: 100%; background: #0f1418; image-rendering: pixelated; }
+#actionRow { margin-top: 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+#actionRow .action { font-size: 15px; }
+#todayCard { margin-top: 6px; border: 1px solid var(--line); padding: 8px 10px; background: #19212600; }
+#todayCard ul { margin: 4px 0; padding-left: 18px; }
+#summaryRow { min-height: 20px; color: var(--warm); margin-top: 4px; }
+#focusBar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--line); }
+#focusBar .clock { font: 600 22px/1 ui-monospace, Menlo, monospace; min-width: 110px; }
+#focusBar .gap { flex-basis: 100%; color: var(--dim); }
+#taskRow { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
+#notices { margin-top: 6px; color: var(--dim); min-height: 18px; }
+#compact { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+figure { margin: 0; } figcaption { color: var(--dim); font-size: 12px; }
+aside { background: var(--panel); border: 1px solid var(--line); padding: 10px; max-height: calc(100vh - 24px); overflow: auto; }
+aside h3 { margin: 12px 0 4px; font-size: 13px; color: var(--warm); } aside h3:first-child { margin-top: 0; }
+#debug { border-style: dashed; } #debug h3 { color: var(--cold); }
+button, select, input { font: inherit; color: var(--text); background: #263138; border: 1px solid var(--line); padding: 2px 8px; border-radius: 3px; }
+button { cursor: pointer; white-space: nowrap; } button:hover { border-color: var(--warm); } button:disabled { opacity: .4; cursor: default; }
+table { border-collapse: collapse; width: 100%; } td, th { padding: 1px 4px; text-align: left; vertical-align: top; } th { color: var(--dim); font-weight: normal; }
+.dim { color: var(--dim); } .row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 2px 0; }
+.follower { color: var(--cold); }
+@media (max-width: 1100px) { #app { grid-template-columns: 1fr; } }
