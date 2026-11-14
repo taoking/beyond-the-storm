@@ -19,14 +19,18 @@
       "id": "bed",
       "label": "床",
       "footAnchor": [
-        1402,
-        815
+        1100,
+        730
       ],
       "actorHeightPx": 305,
       "facing": "朝左卧；睡姿没有脚底时锚点取床面中心",
       "occludedBy": "床前沿、被褥",
       "status": "candidate",
-      "note": "全床完整；床褥厚度需状态分层"
+      "note": "全床完整；床褥厚度需状态分层；站立脚底锚点仅用于床侧靠近，睡姿应读 sleepAnchor",
+      "sleepAnchor": [
+        1370,
+        685
+      ]
     },
     {
       "id": "hearth",
@@ -96,15 +100,12 @@
     {
       "id": "bookshelf",
       "label": "书架",
-      "footAnchor": [
-        540,
-        540
-      ],
+      "footAnchor": null,
       "actorHeightPx": 285,
       "facing": "面向架子",
       "occludedBy": "扶手椅靠背",
-      "status": "candidate",
-      "note": "空出增量书与一格藏书"
+      "status": "blocked_provisional",
+      "note": "空出增量书与一格藏书；椅背占据原来候选脚底点，必须在正式布景时清出站立通道"
     },
     {
       "id": "workbench",
@@ -122,15 +123,12 @@
     {
       "id": "radio",
       "label": "收音机",
-      "footAnchor": [
-        610,
-        374
-      ],
+      "footAnchor": null,
       "actorHeightPx": 250,
       "facing": "面向书架/收音机",
       "occludedBy": "书架板",
       "status": "needs_redraw",
-      "note": "图中物件不清楚且更像唱片机，正式图须给拆开状态的收音机明确位置"
+      "note": "图中物件不清楚且更像唱片机，正式图须给拆开状态的收音机明确位置；当前画中器物位置不等于真实可站的脚底点，正式图先腾出站位再标"
     },
     {
       "id": "gramophone",
@@ -159,40 +157,37 @@
       "id": "window",
       "label": "雪窗",
       "footAnchor": [
-        274,
-        560
+        326,
+        755
       ],
       "actorHeightPx": 290,
       "facing": "面向窗外",
       "occludedBy": "窗框、桌沿",
-      "status": "candidate",
-      "note": "宽雪窗可见，窗帘须初始缺省"
+      "status": "shared_desk_provisional",
+      "note": "宽雪窗可见，窗帘须初始缺省；暂与 desk 共用桌前人物位置，若要站立窗前需另做可通行空间"
     },
     {
       "id": "windowsill",
       "label": "窗台",
       "footAnchor": [
-        284,
-        542
+        326,
+        755
       ],
       "actorHeightPx": 245,
       "facing": "面向窗边",
       "occludedBy": "窗框、物件",
-      "status": "candidate",
-      "note": "留玻璃罐与展示空位"
+      "status": "shared_desk_provisional",
+      "note": "留玻璃罐与展示空位；暂同桌面观测位置，非独立窗前走道"
     },
     {
       "id": "instruments",
       "label": "仪器角",
-      "footAnchor": [
-        1580,
-        456
-      ],
+      "footAnchor": null,
       "actorHeightPx": 266,
       "facing": "面向气压计/记录纸",
       "occludedBy": "衣架、壁板",
       "status": "needs_redraw",
-      "note": "当前温度表不够，需补气压计、记录纸、煤油暖炉"
+      "note": "当前温度表不够，需补气压计、记录纸、煤油暖炉；右墙与床头阻挡，尚无可安全容纳全身的地面站位"
     },
     {
       "id": "cellar",
@@ -397,5 +392,6 @@
     "some benches and furniture placed for mood, not tested with actual characters"
   ],
   "authority": "Neither the new preview nor its camera rects are final G5 production coordinates; Claude must recompute full-camera visibility.",
-  "note": "Actor heights/foot anchors are draft in 1672x941 preview coordinates and must be respecified on a genuinely drawn 2560x1440 new composition. Do NOT upscale pixel positions."
+  "note": "Actor heights/foot anchors are draft in 1672x941 preview coordinates and must be respecified on a genuinely drawn 2560x1440 new composition. Do NOT upscale pixel positions. Review correction: locations with impossible standing room have null footAnchor and status blocked/needs_redraw; annotation markers are approximate OBJECT markers, not validated foot positions.",
+  "clarification": "The visual contact sheet numbers mark area centers. For actor placement use footAnchor from JSON only when non-null and candidate traversability is confirmed. bed has separate sleepAnchor."
 }
