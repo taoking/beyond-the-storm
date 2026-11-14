@@ -1,0 +1,129 @@
+{
+  "schema": "beyond-the-storm.05.g1.female-review/1",
+  "status": "REVIEW_ONLY; image binaries delivered in chat ZIP, not yet committed to GitHub",
+  "referenceBranch": "claude/06-greybox",
+  "correspondingMaleG1Branch": "gpt/05-g1-g3-character-validation-20261114",
+  "alternateAppearance": true,
+  "additionalNPC": false,
+  "master": {
+    "width": 1672,
+    "height": 941,
+    "sha256": "41213918be1e899f939436905f0d1447f37209368b092b7cc9b1d91819147af9",
+    "status": "v1.2 atmosphere target, not neutral production start plate"
+  },
+  "source": {
+    "zip": "beyond_storm_G1_female_character_review_20261114.zip",
+    "path": "sources/female_indoor_four_pose_source.png",
+    "width": 1312,
+    "height": 1199,
+    "sha256": "24f61541e7097e46e47aa698ff9821f8ec557cbfc4506b02566c88b9f19dc643"
+  },
+  "design": {
+    "adult": true,
+    "hair": "long dark-chestnut low tie, cream knit headband",
+    "clothing": "cream cable-knit cardigan, dark green collar, long dark brown skirt, wool socks, brown slippers",
+    "illumination": "warm amber from actual cabin lamps"
+  },
+  "layers": [
+    {
+      "pose": "sleep",
+      "place": "bed",
+      "fullCanvasPng": "assets/05/actor/indoor/female/sleep.png",
+      "tightPng": "assets/05/actor/indoor/female/sleep_tight.png",
+      "bbox": [
+        1515,
+        525,
+        1672,
+        614
+      ],
+      "footAnchorDraft": [
+        1640,
+        660
+      ],
+      "originalAlphaVisibleFraction": 0.34,
+      "validForProduction": false,
+      "issue": "bed cut off by picture frame"
+    },
+    {
+      "pose": "sitRead",
+      "place": "armchair",
+      "fullCanvasPng": "assets/05/actor/indoor/female/sitRead.png",
+      "tightPng": "assets/05/actor/indoor/female/sitRead_tight.png",
+      "bbox": [
+        789,
+        380,
+        966,
+        696
+      ],
+      "footAnchorDraft": [
+        882,
+        684
+      ],
+      "originalAlphaVisibleFraction": 0.914,
+      "validForProduction": false,
+      "issue": "draft armrest/footstool alpha mask, need genuine foreground layers"
+    },
+    {
+      "pose": "sitWrite",
+      "place": "desk",
+      "fullCanvasPng": "assets/05/actor/indoor/female/sitWrite.png",
+      "tightPng": "assets/05/actor/indoor/female/sitWrite_tight.png",
+      "bbox": [
+        530,
+        415,
+        770,
+        703
+      ],
+      "footAnchorDraft": [
+        636,
+        707
+      ],
+      "originalAlphaVisibleFraction": 0.609,
+      "validForProduction": false,
+      "issue": "chair-back occlusion and text legibility pending review"
+    },
+    {
+      "pose": "standWork",
+      "place": "hearth",
+      "fullCanvasPng": "assets/05/actor/indoor/female/standWork.png",
+      "tightPng": "assets/05/actor/indoor/female/standWork_tight.png",
+      "bbox": [
+        1224,
+        323,
+        1367,
+        668
+      ],
+      "footAnchorDraft": [
+        1270,
+        660
+      ],
+      "originalAlphaVisibleFraction": 0.892,
+      "validForProduction": false,
+      "issue": "hearth substituted because stove prep station blocked by bed"
+    }
+  ],
+  "previewOnly": [
+    "previews/female_g1_contact_sheet.jpg",
+    "previews/female_design_four_poses.png",
+    "previews/male_female_same_spots_comparison.jpg",
+    "previews/sleep_composite.png",
+    "previews/sitRead_composite.png",
+    "previews/sitWrite_composite.png",
+    "previews/standWork_composite.png"
+  ],
+  "qa": {
+    "hasFourPngLayers": true,
+    "allRGBA": true,
+    "allFullCanvas1672x941": true,
+    "unalteredBaseSha": true,
+    "nonzeroAlpha": true,
+    "macSmallWindowsValidated": false,
+    "visualApproval": false
+  },
+  "binaryGitHubUploadPending": true,
+  "notes": [
+    "Gender variant is an optional single-protagonist look, not two people.",
+    "Continue G1 user visual approval before G5.",
+    "Do not alter 00/02/03/06 or game/."
+  ]
+}
