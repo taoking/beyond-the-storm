@@ -10,7 +10,6 @@ on:
     paths:
       - "设计/原型/05_v1.0_G2只读视觉适配器*"
       - ".github/workflows/05-g2-visual-bridge.yml"
-      - "game/**"
   workflow_dispatch:
 
 permissions:
