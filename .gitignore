@@ -3,5 +3,8 @@
 !/.gitignore
 !/设计/
 !/game/
+# 05 正式美术高品质资源须能通过普通 git add 正常提交
+!/assets/
+!/assets/05/
 .DS_Store
 __pycache__/
