@@ -1,8 +1,10 @@
 // 长跑的统计口径，工具和测试共用。只读世界状态，不改规则。
 import { CONFIG, type LifeTier } from "./config.ts";
-import { PROJECTS } from "./content.ts";
+import { AREA_BY_ID, PROJECTS } from "./content.ts";
+import { checkOuting, depart } from "./outing.ts";
 import { createWorld, stepMinute } from "./sim.ts";
-import type { NewWorldOptions, World } from "./state.ts";
+import { dayClock, type NewWorldOptions, type World } from "./state.ts";
+import { runWild, wildView } from "./wild.ts";
 
 export interface LongRunCase {
   id: string;
@@ -13,6 +15,8 @@ export interface LongRunCase {
   done?: string[];
   /** 不让他做项目（对照「一件修缮都不做」） */
   noProjects?: boolean;
+  /** 每隔几天带他去一趟松林（固定的出门策略，见 outingTrip） */
+  outingEveryDays?: number;
 }
 
 const BASE = ["windowGaps", "woodshed", "cellar", "fence"];
@@ -32,7 +36,54 @@ export const CASES: LongRunCase[] = [
     world: { wood: 0, food: 0, coldHearth: true, alwaysBlizzard: true },
     noProjects: true,
   },
+  { id: "outings", title: "照他自己的习惯做项目，每 3 天带他去一趟松林（固定的出门策略）", outingEveryDays: 3 },
 ];
+
+const WI = CONFIG.IMPL.wild;
+
+/**
+ * 长跑用的一趟松林：9 点以后，好天或一般的天气出门，带 2 份干粮 1 捆柴（家里够的话）。
+ * 按内容表的顺序把采得到的都采了；冷了去最近的生火点生火烤到暖和，累了先吃干粮再歇；
+ * 下午 2 点半以后或者没得采了就走回林口回家。只调玩家能用的那套野外动作，不碰内核规则。
+ */
+export function outingTrip(w: World): void {
+  const c = checkOuting(w);
+  if (!depart(w, { rations: Math.min(2, c.maxRations), bundles: Math.min(1, c.maxBundles) }).ok) return;
+  runWild(w, { type: "travel", to: "pineForest" });
+  const area = AREA_BY_ID.pineForest;
+  const tend = (): void => {
+    for (let guard = 0; guard < 30 && w.outing; guard++) {
+      const b = w.outing.body;
+      if (b.stamina < WI.tiredWarning + 1000) {
+        if (w.outing.rations > 0) runWild(w, { type: "eat" });
+        else runWild(w, { type: "rest" });
+        continue;
+      }
+      if (b.warmth < WI.coldWarning + 1000) {
+        const view = wildView(w);
+        const fire = view?.fires.find((f) => f.near);
+        if (!fire && view) {
+          const spot = [...area.fires].sort((a, b) => Math.abs(a.x - view.x) + Math.abs(a.y - view.y) - (Math.abs(b.x - view.x) + Math.abs(b.y - view.y)))[0];
+          if (!runWild(w, { type: "walkTo", x: spot.x, y: spot.y }).ok) return;
+          continue;
+        }
+        if (fire && !fire.burning && !runWild(w, { type: "fire" }).ok) return;
+        runWild(w, { type: "rest" });
+        if (w.outing && w.outing.body.warmth >= WI.bodyMax - 1500) return;
+        continue;
+      }
+      return;
+    }
+  };
+  for (const node of area.nodes) {
+    if (!w.outing || dayClock(w) >= 14 * 60 + 30) break;
+    tend();
+    if (w.outing) runWild(w, { type: "gather", node: node.id });
+  }
+  if (!w.outing) return;
+  runWild(w, { type: "walkTo", x: area.exits[0].x, y: area.exits[0].y });
+  runWild(w, { type: "travel", to: "home" });
+}
 
 export interface LongRunResult {
   title: string;
@@ -54,6 +105,8 @@ export interface LongRunResult {
   /** 单个世界年里折枯枝、起鱼笼的最多次数 */
   maxEavePerYear: { wood: number; food: number };
   baseRepairsDoneDay: number | null;
+  /** 出门的账：每个世界年的趟数、昏倒、带回来的各样东西 */
+  outing: Record<string, number>;
 }
 
 export function prepareWorld(c: LongRunCase, seed: number): World {
@@ -77,7 +130,15 @@ export function runCase(c: LongRunCase, runs: number, years: number): LongRunRes
     let day = -1;
     let yearStart = { wood: 0, food: 0 };
     let baseDone: number | null = null;
+    let lastTrip = -1;
     while (w.day < days) {
+      if (
+        c.outingEveryDays && w.day % c.outingEveryDays === 0 && w.day !== lastTrip && dayClock(w) >= 9 * 60 &&
+        dayClock(w) < 11 * 60 && (w.weather.today === "A" || w.weather.today === "B") && checkOuting(w).ok
+      ) {
+        lastTrip = w.day;
+        outingTrip(w);
+      }
       if (w.day !== day) {
         day = w.day;
         if (w.today.mood === "thrift") run += 1;
@@ -137,6 +198,11 @@ export function runCase(c: LongRunCase, runs: number, years: number): LongRunRes
     timeShare: Object.fromEntries(minutes.map(([k, v]) => [k.slice(3), v / allMinutes])),
     maxEavePerYear: max,
     baseRepairsDoneDay: baseDoneCount ? baseDoneSum / baseDoneCount : null,
+    outing: Object.fromEntries(
+      Object.entries(total)
+        .filter(([k]) => k === "出门" || k.startsWith("昏倒") || k.startsWith("带回的") || k.startsWith("野外") || k.startsWith("行囊带走") || k === "离家时无火分钟" || k === "回家时火已经灭了")
+        .map(([k, v]) => [k, v / ny]),
+    ),
   };
 }
 
@@ -166,5 +232,12 @@ export function formatReport(r: LongRunResult): string {
     .join("，");
   lines.push(`  他的时间：${time}`);
   if (r.baseRepairsDoneDay !== null) lines.push(`  五件基础修缮平均在第 ${r.baseRepairsDoneDay.toFixed(0)} 天全部做完`);
+  if (r.outing["出门"]) {
+    const o = Object.entries(r.outing)
+      .sort()
+      .map(([k, v]) => `${k} ${v.toFixed(1)}`)
+      .join("，");
+    lines.push(`  出门（每个世界年）：${o}`);
+  }
   return lines.join("\n");
 }

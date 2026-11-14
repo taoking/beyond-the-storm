@@ -4,6 +4,7 @@ import {
   DEFAULT_STYLE,
   PROJECTS,
   type CropDef,
+  type Goods,
   type Material,
   type PlaceId,
   type StyleSlot,
@@ -172,16 +173,46 @@ export interface Trace {
   until: number;
 }
 
+/** 野外的动作，决定这一分钟耗多少体力；表现层也拿它选姿态 */
+export type WildAct = "walk" | "road" | "gather" | "fire" | "rest" | "eat";
+
+/** 身体三项，0..IMPL.wild.bodyMax 的整数（02 第 9.4 节）。出门时都是满的 */
+export interface Body {
+  warmth: number;
+  stamina: number;
+  health: number;
+}
+
+/** 背包里除了带出去的干粮以外的东西：柴按根，其余按件 */
+export type Bag = Partial<Record<Goods, number>>;
+
 export interface OutingState {
-  /** 在哪个区域；null 是在路上或院门外 */
+  /** 在哪个区域；null 是在院门外 */
   area: string | null;
+  /** 在区域地图上的哪一格；不在区域里是 null */
+  pos: { x: number; y: number } | null;
   /** 走回家门要几个游戏分钟 */
   minutesFromDoor: number;
+  /** 干粮，从家里的粮拿的（1 餐 = 1 份） */
   rations: number;
-  bundles: number;
+  /** 背包里的东西：柴（带出去的柴捆按 3 根算，加上捡的）、食材、燃油、罐头、素材 */
+  bag: Bag;
+  body: Body;
+  /** 点着的篝火：在哪个区域哪一格，烧到哪个绝对分钟 */
+  campfire: { area: string; x: number; y: number; until: number } | null;
+  /** 最近一个动作；没动过是 null */
+  last: WildAct | null;
   departedAt: number;
-  /** 已经提过的返家提示，一趟里每种只提一次 */
-  reminded: { dusk: boolean; night: boolean; late: boolean };
+  /** 已经提过的返家提示，一趟里每种只提一次；cold、tired 回到警戒线以上会重新可提 */
+  reminded: { dusk: boolean; night: boolean; late: boolean; cold: boolean; tired: boolean };
+}
+
+/** 野外资源点的记忆，跨趟保留（02 第 9.2 节） */
+export interface WildMemory {
+  /** 独一份的东西已经拿走了几件。还剩几件 = 03 的账 − 这个数，以后补齐数量时老存档也拿得到 */
+  taken: Record<string, number>;
+  /** 会恢复的点上次被采是哪一天 */
+  harvested: Record<string, number>;
 }
 
 export interface World {
@@ -229,6 +260,7 @@ export interface World {
   /** 现实这边传进来的轻推，只影响他闲暇时爱做什么 */
   nudge: { category: TaskCategory | null; onBreak: boolean };
   outing: OutingState | null;
+  wild: WildMemory;
   events: WorldEvent[];
   nextEventId: number;
   summaries: DaySummary[];
@@ -350,6 +382,7 @@ export function createWorldShell(seed: number, opt: NewWorldOptions = {}): World
     carvings: 0,
     nudge: { category: null, onBreak: false },
     outing: null,
+    wild: { taken: {}, harvested: {} },
     events: [],
     nextEventId: 1,
     summaries: [],

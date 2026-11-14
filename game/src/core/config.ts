@@ -24,8 +24,8 @@ export const CONFIG = {
     /** 「今天早点歇」只在这个钟点以后有效 */
     earlyRestFrom: 18 * 60,
   },
-  /** 现实 1 分钟 = 游戏几分钟 */
-  rates: { awake: 4, asleep: 120, outdoor: 10 },
+  /** 现实 1 分钟 = 游戏几分钟。户外直控没有速率：世界只随他的动作走（IMPL.wild） */
+  rates: { awake: 4, asleep: 120 },
   weather: {
     table: {
       winter: { A: 0.35, B: 0.35, C: 0.18, D: 0.12 },
@@ -154,7 +154,11 @@ export const CONFIG = {
     homeMarginMinutes: 30,
     lateWarningMinute: 21 * 60 + 30,
     collapseMinute: 24 * 60,
-    areas: { pineForest: { name: "松林", travelMinutes: 20 } } as Record<string, { name: string; travelMinutes: number }>,
+    /** 背包（02 第 9.3 节）：20 格；干粮 4 份一格，柴 2 捆（6 根）一格，素材 5 件一格 */
+    bagSlots: 20,
+    rationsPerSlot: 4,
+    woodPerSlot: 6,
+    materialsPerSlot: 5,
   },
   /**
    * 02、03 没有写明、实现时补的初值。每一项在
@@ -192,6 +196,49 @@ export const CONFIG = {
     collapseLossRatio: 0.5,
     /** 世界手记保留最近多少个游戏日的逐条事件；更早的只留每日小结 */
     eventKeepDays: 12,
+    /**
+     * 野外（02 第 9 节，用户 2026-11-14 定「按动作走」）：站着不动世界不走，每个动作花若干游戏分钟。
+     * 身体三项都是 0..bodyMax 的整数，显示时换成百分数。下面的「每分钟」都是动作进行中的每个游戏分钟。
+     */
+    wild: {
+      stepMinutes: 2,
+      restMinutes: 10,
+      eatMinutes: 10,
+      lightFireMinutes: 10,
+      /** 生火要几根柴（一捆） */
+      fireSticks: 3,
+      /** 篝火点着以后烧多久；再添一捆接着烧这么久 */
+      fireBurnMinutes: 90,
+      bodyMax: 10_000,
+      /** 每分钟掉的体温：按季节和天气（D 出不了门） */
+      chill: {
+        winter: { A: 15, B: 25, C: 50 },
+        spring: { A: 10, B: 18, C: 40 },
+        summer: { A: 4, B: 10, C: 30 },
+        autumn: { A: 10, B: 18, C: 40 },
+      } as Record<Season, Record<"A" | "B" | "C", number>>,
+      /** 天黑以后（当季的 outing.dusk 起）每分钟多掉的体温 */
+      nightChill: 20,
+      /** 在点着的篝火旁边（同一格或相邻）每分钟回的体温，代替上面的失温 */
+      fireWarmth: 150,
+      /** 体温见底以后每分钟掉的生命 */
+      frostbite: 100,
+      /** 各种动作每分钟耗的体力；负数是恢复 */
+      stamina: { walk: 25, road: 20, gather: 30, fire: 20, rest: -150, eat: 0 },
+      /** 吃一份干粮回的体力（自己吃的和饭点吃的一样） */
+      rationStamina: 3_000,
+      /** 掉到这里提一句；回到这一线以上再掉下来会再提 */
+      coldWarning: 3_000,
+      tiredWarning: 2_000,
+      /** 食材、燃油、罐头每格几件 */
+      otherPerSlot: 5,
+      gather: {
+        twigs: { minutes: 45, amount: 3, regrowDays: 3 },
+        forage: { minutes: 25, amount: 1, regrowDays: 5 },
+        /** 旧东西：一次最多拿一格的量 */
+        salvage: { minutes: 15, amount: 5, regrowDays: null },
+      } as Record<"twigs" | "forage" | "salvage", { minutes: number; amount: number; regrowDays: number | null }>,
+    },
   },
   heartbeat: {
     /** 两次心跳的间隔不超过这个数，且单调钟和墙上钟对得上，才算「确认在运行」 */

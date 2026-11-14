@@ -21,20 +21,11 @@ import {
   type FocusState,
   type StartOptions,
 } from "./focus.ts";
-import {
-  arriveHome,
-  checkOuting,
-  depart,
-  outingMinute,
-  REFUSAL_TEXT,
-  REMINDER_TEXT,
-  takeHomeReminder,
-  travel,
-  type OutingCheck,
-} from "./outing.ts";
+import { checkOuting, depart, REFUSAL_TEXT, REMINDER_TEXT, WARNING_TEXT, type OutdoorNote, type OutingCheck } from "./outing.ts";
 import { createWorld, hasEffect, stepMinute } from "./sim.ts";
 import { dayClock, type NewWorldOptions, type RequestKind, type World } from "./state.ts";
 import { createTelemetry, sampleTelemetry, type Telemetry } from "./telemetry.ts";
+import { runWild, type WildAction } from "./wild.ts";
 
 export const SAVE_VERSION = 1;
 
@@ -52,7 +43,8 @@ export interface AmbienceChoice {
 export interface Notice {
   id: number;
   wall: number;
-  kind: "refusal" | "reminder" | "info";
+  /** refusal 做不了；reminder 该回家了；body 身体（冷了、累了）；info 别的 */
+  kind: "refusal" | "reminder" | "body" | "info";
   text: string;
 }
 
@@ -62,7 +54,7 @@ export interface Game {
   focus: FocusState;
   mode: Mode;
   ambience: AmbienceChoice | null;
-  /** 户外直控时打开的信息面板：打开时世界暂停（02 第 14.6 条） */
+  /** 户外直控时打开的信息面板：开着的时候不接野外的动作（02 第 14.6 条；野外的世界本来就只随动作走） */
   outdoorPanel: "map" | "pack" | "journal" | null;
   /** 不足一个游戏分钟的零头，单位是「毫秒 × 倍率」，满 60000 进一分钟 */
   carry: number;
@@ -103,17 +95,11 @@ export function frozen(g: Game): boolean {
   return g.mode === "ambience" || g.mode === "outdoorFocus";
 }
 
-/** 现实 1 分钟走几个游戏分钟。hidden：应用在后台（户外直控这时暂停）。 */
-export function worldRate(g: Game, hidden = false): number {
+/** 现实 1 分钟走几个游戏分钟。只有正常陪伴随现实时间走；户外直控只随他的动作走（cmdOutdoor），冻结的两种不走。 */
+export function worldRate(g: Game): number {
   const R = CONFIG.rates;
-  switch (g.mode) {
-    case "companion":
-      return g.world.actor.asleep ? R.asleep : R.awake;
-    case "outdoor":
-      return g.outdoorPanel || hidden ? 0 : R.outdoor;
-    default:
-      return 0;
-  }
+  if (g.mode !== "companion") return 0;
+  return g.world.actor.asleep ? R.asleep : R.awake;
 }
 
 function syncNudge(g: Game): void {
@@ -145,8 +131,6 @@ export interface Heartbeat {
   wall: number;
   /** 这一段里确认应用在运行的毫秒数 */
   verifiedMs: number;
-  /** 应用在后台 */
-  hidden?: boolean;
 }
 
 /**
@@ -166,7 +150,7 @@ export function advance(g: Game, hb: Heartbeat, cal: Calendar): FocusEvent[] {
   let budget = Math.floor(hb.verifiedMs);
   const w = g.world;
   while (budget > 0) {
-    const rate = worldRate(g, hb.hidden);
+    const rate = worldRate(g);
     if (rate <= 0) break;
     const need = 60_000 - g.carry;
     if (budget * rate < need) {
@@ -178,14 +162,8 @@ export function advance(g: Game, hb: Heartbeat, cal: Calendar): FocusEvent[] {
     const over = used * rate - need;
     stepMinute(w);
     // 多出来不到 1 毫秒的零头留给下一分钟；倍率变了（他睡着或醒来）就不要了
-    g.carry = worldRate(g, hb.hidden) === rate ? over : 0;
-    if (g.mode === "companion") sampleTelemetry(g.telemetry, w);
-    if (w.outing) {
-      outingMinute(w);
-      const r = takeHomeReminder(w);
-      if (r) notice(g, hb.wall, "reminder", REMINDER_TEXT[r]);
-      afterCollapseOrArrival(g);
-    }
+    g.carry = worldRate(g) === rate ? over : 0;
+    sampleTelemetry(g.telemetry, w);
   }
   return events;
 }
@@ -337,31 +315,27 @@ export function cmdDepart(g: Game, wall: number, pack: { rations: number; bundle
   return OK;
 }
 
-/** 去一个区域：路程是时间往前跳一段 */
-export function cmdTravelTo(g: Game, wall: number, areaId: string): Result {
-  const w = g.world;
-  const area = CONFIG.outing.areas[areaId];
-  if (g.mode !== "outdoor" || !w.outing) return no("没有在野外");
-  if (g.outdoorPanel) return no("先合上面板");
-  if (!area) return no("没有这个地方");
-  if (w.outing.area === areaId) return no("已经在这里了");
-  const ok = travel(w, Math.max(0, area.travelMinutes - w.outing.minutesFromDoor), "out");
-  if (ok && w.outing) w.outing.area = areaId;
-  const r = takeHomeReminder(w);
-  if (r) notice(g, wall, "reminder", REMINDER_TEXT[r]);
-  afterCollapseOrArrival(g);
-  return OK;
+function noteToNotice(g: Game, wall: number, n: OutdoorNote): void {
+  if (n.kind === "reminder") notice(g, wall, "reminder", REMINDER_TEXT[n.reminder]);
+  else if (n.kind === "warning") notice(g, wall, "body", WARNING_TEXT[n.warning]);
 }
 
-/** 走回家门。回到家门口就是回家：背包入库，换回便服，专注不会自动恢复。 */
-export function cmdHeadHome(g: Game): Result {
+/**
+ * 野外的一切动作：走一格、走到某处、采、歇、吃、生火、去一个区域、回家。
+ * 世界只在这里往前走（02 第 9 节，按动作走），每个游戏分钟都过 outing.ts 的 outdoorMinute。
+ * 走回家门就是回家，昏倒是在床上醒来；两种都回到正常陪伴，专注不会自动恢复。
+ */
+export function cmdOutdoor(g: Game, wall: number, action: WildAction): Result {
   const w = g.world;
   if (g.mode !== "outdoor" || !w.outing) return no("没有在野外");
   if (g.outdoorPanel) return no("先合上面板");
-  w.outing.area = null;
-  if (travel(w, w.outing.minutesFromDoor, "home")) arriveHome(w);
+  const r = runWild(w, action);
+  if (!r.ok) {
+    notice(g, wall, "refusal", r.reason!);
+    return no(r.reason!);
+  }
+  for (const n of r.notes) noteToNotice(g, wall, n);
   afterCollapseOrArrival(g);
-  g.carry = 0;
   return OK;
 }
 

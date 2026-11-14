@@ -14,9 +14,10 @@ npm test            # 全部自动化测试（约 10 秒）
 npm run typecheck   # 类型检查
 npm run dev         # 灰盒界面，http://localhost:5173
 npm run build       # 类型检查 + 打包到 dist/
-npm run longrun     # 无人值守长跑，对照 02 第 5.7 节的验收目标。可加 --runs 300 --years 8 --case bare
+npm run longrun     # 无人值守长跑，对照 02 第 5.7 节的验收目标。可加 --runs 300 --years 8 --case bare（outings 是带他出门的那一种）
 npm run sample      # 打印头几天的动作流水：npm run sample -- 3 2（种子 3，2 天）
 node tools/report.ts  # 人物可见率、活动密度、时间配比
+node tools/wild-smoke.mjs  # 真浏览器冒烟（无界面 Chrome）：野外走、采、回家。先 npm run dev
 ```
 
 ## 结构
@@ -24,10 +25,11 @@ node tools/report.ts  # 人物可见率、活动密度、时间配比
 ```
 src/core/      内核：纯逻辑，不碰 DOM、不读系统时钟，种子固定就能重跑
   config.ts      所有数值（02 第 13 节）。02/03 没写、实现时补的初值在 IMPL 一节
-  content.ts     地点、修缮和慢事、作物、样式（03）
+  content.ts     地点、修缮和慢事、作物、样式、野外的区域（03）
   state.ts       世界状态：一份能整个存成 JSON 的事实
   sim.ts         世界模拟，一步一个游戏分钟：天气、柴粮、炉火、他怎么决定下一件事、项目、菜地
-  outing.ts      出门和回家：行囊下限、压火、收尾、返家提示、昏倒
+  outing.ts      出门和回家：行囊下限、压火、收尾；野外的一分钟（身体、饭点、昏倒、返家提示）；回家和昏倒的收账
+  wild.ts        野外的区域：走、采、歇、吃、生火、来回。区域本身是 content.ts 的 AREAS
   focus.ts       专注计时、有效时间、份的结算、任务、成就
   heartbeat.ts   「这段时间应用是不是一直在运行」的判定
   game.ts        一局游戏：四种世界状态、白名单命令、把现实时间交给专注和世界

@@ -1,8 +1,8 @@
-// 出门和回家：02 第 9 节、第 14.3–14.5 条。这里只管事实（库存、炉火、人在哪），
-// 野外的地图、采集、身体状态还没有做；现在的野外只有「离家门几分钟」这一个量。
+// 出门和回家：02 第 9 节、第 14.3–14.5 条。出门、野外的一分钟（身体、饭点、昏倒、返家提示）、回家和昏倒的收账。
+// 区域里怎么走、怎么采在 wild.ts；野外的时间只随动作走，所有动作的时间都从 outdoorMinute 过。
 import { CONFIG } from "./config.ts";
 import { seasonOf } from "./calendar.ts";
-import { zoneOf } from "./content.ts";
+import { MATERIAL_NAME, zoneOf, type Goods, type Material } from "./content.ts";
 import {
   activity,
   bankFire,
@@ -14,9 +14,10 @@ import {
   stepMinute,
   woodCap,
 } from "./sim.ts";
-import { bump, dayClock, type World } from "./state.ts";
+import { bump, dayClock, type Bag, type Body, type WildAct, type World } from "./state.ts";
 
 const O = CONFIG.outing;
+const W = CONFIG.IMPL.wild;
 
 export type OutingRefusal = "blizzard" | "asleep" | "far" | "busy" | "away" | "overPack";
 
@@ -60,11 +61,26 @@ export function checkOuting(w: World): OutingCheck {
   return { ok: true, ...base, wrapUp };
 }
 
+/** 背包占几格：同类堆叠，干粮、柴、每样素材各算各的（02 第 9.3 节） */
+export function bagSlots(rations: number, bag: Bag): number {
+  let n = Math.ceil(rations / O.rationsPerSlot);
+  for (const [k, v] of Object.entries(bag) as [Goods, number][]) {
+    if (!v) continue;
+    const per = k === "wood" ? O.woodPerSlot : k === "ingredients" || k === "fuel" || k === "cans" ? W.otherPerSlot : O.materialsPerSlot;
+    n += Math.ceil(v / per);
+  }
+  return n;
+}
+
 /** 真的出门：收尾（世界钟照走）、扣行囊、压火。出不了门时什么都不扣。 */
 export function depart(w: World, pack: { rations: number; bundles: number }): OutingCheck {
   const check = checkOuting(w);
   if (!check.ok) return check;
-  if (pack.rations > check.maxRations || pack.bundles > check.maxBundles || pack.rations < 0 || pack.bundles < 0) {
+  const wood = pack.bundles * O.sticksPerBundle;
+  if (
+    pack.rations > check.maxRations || pack.bundles > check.maxBundles || pack.rations < 0 || pack.bundles < 0 ||
+    !Number.isInteger(pack.rations) || !Number.isInteger(pack.bundles) || bagSlots(pack.rations, { wood }) > O.bagSlots
+  ) {
     return { ...check, ok: false, reason: "overPack" };
   }
   const act = w.actor.activity;
@@ -77,9 +93,9 @@ export function depart(w: World, pack: { rations: number; bundles: number }): Ou
   }
   w.actor.activity = null;
   w.stock.food -= pack.rations;
-  w.stock.wood -= pack.bundles * O.sticksPerBundle;
+  w.stock.wood -= wood;
   bump(w, "行囊带走的粮", pack.rations);
-  bump(w, "行囊带走的柴", pack.bundles * O.sticksPerBundle);
+  bump(w, "行囊带走的柴", wood);
   bankFire(w, O.bankMinutes);
   if (dayClock(w) < CONFIG.supply.morningSlot[1] && !w.today.morningChore) w.today.outingMorning = true;
   w.actor.away = true;
@@ -87,11 +103,15 @@ export function depart(w: World, pack: { rations: number; bundles: number }): Ou
   w.actor.outfit = "outdoor";
   w.outing = {
     area: null,
+    pos: null,
     minutesFromDoor: 0,
     rations: pack.rations,
-    bundles: pack.bundles,
+    bag: wood ? { wood } : {},
+    body: fullBody(),
+    campfire: null,
+    last: null,
     departedAt: w.minute,
-    reminded: { dusk: false, night: false, late: false },
+    reminded: { dusk: false, night: false, late: false, cold: false, tired: false },
   };
   w.yearStats.outings += 1;
   bump(w, "出门");
@@ -100,78 +120,162 @@ export function depart(w: World, pack: { rations: number; bundles: number }): Ou
   return check;
 }
 
-/** 人在外面时每个游戏分钟要看的事：到饭点吃干粮，午夜撑不住。返回 true 表示昏倒了。 */
-export function outingMinute(w: World): boolean {
+export function fullBody(): Body {
+  return { warmth: W.bodyMax, stamina: W.bodyMax, health: W.bodyMax };
+}
+
+export type CollapseCause = "cold" | "tired" | "midnight";
+
+/** 野外的一分钟里值得告诉你的事。不是世界里发生的事，不进手记（昏倒除外，它在 collapse 里记） */
+export type OutdoorNote =
+  | { kind: "reminder"; reminder: HomeReminder }
+  | { kind: "warning"; warning: "cold" | "tired" }
+  | { kind: "collapse"; cause: CollapseCause };
+
+const clamp = (n: number): number => Math.max(0, Math.min(W.bodyMax, n));
+
+/** 天黑了没有：当季的天黑钟点以后，到第二天清晨 */
+export function isDark(w: World): boolean {
+  const t = dayClock(w);
+  return t >= O.dusk[seasonOf(w.day).season] || t % 1440 < CONFIG.calendar.wakeMinute;
+}
+
+/** 他身边有没有点着的篝火（同一格或相邻） */
+export function nearFire(w: World): boolean {
   const o = w.outing;
-  if (!o) return false;
+  const f = o?.campfire;
+  if (!o || !f || !o.pos || f.area !== o.area || f.until <= w.minute) return false;
+  return Math.abs(f.x - o.pos.x) + Math.abs(f.y - o.pos.y) <= 1;
+}
+
+function tickBody(w: World, act: WildAct): void {
+  const o = w.outing!;
+  const b = o.body;
+  const tier = w.weather.today === "D" ? "C" : w.weather.today;
+  if (nearFire(w)) b.warmth = clamp(b.warmth + W.fireWarmth);
+  else b.warmth = clamp(b.warmth - W.chill[seasonOf(w.day).season][tier] - (isDark(w) ? W.nightChill : 0));
+  if (b.warmth <= 0) b.health = clamp(b.health - W.frostbite);
+  b.stamina = clamp(b.stamina - W.stamina[act]);
+}
+
+/**
+ * 人在外面的一个游戏分钟：野外所有花时间的动作（走一格、采、歇、生火、吃、区域之间的路）都从这里过。
+ * 家里照常走一分钟（他不在家，只有炉火在烧），到饭点吃干粮，身体按这一分钟在做的事变化，
+ * 然后看要不要昏倒、要不要提一句回家。昏倒以后 w.outing 是 null。
+ */
+export function outdoorMinute(w: World, act: WildAct): OutdoorNote[] {
+  const notes: OutdoorNote[] = [];
+  if (!w.outing) return notes;
+  stepMinute(w);
+  const o = w.outing;
+  o.last = act;
   const t = dayClock(w);
   for (const meal of w.today.meals) {
     if (meal.eaten || meal.skipped || t < meal.minute) continue;
     if (o.rations > 0) {
       o.rations -= 1;
       meal.eaten = true;
+      o.body.stamina = clamp(o.body.stamina + W.rationStamina);
       bump(w, "吃饭");
     } else {
-      // 没带干粮：这顿在外面没吃上。算不算缺餐是暂行的做法，见 IMPL.outingMealWithoutRationsIsMissed
+      // 没带干粮：这顿在外面没吃上，体力也就没补上。算不算缺餐是暂行的做法，见 IMPL.outingMealWithoutRationsIsMissed
       meal.skipped = true;
       if (CONFIG.IMPL.outingMealWithoutRationsIsMissed) w.today.missedMeals += 1;
     }
   }
-  if (t >= O.collapseMinute) {
-    collapse(w);
-    return true;
+  tickBody(w, act);
+  const b = o.body;
+  const cause: CollapseCause | null =
+    b.health <= 0 ? "cold" : b.stamina <= 0 ? "tired" : t >= O.collapseMinute ? "midnight" : null;
+  if (cause) {
+    collapse(w, cause);
+    notes.push({ kind: "collapse", cause });
+    return notes;
   }
-  return false;
+  const r = takeHomeReminder(w);
+  if (r) notes.push({ kind: "reminder", reminder: r });
+  if (b.warmth >= W.coldWarning) o.reminded.cold = false;
+  else if (!o.reminded.cold) {
+    o.reminded.cold = true;
+    notes.push({ kind: "warning", warning: "cold" });
+  }
+  if (b.stamina >= W.tiredWarning) o.reminded.tired = false;
+  else if (!o.reminded.tired) {
+    o.reminded.tired = true;
+    notes.push({ kind: "warning", warning: "tired" });
+  }
+  return notes;
 }
 
-/** 路程是时间往前跳一段，不用一步步走（02 第 9.2 节）。返回 false 表示路上昏倒了。 */
-export function travel(w: World, minutes: number, toward: "home" | "out"): boolean {
+/** 连着花几个游戏分钟做同一件事。each 在每一分钟之后调用（人还在外面时）。返回 false 表示中途昏倒了 */
+export function spendOutdoor(w: World, minutes: number, act: WildAct, notes: OutdoorNote[], each?: () => void): boolean {
   for (let i = 0; i < minutes; i++) {
+    notes.push(...outdoorMinute(w, act));
     if (!w.outing) return false;
-    stepMinute(w);
-    w.outing.minutesFromDoor = Math.max(0, w.outing.minutesFromDoor + (toward === "home" ? -1 : 1));
-    if (outingMinute(w)) return false;
+    each?.();
   }
   return true;
 }
 
-/** 走回家门：背包入库，换回便服 */
-export function arriveHome(w: World): void {
-  const o = w.outing;
-  if (!o) return;
+/** 回家和昏倒共用的收账。keep 是普通物资（柴、干粮、食材）留下的比例；燃油、罐头、素材全留 */
+function settle(w: World, keep: number): void {
+  const o = w.outing!;
+  const bag = o.bag;
+  const kept = (n: number | undefined): number => Math.floor((n ?? 0) * keep);
   // 装不下的部分不入库，也不记进来源（账要对得上）
-  const food = Math.max(0, Math.min(o.rations, foodCap(w) - w.stock.food));
-  const wood = Math.max(0, Math.min(o.bundles * O.sticksPerBundle, woodCap(w) - w.stock.wood));
+  const put = (have: number, cap: number, n: number): number => Math.max(0, Math.min(n, cap - have));
+  const food = put(w.stock.food, foodCap(w), kept(o.rations));
+  const wood = put(w.stock.wood, woodCap(w), kept(bag.wood));
+  const ingredients = put(w.stock.ingredients, CONFIG.stock.ingredientCap, kept(bag.ingredients));
+  const fuel = put(w.stock.fuel, CONFIG.stock.fuelCap, bag.fuel ?? 0);
+  const cans = put(w.stock.cans, CONFIG.stock.canCap, bag.cans ?? 0);
   w.stock.food += food;
   w.stock.wood += wood;
+  w.stock.ingredients += ingredients;
+  w.stock.fuel += fuel;
+  w.stock.cans += cans;
   bump(w, "带回的粮", food);
   bump(w, "带回的柴", wood);
+  if (ingredients) bump(w, "带回的食材", ingredients);
+  if (fuel) bump(w, "带回的燃油", fuel);
+  if (cans) bump(w, "带回的罐头", cans);
+  for (const m of Object.keys(MATERIAL_NAME) as Material[]) {
+    const n = bag[m] ?? 0;
+    if (!n) continue;
+    w.stock.materials[m] += n;
+    bump(w, `带回的素材:${m}`, n);
+  }
   w.outing = null;
   w.actor.away = false;
-  w.actor.place = "door";
   w.actor.outfit = "indoor";
+}
+
+/** 走回家门：背包入库，换回便服 */
+export function arriveHome(w: World): void {
+  if (!w.outing) return;
+  settle(w, 1);
+  w.actor.place = "door";
   if (w.fire.burn <= 0 && w.fire.ember <= 0) bump(w, "回家时火已经灭了");
   logEvent(w, "outing", "回到家了。", 3);
 }
 
-/** 昏倒：在家里的床上醒来，已经是第二天早上；柴粮丢一部分（02 第 9.7 节） */
-export function collapse(w: World): void {
-  const o = w.outing;
-  if (!o) return;
-  const keep = 1 - CONFIG.IMPL.collapseLossRatio;
-  const rations = Math.floor(o.rations * keep);
-  const wood = Math.floor(o.bundles * keep) * O.sticksPerBundle;
-  w.stock.food = Math.min(foodCap(w), w.stock.food + rations);
-  w.stock.wood = Math.min(woodCap(w), w.stock.wood + wood);
-  w.outing = null;
-  w.actor.away = false;
+const COLLAPSE_TEXT: Record<CollapseCause, string> = {
+  cold: "在外面冻得撑不住了。醒来已经在自己的床上。",
+  tired: "在外面累得走不动了。醒来已经在自己的床上。",
+  midnight: "夜里在外面撑不住了。醒来已经在自己的床上。",
+};
+
+/** 昏倒：在家里的床上醒来，已经是第二天早上；柴粮丢一部分，素材不丢（02 第 9.7 节） */
+export function collapse(w: World, cause: CollapseCause): void {
+  if (!w.outing) return;
+  settle(w, 1 - CONFIG.IMPL.collapseLossRatio);
   w.actor.place = "bed";
-  w.actor.outfit = "indoor";
   bump(w, "昏倒");
-  logEvent(w, "collapse", "夜里在外面撑不住了。醒来已经在自己的床上。", 4);
+  bump(w, `昏倒:${cause}`);
+  logEvent(w, "collapse", COLLAPSE_TEXT[cause], 4);
   const until = Math.max(1, w.dayStart + 1440 - w.minute);
   // 这一夜炉子是凉的，记成冷启动：醒来他先生火，没有别的惩罚
-  startActivity(w, activity("sleep", "睡着了", "sleep", [{ place: "bed", minutes: until }], { collapsed: true }));
+  startActivity(w, activity("sleep", "睡着了", "sleep", [{ place: "bed", minutes: until }], { collapsed: true, cause }));
 }
 
 export type HomeReminder = "dusk" | "night" | "late";
@@ -180,6 +284,11 @@ export const REMINDER_TEXT: Record<HomeReminder, string> = {
   dusk: "天色不早了，该往回走了。",
   night: "天黑了，更冷，也看不清路。",
   late: "夜深了，再不回去撑不到天亮。",
+};
+
+export const WARNING_TEXT: Record<"cold" | "tired", string> = {
+  cold: "冷得厉害了。找个生火点烤烤火，或者往回走。",
+  tired: "走累了。歇一歇，或者吃点干粮。",
 };
 
 /**

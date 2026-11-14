@@ -11,7 +11,6 @@ import {
   cmdDepart,
   cmdEndFocus,
   cmdEnterAmbience,
-  cmdHeadHome,
   cmdOutdoorPanel,
   cmdPauseProject,
   cmdPinProject,
@@ -22,13 +21,14 @@ import {
   cmdReturnToToday,
   cmdReturnToWild,
   cmdStartFocus,
-  cmdTravelTo,
+  cmdOutdoor,
   interrupt,
   newGame,
   worldRate,
   type Game,
 } from "../src/core/game.ts";
 import { judgeGap } from "../src/core/heartbeat.ts";
+import { fullBody } from "../src/core/outing.ts";
 import { deserialize, serialize } from "../src/core/save.ts";
 import { stepMinute } from "../src/core/sim.ts";
 import { dayClock } from "../src/core/state.ts";
@@ -45,12 +45,12 @@ function session(seed = 1, opt = {}) {
   const s = {
     g,
     wall: T0,
-    run(ms: number, stepMs = 1000, hidden = false): void {
+    run(ms: number, stepMs = 1000): void {
       let left = ms;
       while (left > 0) {
         const dt = Math.min(stepMs, left);
         s.wall += dt;
-        advance(g, { wall: s.wall, verifiedMs: dt, hidden }, cal);
+        advance(g, { wall: s.wall, verifiedMs: dt }, cal);
         left -= dt;
       }
     },
@@ -84,6 +84,16 @@ function readyToGoOut(seed = 1) {
   }
   throw new Error("找不到合适的种子");
 }
+
+/** 野外的一个动作，做不了就让测试失败 */
+function act(s: { g: Game; wall: number }, action: Parameters<typeof cmdOutdoor>[2]): void {
+  const r = cmdOutdoor(s.g, s.wall, action);
+  if (!r.ok) throw new Error(`${JSON.stringify(action)}：${r.reason}`);
+}
+const toForest = (s: { g: Game; wall: number }): void => act(s, { type: "travel", to: "pineForest" });
+const keepWell = (g: Game): void => {
+  if (g.world.outing) g.world.outing.body = fullBody();
+};
 
 const worldFacts = (g: Game): string => {
   const w = g.world;
@@ -288,39 +298,52 @@ describe("出门（02 第 9 节、第 14.3–14.6 条）", () => {
     expect(cmdCheckOuting(poor.g)).toMatchObject({ maxRations: 0, maxBundles: 0 });
   });
 
-  it("户外直控：现实 1 分钟 = 游戏 10 分钟；家里的家务和项目不动，只有火在烧；应用切到后台就暂停", () => {
+  it("户外直控：站着不动世界不走；每个动作花游戏分钟，家里的家务和项目不动，只有火在烧；后台也一样", () => {
     const s = readyToGoOut(1);
     cmdDepart(s.g, s.wall, { rations: 2, bundles: 0 });
     const w = s.g.world;
+    const before = worldFacts(s.g);
+    s.run(30 * MIN);
+    expect(worldFacts(s.g)).toBe(before);
+    expect(s.g.carry).toBe(0);
     const m = w.minute;
     const events = w.events.length;
     const burn = w.fire.burn;
-    s.run(6 * MIN);
-    expect(w.minute - m).toBe(60);
-    expect(w.fire.burn).toBe(burn - 60);
+    toForest(s);
+    expect(w.minute - m).toBe(20);
+    expect(w.fire.burn).toBe(burn - 20);
     expect(w.events.length).toBe(events);
-    s.run(6 * MIN, 1000, true);
-    expect(w.minute - m).toBe(60);
+    act(s, { type: "move", dx: 1, dy: 0 });
+    expect(w.minute - m).toBe(20 + CONFIG.IMPL.wild.stepMinutes);
+    act(s, { type: "rest" });
+    expect(w.minute - m).toBe(22 + CONFIG.IMPL.wild.restMinutes);
+    const m2 = w.minute;
+    s.run(2 * HOUR);
+    expect(w.minute).toBe(m2);
   });
 
   it("打开地图、背包、手记：世界暂停，关闭后原地接续；这段不算有效专注，不得份", () => {
     const s = readyToGoOut(1);
     cmdDepart(s.g, s.wall, { rations: 2, bundles: 0 });
-    cmdTravelTo(s.g, s.wall, "pineForest");
+    toForest(s);
     const w = s.g.world;
     for (const panel of ["map", "pack", "journal"] as const) {
       cmdOutdoorPanel(s.g, panel);
       const before = worldFacts(s.g);
+      const body = JSON.stringify(w.outing);
       s.run(30 * MIN);
+      expect(cmdOutdoor(s.g, s.wall, { type: "move", dx: 1, dy: 0 })).toEqual({ ok: false, reason: "先合上面板" });
+      expect(cmdOutdoor(s.g, s.wall, { type: "rest" }).ok).toBe(false);
       expect(worldFacts(s.g)).toBe(before);
-      expect(w.outing).toMatchObject({ area: "pineForest", minutesFromDoor: 20 });
+      expect(JSON.stringify(w.outing)).toBe(body);
+      expect(w.outing).toMatchObject({ area: "pineForest", minutesFromDoor: 20, pos: { x: 0, y: 4 } });
       cmdOutdoorPanel(s.g, null);
     }
     expect(s.g.focus.stats.totalMs).toBe(0);
     expect(s.g.focus.shares.total).toBe(0);
     const m = w.minute;
-    s.run(1 * MIN);
-    expect(w.minute - m).toBe(10);
+    act(s, { type: "move", dx: 1, dy: 0 });
+    expect(w.minute - m).toBe(CONFIG.IMPL.wild.stepMinutes);
   });
 
   it("出门时正在跑的专注暂停；直接操控时不计有效专注；休息在野外走完后不自动接下一轮", () => {
@@ -350,11 +373,15 @@ describe("出门（02 第 9 节、第 14.3–14.6 条）", () => {
   it("户外临时专注：世界冻结，他留在原地，照常得份；专注结束不自动切回去，要你点「回到野外」", () => {
     const s = readyToGoOut(1);
     cmdDepart(s.g, s.wall, { rations: 2, bundles: 0 });
-    cmdTravelTo(s.g, s.wall, "pineForest");
+    toForest(s);
+    act(s, { type: "move", dx: 1, dy: 0 });
     cmdStartFocus(s.g, s.wall, cal, { preset: { kind: "countdown", focusMin: 25, breakMin: 0 } });
     expect(s.g.mode).toBe("outdoorFocus");
     const before = worldFacts(s.g);
+    const outing = JSON.stringify(s.g.world.outing);
+    expect(cmdOutdoor(s.g, s.wall, { type: "rest" }).ok).toBe(false);
     s.run(40 * MIN);
+    expect(JSON.stringify(s.g.world.outing)).toBe(outing);
     expect(s.g.focus.shares.total).toBe(1);
     expect(worldFacts(s.g)).toBe(before);
     expect(s.g.mode).toBe("outdoorFocus");
@@ -366,7 +393,7 @@ describe("出门（02 第 9 节、第 14.3–14.6 条）", () => {
     expect(s.g.mode).toBe("outdoorFocus");
     expect(cmdReturnToWild(s.g).ok).toBe(true);
     expect(s.g.mode).toBe("outdoor");
-    expect(s.g.world.outing).toMatchObject({ area: "pineForest", minutesFromDoor: 20 });
+    expect(s.g.world.outing).toMatchObject({ area: "pineForest", pos: { x: 1, y: 4 }, minutesFromDoor: 20 + CONFIG.IMPL.wild.stepMinutes });
   });
 
   it("走回家门才算回家：背包入库，换回便服，专注不会自动恢复；上午被出门占了，下午补活计", () => {
@@ -382,11 +409,11 @@ describe("出门（02 第 9 节、第 14.3–14.6 条）", () => {
     const eaten = (): number => w.today.meals.filter((m) => m.eaten).length;
     const eatenAtHome = eaten();
     expect(w.today.outingMorning).toBe(true);
-    cmdTravelTo(s.g, s.wall, "pineForest");
+    toForest(s);
     expect(w.outing?.minutesFromDoor).toBe(20);
-    s.run(20 * MIN); // 在松林待了 200 个游戏分钟
+    for (let i = 0; i < 20; i++) act(s, { type: "rest" }); // 在松林待了 200 个游戏分钟
     const wood = w.stock.wood;
-    expect(cmdHeadHome(s.g).ok).toBe(true);
+    act(s, { type: "travel", to: "home" });
     expect(s.g.mode).toBe("companion");
     expect(w.actor.away).toBe(false);
     expect(w.actor.outfit).toBe("indoor");
@@ -406,13 +433,17 @@ describe("出门（02 第 9 节、第 14.3–14.6 条）", () => {
     cmdDepart(s.g, s.wall, { rations: 4, bundles: 2 });
     const day = w.day;
     const food = w.stock.food;
-    cmdTravelTo(s.g, s.wall, "pineForest");
-    // 一直待到过了午夜
-    for (let i = 0; i < 2000 && s.g.mode === "outdoor"; i++) s.run(6000);
+    toForest(s);
+    // 身体好好的也撑不过午夜：一直歇到过了午夜（每次歇之前把身体补满，只看午夜这一条）
+    for (let i = 0; i < 200 && s.g.mode === "outdoor"; i++) {
+      keepWell(s.g);
+      act(s, { type: "rest" });
+    }
     expect(s.g.mode).toBe("companion");
     expect(w.outing).toBeNull();
     expect(w.actor.place).toBe("bed");
-    expect(w.events.some((e) => e.type === "collapse")).toBe(true);
+    expect(w.events.filter((e) => e.type === "collapse").map((e) => e.text)).toEqual(["夜里在外面撑不住了。醒来已经在自己的床上。"]);
+    expect(w.tally["昏倒:midnight"]).toBe(1);
     // 路上吃掉了午饭、晚饭两份干粮，剩下 2 份丢一半
     expect(w.stock.food).toBe(food + 1);
     s.until((g) => g.world.day === day + 1 && !g.world.actor.asleep, 600);
@@ -425,28 +456,37 @@ describe("出门（02 第 9 节、第 14.3–14.6 条）", () => {
     const s = readyToGoOut(1);
     const w = s.g.world;
     cmdDepart(s.g, s.wall, { rations: 2, bundles: 0 });
-    cmdTravelTo(s.g, s.wall, "pineForest");
+    toForest(s);
     const reminders = (): string[] => s.g.notices.filter((n) => n.kind === "reminder").map((n) => n.text);
     expect(reminders()).toEqual([]);
     const dusk = CONFIG.outing.dusk[seasonOf(w.day).season];
     expect(dusk).toBe(17 * 60);
-    // 冬天 17:00 天黑，回程 20 分钟加半小时余量：16:10 提第一句
-    while (dayClock(w) < 16 * 60 + 9) s.run(6000);
+    // 冬天 17:00 天黑，回程 20 分钟加半小时余量：16:10 提第一句。野外的时间只随动作走，提示也在动作里出
+    const rest = CONFIG.IMPL.wild.restMinutes;
+    while (dayClock(w) + rest < 16 * 60 + 10) {
+      keepWell(s.g);
+      act(s, { type: "rest" });
+    }
     expect(reminders()).toEqual([]);
-    s.run(12_000);
+    act(s, { type: "rest" });
+    expect(dayClock(w)).toBeGreaterThanOrEqual(16 * 60 + 10);
     expect(reminders()).toEqual(["天色不早了，该往回走了。"]);
     for (let i = 0; i < 5; i++) {
       cmdOutdoorPanel(s.g, "map");
       s.run(5 * MIN);
       cmdOutdoorPanel(s.g, null);
-      s.run(6000);
+      act(s, { type: "move", dx: 1, dy: 0 });
+      act(s, { type: "move", dx: -1, dy: 0 });
     }
     expect(reminders()).toHaveLength(1);
-    while (dayClock(w) < 17 * 60 + 5) s.run(6000);
+    while (dayClock(w) < 17 * 60 + 5) {
+      keepWell(s.g);
+      act(s, { type: "rest" });
+    }
     expect(reminders()).toHaveLength(2);
     // 提示不要求确认，你仍可以接着走
     expect(s.g.mode).toBe("outdoor");
-    cmdHeadHome(s.g);
+    act(s, { type: "travel", to: "home" });
     expect(reminders()).toHaveLength(2);
   });
 

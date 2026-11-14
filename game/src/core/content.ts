@@ -338,3 +338,82 @@ export const CATEGORY_NAME: Record<TaskCategory, string> = {
   write: "写作创作",
   other: "其他",
 };
+
+// ---------- 野外的区域（03 第 5.1 节） ----------
+
+/** 背包里能装的东西：柴按根、干粮按份，其余按件 */
+export type Goods = "wood" | "ingredients" | "fuel" | "cans" | Material;
+
+/**
+ * 资源点。kind 决定采一次花多久、给多少、多久恢复（数在 config.ts 的 IMPL.wild.gather）：
+ * twigs 枯枝、forage 松子浆果这类、salvage 旧世界留下的东西（独一份，拿一件少一件）。
+ */
+export interface NodeDef {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  kind: "twigs" | "forage" | "salvage";
+  gives: Goods;
+  /** salvage 一共放了几件（03 第 3.4 节的账） */
+  total?: number;
+  /** 只在这几个季节有；不写是四季都有 */
+  seasons?: Season[];
+}
+
+export interface AreaDef {
+  id: string;
+  name: string;
+  /** 从这个区域的回家出口走回家门要几个游戏分钟（03 第 5.1 节的单程路程） */
+  homeMinutes: number;
+  /** 地形：# 走不过去（密林、石堆），. 能走 */
+  map: string[];
+  /** 出口：站在这一格才能离开。to 是去哪，home 是回家 */
+  exits: { x: number; y: number; to: "home" | string }[];
+  /** 从家里来时落脚的那一格 */
+  entry: { x: number; y: number };
+  /** 固定的生火点 */
+  fires: { x: number; y: number }[];
+  nodes: NodeDef[];
+}
+
+export const AREAS: AreaDef[] = [
+  {
+    id: "pineForest",
+    name: "松林",
+    homeMinutes: 20,
+    map: [
+      "###############",
+      "#.....#.......#",
+      "#..........##.#",
+      "#...##........#",
+      "..............#",
+      "#...###.......#",
+      "#.......#.....#",
+      "#.............#",
+      "###############",
+    ],
+    exits: [{ x: 0, y: 4, to: "home" }],
+    entry: { x: 0, y: 4 },
+    fires: [
+      { x: 2, y: 6 },
+      { x: 10, y: 4 },
+    ],
+    nodes: [
+      { id: "twigsA", name: "枯枝堆", x: 4, y: 1, kind: "twigs", gives: "wood" },
+      { id: "twigsB", name: "松树下的枯枝", x: 6, y: 7, kind: "twigs", gives: "wood" },
+      { id: "pineNuts", name: "松子", x: 9, y: 1, kind: "forage", gives: "ingredients", seasons: ["autumn", "winter"] },
+      { id: "berries", name: "浆果", x: 10, y: 7, kind: "forage", gives: "ingredients", seasons: ["winter", "summer", "autumn"] },
+      // 废弃的伐木工棚。种子、书、胶卷、旧工具内核里还没有，先不放
+      { id: "shedLumber", name: "工棚的旧木料", x: 12, y: 3, kind: "salvage", gives: "lumber", total: 10 },
+      { id: "shedRope", name: "工棚的旧绳索", x: 13, y: 4, kind: "salvage", gives: "rope", total: 3 },
+      { id: "shedCanvas", name: "工棚的帆布", x: 12, y: 5, kind: "salvage", gives: "canvas", total: 5 },
+      { id: "shedFuel", name: "工棚的一罐油", x: 13, y: 6, kind: "salvage", gives: "fuel", total: 1 },
+      { id: "shedCan", name: "工棚的罐头", x: 11, y: 6, kind: "salvage", gives: "cans", total: 1 },
+    ],
+  },
+];
+
+export const AREA_BY_ID: Record<string, AreaDef> = Object.fromEntries(AREAS.map((a) => [a.id, a]));
+
+export const GOODS_NAME: Record<Goods, string> = { wood: "柴", ingredients: "食材", fuel: "燃油", cans: "罐头", ...MATERIAL_NAME };

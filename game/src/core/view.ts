@@ -3,13 +3,15 @@
 import { CAMERA_IDS, visibleIn, type CameraId } from "./cameras.ts";
 import { clockText, DAY_PART_NAME, dayPartOf, SEASON_NAME, seasonOf } from "./calendar.ts";
 import { CONFIG, type LifeTier } from "./config.ts";
-import { CROP_BY_ID, PLACES, PROJECTS, STYLES, zoneOf, type PlaceId, type Zone } from "./content.ts";
+import { AREA_BY_ID, CROP_BY_ID, GOODS_NAME, PLACES, PROJECTS, STYLES, zoneOf, type Goods, type PlaceId, type Zone } from "./content.ts";
 import { focusBarState, sharesToday, unlockedStyleCount, type Calendar, type FocusBarState, type RoundSummary } from "./focus.ts";
 import { frozen, type Game, type Mode, type Notice } from "./game.ts";
 import { actionLabel, fireLook, foodCap, foodDays, hasEffect, projectStatus, woodCap, woodDays, type ProjectStatus } from "./sim.ts";
-import { dayClock, type WorldEvent } from "./state.ts";
+import { bagSlots, isDark, nearFire } from "./outing.ts";
+import { dayClock, type WildAct, type WorldEvent } from "./state.ts";
 import { TIER_NAME } from "./weather.ts";
-import { actorPose, projectedLook, type LookProjection, type PoseProjection } from "./visual.ts";
+import { actorPose, projectedLook, type LookProjection, type PoseKey, type PoseProjection } from "./visual.ts";
+import { wildView, type WildView } from "./wild.ts";
 
 export const MOOD_NAME: Record<LifeTier, string> = { thrift: "俭", normal: "正常", rich: "丰足" };
 
@@ -85,7 +87,23 @@ export interface Snapshot {
   /** 近况卡：今天到现在真实发生过的事，要紧的在前 */
   today: { top: WorldEvent[]; more: WorldEvent[] };
   traces: { type: string; place: PlaceId }[];
-  outing: { area: string | null; minutesFromDoor: number; rations: number; bundles: number; panel: string | null } | null;
+  outing: {
+    /** 区域的名字；在院门外是 null */
+    area: string | null;
+    areaId: string | null;
+    minutesFromDoor: number;
+    rations: number;
+    panel: string | null;
+    /** 体温、体力、生命，0–100 */
+    body: { warmth: number; stamina: number; health: number };
+    bag: { slots: number; maxSlots: number; items: { goods: Goods; name: string; count: number }[] };
+    dark: boolean;
+    nearFire: boolean;
+    /** 最近一个动作 */
+    last: WildAct | null;
+    /** 在区域里时的地图、资源点、生火点 */
+    map: WildView | null;
+  } | null;
   focus: {
     bar: FocusBarState;
     text: string;
@@ -133,6 +151,10 @@ export function summaryText(s: RoundSummary | null): string {
   return parts.join(" · ");
 }
 
+const WILD_POSE: Record<WildAct, PoseKey> = { walk: "walk", road: "walk", gather: "crouch", fire: "crouch", rest: "sit", eat: "sitHold" };
+
+const percent = (n: number): number => Math.round((n / CONFIG.IMPL.wild.bodyMax) * 100);
+
 function stageVisible(place: PlaceId | null): Record<CameraId, boolean> {
   return Object.fromEntries(CAMERA_IDS.map((c) => [c, place !== null && visibleIn(c, place)])) as Record<CameraId, boolean>;
 }
@@ -164,8 +186,9 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
       ? { show: false, place: null, label: "", illusion: true, outfit: null, activity: null, pose: null, prop: null }
       : { show: true, place: "armchair", label: "在炉边坐着", illusion: true, outfit: "indoor", activity: null, pose: "sit", prop: null };
   } else if (g.mode === "outdoor") {
-    // 野外完整动画/走路路径尚未实装；这里只给预留站姿，不捏造位移。
-    stage = { show: true, place: "wild", label: "在野外", illusion: false, outfit: "outdoor", activity: null, pose: "standLook", prop: null };
+    // 野外只有最近一个动作，姿态跟着它；位移由区域地图上的格子表示
+    const last = w.outing?.last ?? null;
+    stage = { show: true, place: "wild", label: "在野外", illusion: false, outfit: "outdoor", activity: null, pose: last ? WILD_POSE[last] : "standLook", prop: null };
   } else {
     stage = { show: true, place: a.place, label, illusion: false, outfit: a.outfit, ...pose };
   }
@@ -294,11 +317,27 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
     traces: w.traces.filter((x) => x.until > w.minute).map((x) => ({ type: x.type, place: x.place })),
     outing: w.outing
       ? {
-          area: w.outing.area ? CONFIG.outing.areas[w.outing.area].name : null,
+          area: w.outing.area ? AREA_BY_ID[w.outing.area].name : null,
+          areaId: w.outing.area,
           minutesFromDoor: w.outing.minutesFromDoor,
           rations: w.outing.rations,
-          bundles: w.outing.bundles,
           panel: g.outdoorPanel,
+          body: {
+            warmth: percent(w.outing.body.warmth),
+            stamina: percent(w.outing.body.stamina),
+            health: percent(w.outing.body.health),
+          },
+          bag: {
+            slots: bagSlots(w.outing.rations, w.outing.bag),
+            maxSlots: CONFIG.outing.bagSlots,
+            items: (Object.entries(w.outing.bag) as [Goods, number][])
+              .filter(([, n]) => n > 0)
+              .map(([goods, count]) => ({ goods, name: GOODS_NAME[goods], count })),
+          },
+          dark: isDark(w),
+          nearFire: nearFire(w),
+          last: w.outing.last,
+          map: wildView(w),
         }
       : null,
     focus: {

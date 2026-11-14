@@ -9,6 +9,7 @@ import { judgeGap, type Beat } from "../core/heartbeat.ts";
 import { deserialize, serialize } from "../core/save.ts";
 import type { TaskCategory } from "../core/content.ts";
 import type { FocusPreset } from "../core/focus.ts";
+import type { WildAction } from "../core/wild.ts";
 
 const SAVE_KEY = "bts.save.v1";
 const LOCK = "bts.leader";
@@ -39,8 +40,7 @@ const COMMANDS: Record<string, (g: G.Game, wall: number, ...a: never[]) => unkno
   returnToToday: (g) => G.cmdReturnToToday(g),
   returnToWild: (g) => G.cmdReturnToWild(g),
   depart: (g, wall, rations: number, bundles: number) => G.cmdDepart(g, wall, { rations, bundles }),
-  travelTo: (g, wall, area: string) => G.cmdTravelTo(g, wall, area),
-  headHome: (g) => G.cmdHeadHome(g),
+  outdoor: (g, wall, action: WildAction) => G.cmdOutdoor(g, wall, action),
   outdoorPanel: (g, _wall, panel: G.Game["outdoorPanel"]) => G.cmdOutdoorPanel(g, panel),
   pin: (g, _wall, id: string) => G.cmdPinProject(g, id),
   unpin: (g, _wall, id: string) => G.cmdUnpinProject(g, id),
@@ -154,7 +154,7 @@ export function startRuntime(): Runtime {
       const ms = verdict.verifiedMs + remainder;
       const whole = Math.floor(ms);
       remainder = ms - whole;
-      if (whole > 0) G.advance(g, { wall: now.wall, verifiedMs: whole, hidden: document.hidden }, cal);
+      if (whole > 0) G.advance(g, { wall: now.wall, verifiedMs: whole }, cal);
     } else {
       G.interrupt(g, verdict.kind === "sleep" ? "sleep" : "gap", verdict.gapMs);
       save(true);

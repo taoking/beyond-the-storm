@@ -161,12 +161,7 @@ function renderInspect(s: Snapshot, g: Game): string {
 
   h.push("<h3>出门</h3>");
   if (s.outing) {
-    const o = s.outing;
-    h.push(`<div>${o.area ? `在${esc(o.area)}` : "在院门外"} · 走回家门要 ${o.minutesFromDoor} 分钟 · 干粮 ${o.rations} · 柴 ${o.bundles} 捆</div>
-      <div class="row">${btn("去松林", "travelTo", ["pineForest"], s.mode !== "outdoor" || o.area === "松林")}
-      ${btn("走回家", "headHome", [], s.mode !== "outdoor")}
-      ${(["map", "pack", "journal"] as const).map((p) => btn(o.panel === p ? `合上${PANEL_NAME[p]}` : PANEL_NAME[p], "outdoorPanel", [o.panel === p ? null : p], s.mode !== "outdoor")).join("")}</div>
-      <div class="dim">${o.panel ? "面板开着：世界暂停，也不算专注。" : "野外的地图、采集和身体状态还没有做，这里只有时间、行囊和回家。"}</div>`);
+    h.push('<div class="dim">在外面。走、采、歇、生火在场景下面的「野外」一栏。</div>');
   } else {
     const c = checkOuting(w);
     h.push(`<div class="row">干粮 <input id="packRations" type="number" min="0" max="${c.maxRations}" value="${Math.min(2, c.maxRations)}" style="width:50px"/>
@@ -196,6 +191,56 @@ function renderInspect(s: Snapshot, g: Game): string {
     if (open.length) h.push(`<div class="row">${open.map((t) => btn(`勾完：${t.name}`, "completeTask", [t.id])).join("")}</div>`);
     h.push(f.journal.slice(-6).reverse().map((j) => `<div class="dim">${j.date} ${esc(j.text)}</div>`).join(""));
   }
+  return h.join("");
+}
+
+const BODY_NAME = { warmth: "体温", stamina: "体力", health: "生命" } as const;
+const bar = (n: number): string => `<span class="bar"><i style="width:${n}%"></i></span>`;
+
+/** 野外一栏：单独一块，内容变了才重画（世界在野外只随动作变），按钮不会在按下和松开之间被换掉 */
+function renderWild(s: Snapshot): string {
+  const o = s.outing!;
+  const off = s.mode !== "outdoor" || o.panel !== null;
+  const h: string[] = [];
+  h.push(`<div><strong>${o.area ? esc(o.area) : "院门外"}</strong> · ${esc(s.world.clock)}${o.dark ? " · 天黑了" : ""}${o.nearFire ? " · 在火边" : ""} · 走回家门要 ${o.minutesFromDoor} 分钟</div>`);
+  h.push(`<div>${(Object.keys(BODY_NAME) as (keyof typeof BODY_NAME)[]).map((k) => `${BODY_NAME[k]} ${o.body[k]} ${bar(o.body[k])}`).join("")}</div>`);
+  const items = [o.rations ? `干粮 ${o.rations}` : "", ...o.bag.items.map((x) => `${x.name} ${x.count}`)].filter(Boolean);
+  h.push(`<div>背包 ${o.bag.slots}/${o.bag.maxSlots} 格：${esc(items.join("、") || "空的")}</div>`);
+  const m = o.map;
+  if (m) {
+    const cells: string[] = [];
+    m.map.forEach((row, y) =>
+      [...row].forEach((ch, x) => {
+        if (ch === "#") return cells.push('<span class="wall"></span>');
+        const me = m.x === x && m.y === y;
+        const nodeHere = m.nodes.find((n) => n.x === x && n.y === y);
+        const fire = m.fires.find((f) => f.x === x && f.y === y);
+        const mark = me ? "@" : nodeHere ? (nodeHere.available > 0 ? "*" : "·") : fire ? (fire.burning ? "火" : "F") : "";
+        const title = nodeHere ? nodeHere.name : fire ? "生火点" : "";
+        cells.push(`<span class="${me ? "me" : ""}" title="${esc(title)}" data-x="${x}" data-y="${y}" data-cmd="outdoor" data-args="${esc(JSON.stringify([{ type: "walkTo", x, y }]))}">${mark}</span>`);
+      }),
+    );
+    h.push(`<div class="map" style="grid-template-columns:repeat(${m.map[0].length},18px)">${cells.join("")}</div>`);
+    h.push('<div class="dim">WASD 或方向键走一格，点格子走过去。* 能采，· 这会儿没有，F 生火点，火 点着的篝火。</div>');
+    h.push(
+      `<div class="row">${m.nodes
+        .filter((n) => n.available > 0 || n.unique)
+        .map((n) => btn(`采${n.name}${n.unique ? `（剩 ${n.available}）` : ""}`, "outdoor", [{ type: "gather", node: n.id }], off || n.why !== null))
+        .join("")}</div>`,
+    );
+    const why = m.nodes.filter((n) => n.why && n.available > 0).map((n) => `${n.name}：${n.why}`);
+    if (why.length) h.push(`<div class="dim">${esc(why.join("　"))}</div>`);
+  }
+  const atFire = m?.fires.some((f) => f.near) ?? false;
+  h.push(`<div class="row">
+    ${btn("歇一会儿", "outdoor", [{ type: "rest" }], off)}
+    ${btn("吃一份干粮", "outdoor", [{ type: "eat" }], off || o.rations <= 0)}
+    ${m ? btn(m.fires.some((f) => f.near && f.burning) ? "添一捆柴" : "生火", "outdoor", [{ type: "fire" }], off || !atFire) : ""}
+    ${m ? "" : btn("去松林", "outdoor", [{ type: "travel", to: "pineForest" }], off)}
+    ${btn(m ? "从林口回家" : "回屋", "outdoor", [{ type: "travel", to: "home" }], off || (m !== null && !m.atHomeExit))}
+    ${(["map", "pack", "journal"] as const).map((p) => btn(o.panel === p ? `合上${PANEL_NAME[p]}` : PANEL_NAME[p], "outdoorPanel", [o.panel === p ? null : p], s.mode !== "outdoor")).join("")}
+  </div>`);
+  h.push(`<div class="dim">${o.panel ? "面板开着：什么也不做，世界就停着；也不算专注。" : s.mode === "outdoorFocus" ? "在专注：世界停着，他留在原地。" : "站着不动世界不走；每个动作花游戏里的时间。"}</div>`);
   return h.join("");
 }
 
@@ -237,6 +282,7 @@ const sceneCtx = $<HTMLCanvasElement>("scene").getContext("2d")!;
 const c320 = $<HTMLCanvasElement>("small320").getContext("2d")!;
 const c480 = $<HTMLCanvasElement>("small480").getContext("2d")!;
 let lastTaskSig = "";
+let lastWildHtml = "";
 
 function render(): void {
   const g = rt.game;
@@ -258,6 +304,13 @@ function render(): void {
   $("summaryRow").textContent = s.focus.summaryText;
   $("focusBar").innerHTML = renderFocus(s, g);
   $("notices").textContent = s.notices.slice(-2).map((n) => n.text).join("　");
+  const wild = $("wild");
+  wild.hidden = !s.outing;
+  const wildHtml = s.outing ? renderWild(s) : "";
+  if (wildHtml !== lastWildHtml) {
+    lastWildHtml = wildHtml;
+    wild.innerHTML = wildHtml;
+  }
   // 检查面板里有下拉框和输入框：鼠标或键盘正停在上面时不重画，免得打断操作
   const inspect = $("inspect");
   if (!inspect.matches(":hover") && !inspect.contains(document.activeElement)) inspect.innerHTML = renderInspect(s, g);
@@ -350,9 +403,27 @@ $<HTMLInputElement>("note").addEventListener("keydown", (ev) => {
   input.value = "";
 });
 
+/** 按住方向键时一步至少隔这么久，免得键盘连发一秒走几十格（野外每一步都花游戏时间） */
+const STEP_INTERVAL_MS = 200;
+let lastStep = 0;
+const STEP: Record<string, [number, number]> = {
+  ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
+  w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0],
+};
+
 document.addEventListener("keydown", (ev) => {
   if (ev.key === "Escape" && showToday) {
     showToday = false;
     render();
+    return;
   }
+  const dir = STEP[ev.key.length === 1 ? ev.key.toLowerCase() : ev.key];
+  const typing = ev.target instanceof HTMLInputElement || ev.target instanceof HTMLSelectElement || ev.target instanceof HTMLTextAreaElement;
+  if (!dir || typing || rt.game?.mode !== "outdoor" || !rt.game.world.outing?.pos) return;
+  ev.preventDefault();
+  const now = performance.now();
+  if (now - lastStep < STEP_INTERVAL_MS) return;
+  lastStep = now;
+  rt.dispatch("outdoor", { type: "move", dx: dir[0], dy: dir[1] });
+  render();
 });
