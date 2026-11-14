@@ -60,7 +60,7 @@ export interface Snapshot {
     visible: Record<CameraId, boolean>;
   };
   /** 画面里要画的人：氛围态里是不产出的闲暇演出；户外临时专注是空屋 */
-  stage: { show: boolean; place: PlaceId | null; label: string; illusion: boolean } & PoseProjection;
+  stage: { show: boolean; place: PlaceId | null; label: string; illusion: boolean; outfit: "indoor" | "outdoor" | null } & PoseProjection;
   /** 当前实际可绘制的天气、季节和时间；独立氛围和真实世界严格分开。 */
   look: LookProjection;
   fire: { look: string; burn: number; ember: number };
@@ -139,20 +139,20 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
   const visible = Object.fromEntries(CAMERA_IDS.map((c) => [c, !a.away && visibleIn(c, a.place)])) as Record<CameraId, boolean>;
 
   // 表现姿态只读已有的结构化 Activity/phase/data，永远不解析中文 label。
-  const pose = actorPose(a);
+  const pose = actorPose(a, { day: w.day, minuteOfDay: t });
   let stage: Snapshot["stage"];
   if (g.mode === "outdoorFocus") {
-    stage = { show: false, place: null, label: "屋里没人，炉里留着余火", illusion: false, activity: null, pose: null, prop: null };
+    stage = { show: false, place: null, label: "屋里没人，炉里留着余火", illusion: false, outfit: null, activity: null, pose: null, prop: null };
   } else if (g.mode === "ambience") {
     // 独立氛围只演出一个不消耗资源的姿态；真实 actor 和 world 都不动。
     stage = a.away
-      ? { show: false, place: null, label: "", illusion: true, activity: null, pose: null, prop: null }
-      : { show: true, place: "armchair", label: "在炉边坐着", illusion: true, activity: null, pose: "sit", prop: null };
+      ? { show: false, place: null, label: "", illusion: true, outfit: null, activity: null, pose: null, prop: null }
+      : { show: true, place: "armchair", label: "在炉边坐着", illusion: true, outfit: "indoor", activity: null, pose: "sit", prop: null };
   } else if (g.mode === "outdoor") {
     // 野外完整动画/走路路径尚未实装；这里只给预留站姿，不捏造位移。
-    stage = { show: true, place: "wild", label: "在野外", illusion: false, activity: null, pose: "standLook", prop: null };
+    stage = { show: true, place: "wild", label: "在野外", illusion: false, outfit: "outdoor", activity: null, pose: "standLook", prop: null };
   } else {
-    stage = { show: true, place: a.place, label, illusion: false, ...pose };
+    stage = { show: true, place: a.place, label, illusion: false, outfit: a.outfit, ...pose };
   }
 
   const fs = g.focus;

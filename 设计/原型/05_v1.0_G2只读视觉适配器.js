@@ -97,15 +97,17 @@
           source: "ambience_projection",
           weather: plain(projectedLook.weatherLabel) ?? plain(projectedLook.weather),
           weatherTier: plain(projectedLook.weather),
+          weatherKey: plain(projectedLook.weatherKey),
           season: plain(projectedLook.season),
           dayPart: plain(projectedLook.dayPart)
         }
       : previewMissing
-      ? { source: "projection_missing", weather: null, weatherTier: null, season: null, dayPart: null }
+      ? { source: "projection_missing", weather: null, weatherTier: null, weatherKey: null, season: null, dayPart: null }
       : {
           source: "real_world",
           weather: plain(projectedLook?.weatherLabel) ?? plain(snapshot.world.look),
           weatherTier: plain(projectedLook?.weather),
+          weatherKey: plain(projectedLook?.weatherKey),
           season: plain(projectedLook?.season) ?? plain(snapshot.world.dayLabel),
           dayPart: plain(projectedLook?.dayPart) ?? plain(snapshot.world.dayPart)
         };
@@ -130,7 +132,9 @@
         posePending: Boolean(seen && !pose),
         activity: seen ? activity : null,
         prop: seen ? prop : null,
-        outfit: seen ? plain(snapshot.actor.outfit) : null,
+        // 氛围角色坐在室内时始终穿便服；不能复制真实演员在院外的保暖服。
+        outfit: seen ? plain(snapshot.stage.outfit) ??
+          (illusory ? "indoor" : plain(snapshot.actor.outfit)) : null,
         whereabouts: !seen && !illusory ? plain(snapshot.actor.whereabouts) : null
       },
       fire: {

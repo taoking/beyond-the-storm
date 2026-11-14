@@ -1,9 +1,14 @@
 name: 06 G2 read-only presentation
 
+# Preserve validation after merging into main and on PRs, without pinning a temporary branch.
 on:
   push:
-    branches:
-      - gpt/06-g2-readonly-presentation-20261114
+    paths:
+      - "game/**"
+      - "设计/原型/05_v1.0_G2只读视觉适配器*"
+      - "设计/原型/05_v1.0_06真实快照冒烟.mjs"
+      - ".github/workflows/06-g2-presentation.yml"
+  pull_request:
     paths:
       - "game/**"
       - "设计/原型/05_v1.0_G2只读视觉适配器*"

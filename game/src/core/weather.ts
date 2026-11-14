@@ -83,6 +83,29 @@ const LOOKS: Record<Season, Record<WeatherTier, [string, number][]>> = {
   },
 };
 
+/** 静态素材键统一定义在天气模块。中文名称只用于叙述，画面不再做文本匹配。
+ * 不改变 LOOKS 的权重、抽签顺序、当前世界天气文本或存档格式。
+ */
+export const WEATHER_ART_KEYS = {
+  "晴": "clear",
+  "多云": "cloudy",
+  "小雪": "lightSnow",
+  "大雪": "heavySnow",
+  "暴风雪": "blizzard",
+  "冷雨": "coldRain",
+  "雾": "fog",
+  "冻雨": "freezingRain",
+  "雷雨": "thunderstorm",
+} as const;
+export type WeatherArtKey = (typeof WEATHER_ART_KEYS)[keyof typeof WEATHER_ART_KEYS];
+
+/** 存档仍保存原本的天气文字；这里只生成一个稳定的只读视觉标签。 */
+export function weatherArtKey(label: string): WeatherArtKey | null {
+  return Object.prototype.hasOwnProperty.call(WEATHER_ART_KEYS, label)
+    ? WEATHER_ART_KEYS[label as keyof typeof WEATHER_ART_KEYS]
+    : null;
+}
+
 /** 独立氛围展示的固定代表画面；纯查表，不抽随机数、不推进真实天气。 */
 export function previewLook(season: Season, tier: WeatherTier): string {
   return LOOKS[season][tier][0][0];
