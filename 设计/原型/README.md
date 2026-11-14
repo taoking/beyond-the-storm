@@ -2,6 +2,59 @@
 
 > **状态：04 v1.4 的交互演示＋05 v0.7 的目标美术规范并存；05 v0.6 的低保真结构已有真实 Chromium/PNG 验证，**仍非正式美术或游戏 Demo**。** GPT 负责视觉图片/资产、Claude 负责 06 真实游戏核心，UI/交互由双方共同评审。所有演示数据不得写入正式世界。
 
+
+## 06 v0.3：G2 姿态/道具/氛围投影已在真实内核落地
+
+用户授权 GPT 暂时接手 Claude 的 06 下一轮。已在 [06 v0.3 工作分支](https://github.com/taoking/beyond-the-storm/tree/gpt/06-g2-readonly-presentation-20261114) 中实现此前约定的 `Snapshot.stage.activity/pose/prop` 和 `Snapshot.look`。先前 05 v1.0 的只读适配器现在能够读到**真实存在**的姿态键、手持道具与独立氛围天气，而非用中文描述猜帧。
+
+- [新增 06 表现层代码](../../game/src/core/visual.ts)：九种姿态、书/杯/碗/工具等可绘制道具与冻结氛围的季节、天气、时段。
+- [06 设计与验收记录](../06_技术与版本.md)：界面如何读取投影，以及为何不改动世界模拟。
+- [GitHub Actions](https://github.com/taoking/beyond-the-storm/actions/runs/43474800455)：**118 条 06 测试、16 条 05 合约、1,440 世界分钟 / 4,320 次真实画面映射及构建全部通过**。
+
+这**不代表**真实高品质角色动画、炉火五态素材、无人物 clean plate 已完成。正式美术尚需单独绘制并在 Mac 320/480 小窗内验收；本轮没有把参考画变成实际生产资源。
+
+## 最新：05 v1.0 真实 06 Snapshot → 只读美术状态桥接
+
+本轮的新增是**可以实际执行的视觉适配器，不是另一套世界模拟，也不是原型占位画的高保真完成声明**。
+
+- [只读 G2 adapter JavaScript](05_v1.0_G2只读视觉适配器.js) — 从 Claude 06 当前 Snapshot 输出 actor、fire、jar、weather、focus、today 等可绘制状态；不改状态、不追人、不造事件。
+- [16 条独立单元测试](05_v1.0_G2只读视觉适配器.test.cjs) — 测试空镜、冷炉、氛围展示字段缺失、已摆放球果和人物位置等条件。
+- [1,440 游戏分钟真实内核联动](05_v1.0_06真实快照冒烟.mjs) — 在真实 Claude 世界里读取 Snapshot，映射三个镜头 **4,320 次**。无世界状态写入。
+- [GitHub CI](../../.github/workflows/05-g2-visual-bridge.yml) — [完整成功记录](https://github.com/taoking/beyond-the-storm/actions/runs/43472167991)，新视觉测试 + 真实世界联动 + Claude 原有测试和打包全部通过。
+- [美术与 06 接口评审及缺口](../讨论记录/2026-11-14_05v1.0美术与06真实快照联调_GPT.md) — 下一步以真实高品质分层美术替换视觉原型，不增加新世界规则。
+
+另提供对话附件 `beyond_storm_05_v10_visual_reference.zip`：无人木屋全景与雪窗/炉边两个 480×270 构图参考。**画面仍烘焙火焰、天气、光照，不能当正式 clean plate；PNG 尚不在 GitHub**。正式无人无火无 UI 母图依然是未完成的 P0。
+
+## 05 v0.9 统一交给 Claude 的完整美术 ZIP
+
+本次对话已另外制作 `beyond_storm_05_v09_claude_handoff.zip`，**一包包含**：
+
+- `reference/user_selected_visual_target.png`：用户认可的那张目标画面（Claude 此前尚未看到原图）；
+- `layout/`：甲乙布局、床/椅/灶台/工作台/路线、480 vs 640 参考图；
+- `sprite_studies/`：12 张参考姿态、5 种参考炉火、两个 atlas、`preview.html` 和 manifest；
+- `HANDOFF_README.md`：清楚区分目标、结构原型和正式资产。
+
+**仍未上传仓库中的 PNG**；ZIP 是对话附件，用户转给 Claude 后应先放在独立 `lookdev` 目录，绝不可把方案板/抠图当正式 clean plate 或投产 sprite。GPT/Claude 的 GitHub 分支仍维持各自职责。
+
+## 05 v0.9 同步：正式木屋母图之前的两种布局与 480/640 美术采样
+
+Claude 最新反馈指出床、扶手椅、灶台、工作台和走路线路必须先确定。GPT 已制作**甲乙两案的俯视布局草稿**与**目标效果图同区采样的 480×270 / 640×360 细节对比**，供用户和 Claude 同步。
+
+- [正式母图前的布局/像素密度设计评审](../讨论记录/2026-11-14_05母图布局与像素密度对齐_GPT.md)
+- **PNG 交付**：本次对话附件 `beyond_storm_05_v09_layout_and_density.zip`，GitHub 此分支只有文字分析（不含二进制图片）。
+- **未确认的选择**：壁炉＋灶台分两处还是合成柴炉、饭点桌位、480 与 640 原生母图密度。当前的取样不能充当两个尺寸分别原生绘制的正式像素艺术验收。
+- **04 已同步改口径**：没有新份时只显示本轮时长；手工/夜读分两行，基础修缮保留木料要给真实原因；昨天小结是**未确认**的回访 UI 候选。
+- **真实 G2 美术与 Claude 06**：下一批必须补 `sleep`、`standWork`、`sit`、`walk` 姿态，而不是只继续画读书/喝茶特写。字段名以 Claude 最新只读 Snapshot 为准。
+
+## 05 v0.9：角色姿态和炉火的首批实际透明 PNG **参考包**
+
+- [05 v0.9 透明精灵参考包说明与 Claude 交接](05_v0.9_透明角色与炉火试片交接.md)。
+- 本轮确实从新生成的美术方案板分离出 **12 张室内人物参考 PNG**（read/tea/observe 各 4）、**5 张炉火强度参考 PNG**（out/ember/low/mid/high），分别打包为 RGBA 图集，还附有离线 `preview.html`、manifest 和源视觉板。
+- 在系统 Chromium 通过了 **17 个图片显示状态切换检查**，但这些是图片显示冒烟检查，不是角色动作连续性、游戏实机或 Safari 验收。
+- **实际二进制 ZIP 在 GPT 对话附件中**：`beyond_storm_05_v09_transparent_sprite_studies.zip`。仓库使用的 GitHub 写入工具只接受 UTF-8 文本，**当前本分支没有 PNG 图片文件**，不能只 clone 此分支就宣称素材已经在本地。
+- **质量与进度**：PNG 是“视觉参考级剪取”，不符合正式精灵标准；真正的高品质无人/无火 `cabin_clean` 尚未拿到。不要将 AI 方案板中的角色/火焰/猫或 UI 烘焙进正式背景。
+- **下一轮**：优先做与用户认可美术品质相近的**纯木屋 clean plate**；再统一人体比例和细化火焰/光照，并通过 Claude 06 的只读 `Snapshot` 驱动。
+
 ## 05 v0.8：Claude 06 灰盒数据回流，首次验证视觉「有人比例」
 
 Claude 已在 `claude/06-greybox @ e01849e` 提交 06 v0.2 可复现 TypeScript 核心与薄 UI（**未合并 main**）。这轮 GPT 阅读了它的角色状态、相机和视图接口，更新 05 美术规划，**不替 Claude 改内核**。

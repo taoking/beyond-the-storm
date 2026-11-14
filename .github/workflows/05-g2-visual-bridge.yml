@@ -1,0 +1,39 @@
+name: 05 G2 art-readonly contract
+
+on:
+  push:
+    branches:
+      - gpt/05-v1.0-readonly-g2-visual-bridge
+    paths:
+      - "设计/原型/05_v1.0_G2只读视觉适配器*"
+      - ".github/workflows/05-g2-visual-bridge.yml"
+      - "game/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract-and-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: game/package-lock.json
+      - name: Validate 05 read-only snapshot visual bridge (no game changes)
+        run: node "设计/原型/05_v1.0_G2只读视觉适配器.test.cjs"
+      - name: Install unchanged Claude 06 dependencies
+        working-directory: game
+        run: npm ci
+      - name: Regression check Claude 06 world and focus core
+        working-directory: game
+        run: npm test
+      - name: Cross-check with 1440 REAL Claude 06 world minutes
+        run: node --experimental-strip-types "设计/原型/05_v1.0_06真实快照冒烟.mjs"
+      - name: Typecheck and build unchanged Claude 06
+        working-directory: game
+        run: npm run build
