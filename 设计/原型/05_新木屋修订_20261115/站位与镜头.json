@@ -1,0 +1,653 @@
+{
+  "schema": "beyond-the-storm.05.cabin-review/2",
+  "status": "候选，待用户看图和Claude重算可见时间；不是G5",
+  "baselineCommit": "925d540",
+  "canvas": [
+    1670,
+    941
+  ],
+  "rectConvention": "所有rect均为[x,y,width,height]；原点左上；像素整数；多边形为绝对坐标",
+  "candidate": "empty_day.png",
+  "neutralStructure": "layers/room_structure.png",
+  "depthScale": {
+    "formula": "standingHeightPx = round(0.6 * footY - 68)",
+    "slope": 0.6,
+    "intercept": -68,
+    "validFootY": [
+      500,
+      860
+    ],
+    "sitHeightRatios": {
+      "sitWrite": 0.78,
+      "sitRead": 0.72
+    },
+    "sleep": "床面 bedDepthY 代入同一公式取H；露出头部约H/7.3，身体在薄被下不绘；不以露出的头肩高度冒充全身尺度"
+  },
+  "locations": [
+    {
+      "id": "hearth",
+      "label": "柴炉",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        1044,
+        650
+      ],
+      "standingHeightPx": 322,
+      "facing": "朝左，面向炉门",
+      "occludedBy": [],
+      "note": "站位在炉右前方，避开扶手椅；唯一柴炉",
+      "contactShadow": "layers/shadow_hearth.png"
+    },
+    {
+      "id": "woodpile",
+      "label": "柴堆",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        733,
+        548
+      ],
+      "standingHeightPx": 261,
+      "facing": "面向设施",
+      "occludedBy": [],
+      "note": "空筐在炉左侧，五档柴量后做",
+      "contactShadow": "layers/shadow_woodpile.png"
+    },
+    {
+      "id": "stove",
+      "label": "料理台",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        1090,
+        555
+      ],
+      "standingHeightPx": 265,
+      "facing": "面向设施",
+      "occludedBy": [],
+      "note": "料理台前；不在此生第二处火",
+      "contactShadow": "layers/shadow_stove.png"
+    },
+    {
+      "id": "shelf",
+      "label": "储物架",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        996,
+        525
+      ],
+      "standingHeightPx": 247,
+      "facing": "面向设施",
+      "occludedBy": [],
+      "note": "使用料理台左侧通道取上方储物，距料理站位约99像素",
+      "contactShadow": "layers/shadow_shelf.png"
+    },
+    {
+      "id": "desk",
+      "label": "书桌",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        329,
+        780
+      ],
+      "standingHeightPx": 400,
+      "facing": "朝左上，四分之三背影",
+      "occludedBy": [
+        "桌边、椅背前景"
+      ],
+      "note": "写字姿态的实际脚底；坐垫接触点另见 poses.sitWrite.seatContact",
+      "contactShadow": "layers/shadow_desk.png"
+    },
+    {
+      "id": "bookshelf",
+      "label": "书架",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        501,
+        558
+      ],
+      "standingHeightPx": 267,
+      "facing": "面向设施",
+      "occludedBy": [],
+      "note": "书架正前方地面；扶手椅已移走",
+      "contactShadow": "layers/shadow_bookshelf.png"
+    },
+    {
+      "id": "workbench",
+      "label": "工作台",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        1240,
+        556
+      ],
+      "standingHeightPx": 266,
+      "facing": "面向设施",
+      "occludedBy": [],
+      "note": "床上沿之前的清楚地面，面向工作台",
+      "contactShadow": "layers/shadow_workbench.png"
+    },
+    {
+      "id": "radio",
+      "label": "收音机",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        642,
+        555
+      ],
+      "standingHeightPx": 265,
+      "facing": "面向设施",
+      "occludedBy": [],
+      "note": "独立拆开的收音机，收音机台前站位不再被椅背遮住",
+      "contactShadow": "layers/shadow_radio.png"
+    },
+    {
+      "id": "gramophone",
+      "label": "唱片机",
+      "inFrame": false,
+      "actorApplicable": true,
+      "footAnchor": null,
+      "standingHeightPx": null,
+      "facing": "画外",
+      "occludedBy": [],
+      "note": "画外，修好以前不去；任意镜头都不可见",
+      "contactShadow": null
+    },
+    {
+      "id": "armchair",
+      "label": "扶手椅",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        851,
+        852
+      ],
+      "standingHeightPx": 443,
+      "facing": "朝左前，低头读书",
+      "occludedBy": [
+        "扶手前景"
+      ],
+      "note": "实际坐姿脚底；坐姿高度为本处站立高度的0.72",
+      "contactShadow": "layers/shadow_armchair.png"
+    },
+    {
+      "id": "window",
+      "label": "雪窗",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        460,
+        545
+      ],
+      "standingHeightPx": 259,
+      "facing": "朝左，看窗外",
+      "occludedBy": [],
+      "note": "书桌右侧的站立位置，独立于坐姿书桌；不需要内核改为坐看",
+      "contactShadow": "layers/shadow_window.png"
+    },
+    {
+      "id": "windowsill",
+      "label": "窗台",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        460,
+        545
+      ],
+      "standingHeightPx": 259,
+      "facing": "朝左",
+      "occludedBy": [],
+      "note": "和看雪共享同一地面站位，窗台本身无人物动作",
+      "contactShadow": "layers/shadow_windowsill.png"
+    },
+    {
+      "id": "bed",
+      "label": "床",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        1350,
+        778
+      ],
+      "standingHeightPx": 399,
+      "facing": "侧卧，头向右",
+      "occludedBy": [
+        "薄床被前景"
+      ],
+      "note": "脚底为床前靠近点；实际睡姿、床面进深和被子边界见 poses.sleep",
+      "contactShadow": "layers/shadow_bed.png"
+    },
+    {
+      "id": "instruments",
+      "label": "仪器角",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        1544,
+        557
+      ],
+      "standingHeightPx": 266,
+      "facing": "面向设施",
+      "occludedBy": [],
+      "note": "床头后方与暖炉前的可见地面；气压计/温度纸/煤油暖炉齐全",
+      "contactShadow": "layers/shadow_instruments.png"
+    },
+    {
+      "id": "backdoor",
+      "label": "后门和牵引绳",
+      "inFrame": false,
+      "actorApplicable": true,
+      "footAnchor": null,
+      "standingHeightPx": null,
+      "facing": "画外",
+      "occludedBy": [],
+      "note": "明确画外，所有镜头不可见",
+      "contactShadow": null
+    },
+    {
+      "id": "springhouse",
+      "label": "短廊和泉屋",
+      "inFrame": false,
+      "actorApplicable": true,
+      "footAnchor": null,
+      "standingHeightPx": null,
+      "facing": "屋外",
+      "occludedBy": [],
+      "note": "屋外，室内三镜头不可见",
+      "contactShadow": null
+    },
+    {
+      "id": "door",
+      "label": "门和衣架",
+      "inFrame": true,
+      "actorApplicable": true,
+      "footAnchor": [
+        1420,
+        558
+      ],
+      "standingHeightPx": 267,
+      "facing": "面向设施",
+      "occludedBy": [],
+      "note": "外套独立层，本轮空衣钩",
+      "contactShadow": "layers/shadow_door.png"
+    },
+    {
+      "id": "lamps",
+      "label": "灯",
+      "inFrame": true,
+      "actorApplicable": false,
+      "footAnchor": [
+        650,
+        680
+      ],
+      "standingHeightPx": null,
+      "facing": "面向设施",
+      "occludedBy": [],
+      "note": "非人物地点；油灯后做独立层；底图没有点亮的灯和电灯",
+      "contactShadow": null
+    },
+    {
+      "id": "cellar",
+      "label": "地窖口",
+      "inFrame": false,
+      "actorApplicable": true,
+      "footAnchor": null,
+      "standingHeightPx": null,
+      "facing": "画外",
+      "occludedBy": [],
+      "note": "补充内核地点，所有镜头不可见",
+      "contactShadow": null
+    }
+  ],
+  "cameras": [
+    {
+      "id": "wide",
+      "rect": [
+        0,
+        0,
+        1664,
+        936
+      ]
+    },
+    {
+      "id": "window",
+      "rect": [
+        60,
+        105,
+        944,
+        531
+      ]
+    },
+    {
+      "id": "hearth",
+      "rect": [
+        620,
+        326,
+        944,
+        531
+      ]
+    }
+  ],
+  "displaySlots": [
+    {
+      "id": "photo_wall",
+      "label": "照片墙",
+      "rect": [
+        458,
+        158,
+        217,
+        51
+      ],
+      "mustStartEmpty": true
+    },
+    {
+      "id": "windowsill",
+      "label": "窗台",
+      "rect": [
+        167,
+        480,
+        166,
+        24
+      ],
+      "mustStartEmpty": true
+    },
+    {
+      "id": "desk_corner",
+      "label": "书桌一角",
+      "rect": [
+        328,
+        513,
+        70,
+        30
+      ],
+      "mustStartEmpty": true
+    },
+    {
+      "id": "hearth_shelf",
+      "label": "炉上搁板",
+      "rect": [
+        770,
+        255,
+        174,
+        55
+      ],
+      "mustStartEmpty": true
+    },
+    {
+      "id": "bedside",
+      "label": "床头",
+      "rect": [
+        1520,
+        379,
+        119,
+        20
+      ],
+      "mustStartEmpty": true
+    },
+    {
+      "id": "wall_spare",
+      "label": "墙上一处",
+      "rect": [
+        1000,
+        165,
+        122,
+        56
+      ],
+      "mustStartEmpty": true
+    }
+  ],
+  "poses": {
+    "sitWrite": {
+      "place": "desk",
+      "source": "sources/male_sitWrite.png",
+      "height": 312,
+      "left": 211,
+      "top": 468,
+      "footAnchor": [
+        329,
+        780
+      ],
+      "seatContact": [
+        375,
+        676
+      ],
+      "occlusionPolygons": [
+        [
+          [
+            399,
+            608
+          ],
+          [
+            452,
+            587
+          ],
+          [
+            468,
+            590
+          ],
+          [
+            457,
+            711
+          ],
+          [
+            402,
+            728
+          ]
+        ]
+      ],
+      "upperBodyRect": [
+        224,
+        468,
+        201,
+        155
+      ],
+      "note": "肩/双臂/笔/本子露出；椅背只遮右下半身",
+      "renderedRect": [
+        211,
+        468,
+        196,
+        312
+      ],
+      "alphaBounds": [
+        211,
+        468,
+        196,
+        312
+      ],
+      "layer": "layers/actor_sitWrite.png",
+      "foreground": "layers/foreground_sitWrite.png"
+    },
+    "sitRead": {
+      "place": "armchair",
+      "source": "sources/male_sitRead.png",
+      "height": 319,
+      "left": 760,
+      "top": 533,
+      "footAnchor": [
+        851,
+        852
+      ],
+      "seatContact": [
+        839,
+        730
+      ],
+      "occlusionPolygons": [
+        [
+          [
+            724,
+            650
+          ],
+          [
+            755,
+            648
+          ],
+          [
+            798,
+            678
+          ],
+          [
+            795,
+            748
+          ],
+          [
+            755,
+            730
+          ]
+        ],
+        [
+          [
+            925,
+            634
+          ],
+          [
+            974,
+            651
+          ],
+          [
+            981,
+            709
+          ],
+          [
+            930,
+            712
+          ]
+        ]
+      ],
+      "note": "按同一进深线×0.72确定坐姿高度",
+      "renderedRect": [
+        760,
+        533,
+        194,
+        319
+      ],
+      "alphaBounds": [
+        760,
+        533,
+        194,
+        319
+      ],
+      "layer": "layers/actor_sitRead.png",
+      "foreground": "layers/foreground_sitRead.png"
+    },
+    "standWork": {
+      "place": "hearth",
+      "source": "sources/male_standWork.png",
+      "height": 322,
+      "left": 992,
+      "top": 328,
+      "footAnchor": [
+        1044,
+        650
+      ],
+      "occlusionPolygons": [],
+      "note": "成人站姿端锅，脚底在炉右地面",
+      "renderedRect": [
+        992,
+        328,
+        103,
+        322
+      ],
+      "alphaBounds": [
+        992,
+        328,
+        103,
+        322
+      ],
+      "layer": "layers/actor_standWork.png",
+      "foreground": "layers/foreground_standWork.png"
+    },
+    "sleep": {
+      "place": "bed",
+      "source": "sources/male_sleep.png",
+      "width": 120,
+      "left": 1420,
+      "top": 607,
+      "bedDepthY": 700,
+      "referenceStandingHeight": 352,
+      "footAnchor": null,
+      "sleepAnchor": [
+        1510,
+        653
+      ],
+      "occlusionPolygons": [
+        [
+          [
+            1198,
+            643
+          ],
+          [
+            1378,
+            629
+          ],
+          [
+            1430,
+            654
+          ],
+          [
+            1539,
+            659
+          ],
+          [
+            1541,
+            764
+          ],
+          [
+            1201,
+            775
+          ]
+        ]
+      ],
+      "note": "睡姿只绘露出的成年头肩；身体不画在被面上，由独立薄被前景遮住肩下部分；头高约48，对应床面进深H352的约1/7.3。",
+      "renderedRect": [
+        1420,
+        607,
+        120,
+        63
+      ],
+      "alphaBounds": [
+        1420,
+        607,
+        120,
+        63
+      ],
+      "layer": "layers/actor_sleep.png",
+      "foreground": "layers/foreground_sleep.png",
+      "exposedHeadHeightPx": 48,
+      "estimatedCoveredBodyLengthPx": 300
+    }
+  },
+  "glassMask": {
+    "method": "渲染时只在玻璃ROI内按蓝色占位色取样，写独立alpha遮罩；不修改生成源图",
+    "regions": [
+      [
+        136,
+        127,
+        255,
+        361
+      ],
+      [
+        1383,
+        226,
+        56,
+        64
+      ]
+    ]
+  },
+  "lighting": {
+    "day": "neutral source",
+    "night": "独立深蓝夜色遮罩，非正式受光资产",
+    "lamps": "底图无点亮灯；每盏油灯资产与各自光蒙版留待G5",
+    "fire": "冷炉；两三档投射受光蒙版留待G5，未声称完成"
+  },
+  "notes": [
+    "雪林是候选玻璃内的小块独立参考，不是G6正式全画布窗外资产；没有画进屋内结构",
+    "玻璃、床被/椅背遮挡、接触阴影由同一JSON在渲染阶段装配；坐标不另存第二套",
+    "正式2560x1440必须原生重画并重新标定，禁止缩放此候选充数",
+    "全景内可活动站位有锚点；唱片机、地窖、后门、屋外明确不可见；灯无人物动作"
+  ]
+}

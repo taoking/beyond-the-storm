@@ -1,7 +1,7 @@
 /**
  * 风雪之外 05 v1.0 | G2 只读视觉适配器（候选）
  *
- * Input: Claude 06 v0.2 game/src/core/view.ts present(): Snapshot
+ * Input: Claude 06 v0.5 game/src/core/view.ts present(): Snapshot
  * Output: a new lightweight view model. NEVER mutates input or simulation state.
  *
  * Coordinates below are a 640x360 PROPOSED spatial study for checking G2
@@ -17,6 +17,7 @@
     window: [24, 68, 366, 205.875],
     hearth: [328, 82, 300, 168.75]
   });
+  const CAMERA_PROJECTION_KEYS = Object.freeze({wide: "wideIndoor", window: "window", hearth: "hearth"});
 
   // A first art-space candidate. Outside and hidden locations deliberately
   // have no anchor; they must not be "teleported" inside for an attractive shot.
@@ -40,12 +41,6 @@
   });
   const SPRITE_BOUNDS = Object.freeze([24, 48]); // placeholder only
 
-  function intersects(rect, cx, cy, spriteWidth, spriteHeight) {
-    const [x, y, w, h] = rect;
-    const left = cx - spriteWidth / 2, top = cy - spriteHeight;
-    return left < x + w && left + spriteWidth > x &&
-      top < y + h && top + spriteHeight > y;
-  }
   function copyPoint(x) { return x ? [x[0], x[1]] : null; }
   function plain(value) {
     if (value === null || value === undefined) return null;
@@ -68,11 +63,14 @@
     const anchor = place && Object.prototype.hasOwnProperty.call(ANCHORS, place)
       ? ANCHORS[place] : null;
     const stageShow = snapshot.stage.show === true;
-    const seen = Boolean(stageShow && anchor && intersects(
-      crop, anchor[0], anchor[1], SPRITE_BOUNDS[0], SPRITE_BOUNDS[1]));
+    // 06 owns camera membership. Placeholder art anchors never override it.
+    // Missing projection fails closed; actor.visible describes the real actor,
+    // which can differ from the independently staged ambience actor.
+    const projectionKey = CAMERA_PROJECTION_KEYS[id];
+    const seen = Boolean(stageShow && snapshot.stage.visible?.[projectionKey] === true);
     const illusory = snapshot.stage.illusion === true;
 
-    // Structured pose/prop are anticipated G2-only additions. Never infer
+    // Structured pose/prop are actual G2 projections. Never infer
     // sprite pose by parsing Chinese story prose from actor.label/stage.label.
     const pose = plain(snapshot.stage.pose);
     const prop = plain(snapshot.stage.prop);
@@ -84,33 +82,21 @@
     // silently painted as the user's selected ambience weather.
     const projectedLook = snapshot.look && typeof snapshot.look === "object"
       ? snapshot.look : null;
-    const isAmbience = mode === "ambience";
-    const hasProjection = projectedLook && (
-      projectedLook.source === "ambience" ||
-      // Backwards-compatible mock fixture from 05 v1.0.
-      (isAmbience && projectedLook.source === undefined)
-    );
-    const previewMissing = (isAmbience || mode === "outdoorFocus") &&
-      (!projectedLook || projectedLook.source === "missing");
-    const weather = hasProjection
+    const validLook = projectedLook && ["world", "ambience"].includes(projectedLook.source);
+    const previewMissing = !validLook;
+    const weather = validLook
       ? {
-          source: "ambience_projection",
+          source: projectedLook.source === "ambience" ? "ambience_projection" : "real_world",
           weather: plain(projectedLook.weatherLabel) ?? plain(projectedLook.weather),
           weatherTier: plain(projectedLook.weather),
           weatherKey: plain(projectedLook.weatherKey),
           season: plain(projectedLook.season),
-          dayPart: plain(projectedLook.dayPart)
+          dayPart: plain(projectedLook.dayPart),
+          dayPartKey: plain(projectedLook.dayPartKey),
+          time: plain(projectedLook.time)
         }
-      : previewMissing
-      ? { source: "projection_missing", weather: null, weatherTier: null, weatherKey: null, season: null, dayPart: null }
-      : {
-          source: "real_world",
-          weather: plain(projectedLook?.weatherLabel) ?? plain(snapshot.world.look),
-          weatherTier: plain(projectedLook?.weather),
-          weatherKey: plain(projectedLook?.weatherKey),
-          season: plain(projectedLook?.season) ?? plain(snapshot.world.dayLabel),
-          dayPart: plain(projectedLook?.dayPart) ?? plain(snapshot.world.dayPart)
-        };
+      : { source: "projection_missing", weather: null, weatherTier: null, weatherKey: null,
+          season: null, dayPart: null, dayPartKey: null, time: null };
 
     const cones = Math.max(0, Math.trunc(Number(snapshot.jar.cones) || 0));
     const pending = Math.max(0, Math.trunc(Number(snapshot.jar.pending) || 0));
@@ -162,7 +148,10 @@
       },
       diagnostics: {
         // Non-final: no occlusion/pixel silhouette check yet.
-        visibilityBasis: "candidate art-space bbox intersection, not 06 coarse camera memberships",
+        visibilityBasis: "Snapshot.stage.visible (06 camera membership)",
+        stageVisibleUsed: true,
+        cameraProjectionKey: projectionKey,
+        missingAnchorProjection: seen && !anchor,
         missingPoseProjection: seen && !pose,
         missingAmbienceProjection: Boolean(previewMissing),
         snapshotActorVisibleNotUsed: true

@@ -90,8 +90,7 @@
   },
   "characters": {
     "variants": [
-      "male",
-      "female"
+      "male"
     ],
     "oneProtagonistAtATime": true,
     "garment": [
@@ -111,9 +110,12 @@
     "walkSprites": false,
     "poseTransition": "simple alpha crossfade",
     "framesPerPose": "1–4 only when justified",
-    "characterOrigin": "same source identity within each variant",
+    "characterOrigin": "one male identity across all production poses",
     "bodyDepth": "location-dependent scale/occlusion under G2",
-    "hasOneFootAnchorPerPlace": true
+    "hasOneFootAnchorPerPlace": true,
+    "referenceOnlyVariants": [
+      "female"
+    ]
   },
   "animation": {
     "fireFramesPerState": [
@@ -135,8 +137,8 @@
     "visibleWhen"
   ],
   "manifestEntryExample": {
-    "id": "female_sitRead_armchair",
-    "file": "actor/indoor/female/sitRead_armchair.png",
+    "id": "male_sitRead_armchair",
+    "file": "actor/indoor/male/sitRead_armchair.png",
     "x": 960,
     "y": 480,
     "width": 240,
@@ -146,19 +148,18 @@
     "visibleWhen": {
       "stage.pose": "sitRead",
       "stage.place": "armchair",
-      "stage.outfit": "indoor",
-      "stage.actorVariant": "female (proposed, not 06 field)"
+      "stage.outfit": "indoor"
     },
     "origin": "top-left of cropped transparent PNG"
   },
   "productionSteps": [
-    "G1 verify male/female four poses, especially full bed and actual writing desk posture",
+    "G1 male four poses only; female remains visual reference outside development",
     "G2 approved full scene layout, location depth anchors, 16:9 cameras, six empty display spots",
     "G3 remove baked state objects; check 43 proposed layers against 03",
     "G5 draw native 2560x1440 neutral opening baseline with transparent glass; only two lighting states winter day/night",
     "G6 static layered forest with variable sky; weather particles are separate",
     "G7 fire out/ember/low/mid/high and localized light falloff",
-    "G8 full eight-pose male/female sprite sets only when G1 accepted"
+    "G8 full male eight-pose set only after G1 accepted"
   ],
   "deprecated": [
     "480x270 logic canvas",
@@ -169,7 +170,7 @@
     "new GIF walk cycles"
   ],
   "scope": {
-    "G1_designReview": "identity/poses visually acceptable pending site fixes",
+    "G1_designReview": "Male reading passed and standing broadly passed last round; revised writing/sleeping candidates await user and Claude review",
     "G2_layout": "not finalized",
     "G3_layers": "draft 43 groups",
     "G5": "not started"

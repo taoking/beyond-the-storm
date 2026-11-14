@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>新木屋构图候选 · 2026-11-15</title>
+<style>
+*{box-sizing:border-box}body{margin:24px;background:#172127;color:#eee4d6;font:14px/1.7 system-ui}h1{font-size:22px;font-weight:550;margin-bottom:5px}p{color:#bac6c9;max-width:920px}nav{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:22px 0}select,button{font:inherit;padding:6px 9px;background:#293a42;color:#f0e5d6;border:1px solid #697c83;border-radius:5px}a{color:#e9bc7a}canvas{display:block;image-rendering:auto;background:#172127;outline:1px solid #8c9290}#frame{width:max-content}#status{white-space:pre-wrap;max-width:1050px}label{white-space:nowrap}
+</style>
+<h1>新木屋构图候选</h1>
+<p>先看构图和人物接触关系。这是试片，待用户看图及 Claude 复算；尚未开始正式底图。控件在被测窗口外，画面保持真实像素尺寸。</p>
+<nav>
+<label>姿态 <select id="pose"><option value="empty">空屋</option><option value="sitWrite">书桌写字</option><option value="sitRead">扶手椅读书</option><option value="standWork">炉前端锅</option><option value="sleep">床上睡</option></select></label>
+<label>镜头 <select id="camera"><option value="wide">全景</option><option value="window">雪窗</option><option value="hearth">炉边</option></select></label>
+<label>窗口 <select id="size"><option>320</option><option selected>480</option><option>1280</option></select></label>
+<label><input type="checkbox" id="night">冬夜试片</label>
+<label><input type="checkbox" id="markers">站位 / 展示位</label>
+</nav>
+<div id="frame"><canvas id="view" width="480" height="270" aria-label="木屋构图候选"></canvas></div>
+<p id="status">加载中…</p>
+<p><a href="站位与镜头.json">站位与镜头 JSON</a> · <a href="验证结果.json">静态验证结果</a> · <a href="empty_day.png">空屋候选原图</a> · <a href="README.md">说明与未完成项</a></p>
+<script>
+let spec;const cache=new Map(),$=id=>document.getElementById(id);
+function getImage(src){if(!cache.has(src))cache.set(src,new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(new Error('图片加载失败：'+src));i.src=src}));return cache.get(src)}
+let revision=0;
+async function render(){
+ const rev=++revision,pose=$('pose').value,camera=spec.cameras.find(c=>c.id===$('camera').value),w=+$('size').value,h=w*9/16;
+ const paths=['empty_day.png'];if(pose!=='empty'){const p=spec.poses[pose],l=spec.locations.find(l=>l.id===p.place);paths.push(l.contactShadow,p.layer,p.foreground)}if($('night').checked)paths.push('layers/night_mask.png');
+ const images=await Promise.all(paths.map(getImage));if(rev!==revision)return;
+ const canvas=$('view'),ctx=canvas.getContext('2d');canvas.width=w;canvas.height=h;canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+ const [x,y,cw,ch]=camera.rect;for(const image of images)ctx.drawImage(image,x,y,cw,ch,0,0,w,h);
+ if($('markers').checked){ctx.save();ctx.scale(w/cw,h/ch);ctx.translate(-x,-y);ctx.font='18px system-ui';ctx.lineWidth=2;for(const l of spec.locations)if(l.footAnchor&&l.actorApplicable){const [px,py]=l.footAnchor;ctx.strokeStyle='#9bffe0';ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#9bffe0';ctx.fillText(l.label,px+9,py)}for(const s of spec.displaySlots){ctx.strokeStyle='#ffd08a';ctx.strokeRect(...s.rect);ctx.fillStyle='#ffd08a';ctx.fillText(s.label,s.rect[0],s.rect[1]-5)}ctx.restore()}
+ $('status').textContent=`${w}×${h} 实际 CSS 像素；${camera.id} 裁切 ${camera.rect.join(', ')}。\n${pose==='empty'?'空屋无灯无火。':spec.poses[pose].note}\n冬夜为独立色罩试片，正式油灯、炉火受光蒙版尚未制作。`;
+ window.reviewReady=true;
+}
+window.renderReview=render;
+Promise.all([fetch('站位与镜头.json').then(r=>{if(!r.ok)throw new Error(r.status);return r.json()})]).then(([s])=>{spec=s;for(const id of ['pose','camera','size','night','markers'])$(id).addEventListener('change',()=>render().catch(e=>$('status').textContent=e.message));return render()}).catch(e=>$('status').textContent='请通过本地 HTTP 服务打开：'+e.message);
+</script></html>

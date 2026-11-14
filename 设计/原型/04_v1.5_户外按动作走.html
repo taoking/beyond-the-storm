@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>风雪之外 · 户外按动作走</title>
+<style>
+*{box-sizing:border-box}body{margin:28px;background:#16232a;color:#eee7d8;font:14px/1.7 system-ui}main{max-width:1050px;margin:auto}h1{font-size:23px;font-weight:550}p{color:#bbcbcd}button,input{font:inherit;padding:8px 12px;border:1px solid #758c91;border-radius:6px;background:#293d45;color:#f5e5ce}button{cursor:pointer}button:disabled{opacity:.4;cursor:default}button:focus-visible,canvas:focus-visible{outline:2px solid #ecc18b;outline-offset:3px}nav{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}input{width:80px}#status{padding:12px 16px;border:1px solid #789095;border-radius:7px;color:#e4d4b6}#scene{position:relative;width:640px;max-width:100%}canvas{width:640px;height:360px;max-width:100%;display:block;background:#233c48;border:1px solid #7b9298;image-rendering:auto}#panel{position:absolute;inset:14px;background:#1a2c35f5;border:1px solid #b8b399;border-radius:8px;padding:20px;overflow:auto}#panel[hidden],section[hidden],button[hidden]{display:none}#message{min-height:24px;color:#f4ce94}a{color:#e7be85}.note{font-size:12px}#focusView{padding:45px 20px;border:1px solid #667f89;background:#1d2b35}.stock{white-space:pre-wrap}
+</style>
+<main><h1>在松林走一会儿</h1><p>站着不动，世界就停在这一刻。点地图后用 WASD 行走，也可以点地面或资源点。</p>
+<div id="status" aria-live="polite"></div>
+<section id="pack"><p id="stock"></p><label>干粮 <input id="rations" type="number" min="0" value="2"></label> <label>柴捆 <input id="bundles" type="number" min="0" value="1"></label><nav><button id="depart">开始出门，暂停专注</button></nav><p class="note">给木屋留下三天用量；确认出门才扣行囊和压火的柴。</p></section>
+<section id="outdoor" hidden>
+<nav><button id="enter">进入松林</button><button id="home">从出口回家</button><button data-panel="pack">背包</button><button data-panel="map">地图</button><button data-panel="journal">手记</button><button id="focus">打开专注</button></nav>
+<div id="scene"><canvas id="map" width="640" height="360" tabindex="0" aria-label="松林地图，WASD行走，E采集，B背包，M地图，J手记，Esc关闭面板"></canvas><div id="panel" hidden><h2 id="panelTitle"></h2><div id="panelContent" class="stock"></div><nav><button id="closePanel">关闭，继续探索</button></nav></div></div>
+<nav><button data-action="rest">歇一会儿</button><button data-action="eat">吃一份干粮</button><button data-action="fire">生火</button></nav><p class="note">绿色方块是你，金色方块是资源，橙色圆点是生火点，蓝色方块是返家出口。面板开着时不接移动、采集、歇息、吃饭和生火。</p>
+</section>
+<section id="focusView" hidden><h2>户外临时专注 · 世界暂停</h2><p>木屋是空的，人在松林原地。回来时继续原来的位置。</p><button id="back">暂停专注，返回野外原地</button></section>
+<p id="message" role="status"></p><p class="note">交互试片，使用 06 真实内核与独立演示存档；不写正式存档。本页专测动作与冻结，不验完整专注计时、正式美术或后台运行。</p><p><a href="../04_UI与交互.md">04 交互规范</a> · <a href="05_新木屋修订_20261115/">木屋候选</a></p>
+</main><script type="module" src="./04_v1.5_户外按动作走.ts"></script></html>

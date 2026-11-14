@@ -1,0 +1,146 @@
+{
+  "canvas": [
+    1670,
+    941
+  ],
+  "glassPixels": 55929,
+  "poses": {
+    "sitWrite": {
+      "renderedRect": [
+        211,
+        468,
+        196,
+        312
+      ],
+      "alphaBounds": [
+        211,
+        468,
+        196,
+        312
+      ],
+      "outsideChanges": 0
+    },
+    "sitRead": {
+      "renderedRect": [
+        760,
+        533,
+        194,
+        319
+      ],
+      "alphaBounds": [
+        760,
+        533,
+        194,
+        319
+      ],
+      "outsideChanges": 0
+    },
+    "standWork": {
+      "renderedRect": [
+        992,
+        328,
+        103,
+        322
+      ],
+      "alphaBounds": [
+        992,
+        328,
+        103,
+        322
+      ],
+      "outsideChanges": 0
+    },
+    "sleep": {
+      "renderedRect": [
+        1420,
+        607,
+        120,
+        63
+      ],
+      "alphaBounds": [
+        1420,
+        607,
+        120,
+        63
+      ],
+      "outsideChanges": 0
+    }
+  },
+  "geometricVisibility": [
+    {
+      "pose": "sitWrite",
+      "camera": "wide",
+      "full": true,
+      "upper": true
+    },
+    {
+      "pose": "sitWrite",
+      "camera": "window",
+      "full": false,
+      "upper": true
+    },
+    {
+      "pose": "sitWrite",
+      "camera": "hearth",
+      "full": false,
+      "upper": false
+    },
+    {
+      "pose": "sitRead",
+      "camera": "wide",
+      "full": true,
+      "upper": true
+    },
+    {
+      "pose": "sitRead",
+      "camera": "window",
+      "full": false,
+      "upper": false
+    },
+    {
+      "pose": "sitRead",
+      "camera": "hearth",
+      "full": true,
+      "upper": true
+    },
+    {
+      "pose": "standWork",
+      "camera": "wide",
+      "full": true,
+      "upper": true
+    },
+    {
+      "pose": "standWork",
+      "camera": "window",
+      "full": false,
+      "upper": false
+    },
+    {
+      "pose": "standWork",
+      "camera": "hearth",
+      "full": true,
+      "upper": true
+    },
+    {
+      "pose": "sleep",
+      "camera": "wide",
+      "full": true,
+      "upper": true
+    },
+    {
+      "pose": "sleep",
+      "camera": "window",
+      "full": false,
+      "upper": false
+    },
+    {
+      "pose": "sleep",
+      "camera": "hearth",
+      "full": true,
+      "upper": true
+    }
+  ],
+  "limitations": [
+    "仅几何边框与静态像素核验；不是内核时间占比报告，也不是用户审美验收"
+  ]
+}

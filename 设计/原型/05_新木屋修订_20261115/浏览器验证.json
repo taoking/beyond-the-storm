@@ -1,0 +1,260 @@
+{
+  "browser": "headless installed Google Chrome",
+  "deviceScaleFactor": 1,
+  "frames": [
+    {
+      "size": 320,
+      "pose": "sitWrite",
+      "camera": "wide",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "sitWrite",
+      "camera": "window",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "sitWrite",
+      "camera": "hearth",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "sitRead",
+      "camera": "wide",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "sitRead",
+      "camera": "window",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "sitRead",
+      "camera": "hearth",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "standWork",
+      "camera": "wide",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "standWork",
+      "camera": "window",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "standWork",
+      "camera": "hearth",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "sleep",
+      "camera": "wide",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "sleep",
+      "camera": "window",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 320,
+      "pose": "sleep",
+      "camera": "hearth",
+      "width": 320,
+      "height": 180
+    },
+    {
+      "size": 480,
+      "pose": "sitWrite",
+      "camera": "wide",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "sitWrite",
+      "camera": "window",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "sitWrite",
+      "camera": "hearth",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "sitRead",
+      "camera": "wide",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "sitRead",
+      "camera": "window",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "sitRead",
+      "camera": "hearth",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "standWork",
+      "camera": "wide",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "standWork",
+      "camera": "window",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "standWork",
+      "camera": "hearth",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "sleep",
+      "camera": "wide",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "sleep",
+      "camera": "window",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 480,
+      "pose": "sleep",
+      "camera": "hearth",
+      "width": 480,
+      "height": 270
+    },
+    {
+      "size": 1280,
+      "pose": "sitWrite",
+      "camera": "wide",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "sitWrite",
+      "camera": "window",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "sitWrite",
+      "camera": "hearth",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "sitRead",
+      "camera": "wide",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "sitRead",
+      "camera": "window",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "sitRead",
+      "camera": "hearth",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "standWork",
+      "camera": "wide",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "standWork",
+      "camera": "window",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "standWork",
+      "camera": "hearth",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "sleep",
+      "camera": "wide",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "sleep",
+      "camera": "window",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "size": 1280,
+      "pose": "sleep",
+      "camera": "hearth",
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "pageErrors": [],
+  "limitations": "未测Safari、原生Mac小窗或长期运行"
+}
