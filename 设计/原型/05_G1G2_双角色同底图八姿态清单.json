@@ -1,0 +1,229 @@
+{
+  "schema": "beyond-the-storm.05.G1-on-G2.review/1",
+  "status": "REVIEW_ONLY; NOT approved production assets",
+  "basedOn": "Claude 2026-11-14 G1/G2 task, male/female G1 identity sheets and G2 1672x941 spatial candidate",
+  "branch": "gpt/05-g1-newlayout-dual-character-20261114",
+  "sourcePackage": "beyond_storm_05_G1_G2_dual_actor_locked_scene_20261114.zip",
+  "master": {
+    "name": "G2_新布局视觉候选_1672x941.png",
+    "size": [
+      1672,
+      941
+    ],
+    "sha256": "7f2d72e49c1a520358111845d71b026d041ede1da1d08febdec6d21ac70bbb66",
+    "notNative2560": true,
+    "notNeutralG5": true
+  },
+  "scenarios": [
+    {
+      "id": "male.sleep",
+      "variant": "male",
+      "pose": "sleep",
+      "place": "bed",
+      "actorRect": [
+        1275,
+        532,
+        313,
+        101
+      ],
+      "visibleAlphaBBox": [
+        1289,
+        532,
+        1588,
+        620
+      ],
+      "sourcePng": "assets/05/actor/indoor/male/sleep.png",
+      "scenePreview": "previews/male_sleep.png",
+      "reviewStatus": "pending",
+      "direction": "horizontal flipped; pillow to right",
+      "reviewIssue": "bed full but quilt foreground mask only draft; arms/body occluded intentionally"
+    },
+    {
+      "id": "male.sitRead",
+      "variant": "male",
+      "pose": "sitRead",
+      "place": "armchair",
+      "actorRect": [
+        513,
+        377,
+        221,
+        304
+      ],
+      "visibleAlphaBBox": [
+        513,
+        377,
+        726,
+        681
+      ],
+      "sourcePng": "assets/05/actor/indoor/male/sitRead.png",
+      "scenePreview": "previews/male_sitRead.png",
+      "reviewStatus": "pending",
+      "direction": "left three-quarter",
+      "reviewIssue": "armrest and footstool alpha occlusion draft"
+    },
+    {
+      "id": "male.sitWrite",
+      "variant": "male",
+      "pose": "sitWrite",
+      "place": "desk",
+      "actorRect": [
+        288,
+        409,
+        238,
+        297
+      ],
+      "visibleAlphaBBox": [
+        288,
+        409,
+        526,
+        701
+      ],
+      "sourcePng": "assets/05/actor/indoor/male/sitWrite.png",
+      "scenePreview": "previews/male_sitWrite.png",
+      "reviewStatus": "pending",
+      "direction": "flip to write toward left-hand desk",
+      "reviewIssue": "hand-to-journal contact and chair-back depth need hand correction"
+    },
+    {
+      "id": "male.standWork",
+      "variant": "male",
+      "pose": "standWork",
+      "place": "hearth",
+      "actorRect": [
+        822,
+        314,
+        169,
+        344
+      ],
+      "visibleAlphaBBox": [
+        837,
+        314,
+        991,
+        658
+      ],
+      "sourcePng": "assets/05/actor/indoor/male/standWork.png",
+      "scenePreview": "previews/male_standWork.png",
+      "reviewStatus": "pending",
+      "direction": "three-quarter near cast iron stove",
+      "reviewIssue": "workbench/cooking station still blocked by bed; hearth substitution only"
+    },
+    {
+      "id": "female.sleep",
+      "variant": "female",
+      "pose": "sleep",
+      "place": "bed",
+      "actorRect": [
+        1275,
+        532,
+        313,
+        101
+      ],
+      "visibleAlphaBBox": [
+        1333,
+        532,
+        1588,
+        633
+      ],
+      "sourcePng": "assets/05/actor/indoor/female/sleep.png",
+      "scenePreview": "previews/female_sleep.png",
+      "reviewStatus": "pending",
+      "direction": "horizontal flipped; pillow to right",
+      "reviewIssue": "bed full but quilt foreground mask only draft; arms/body occluded intentionally"
+    },
+    {
+      "id": "female.sitRead",
+      "variant": "female",
+      "pose": "sitRead",
+      "place": "armchair",
+      "actorRect": [
+        513,
+        377,
+        221,
+        304
+      ],
+      "visibleAlphaBBox": [
+        513,
+        377,
+        696,
+        681
+      ],
+      "sourcePng": "assets/05/actor/indoor/female/sitRead.png",
+      "scenePreview": "previews/female_sitRead.png",
+      "reviewStatus": "pending",
+      "direction": "left three-quarter",
+      "reviewIssue": "armrest and footstool alpha occlusion draft"
+    },
+    {
+      "id": "female.sitWrite",
+      "variant": "female",
+      "pose": "sitWrite",
+      "place": "desk",
+      "actorRect": [
+        288,
+        409,
+        238,
+        297
+      ],
+      "visibleAlphaBBox": [
+        289,
+        409,
+        526,
+        706
+      ],
+      "sourcePng": "assets/05/actor/indoor/female/sitWrite.png",
+      "scenePreview": "previews/female_sitWrite.png",
+      "reviewStatus": "pending",
+      "direction": "flip to write toward left-hand desk",
+      "reviewIssue": "hand-to-journal contact and chair-back depth need hand correction"
+    },
+    {
+      "id": "female.standWork",
+      "variant": "female",
+      "pose": "standWork",
+      "place": "hearth",
+      "actorRect": [
+        822,
+        314,
+        169,
+        344
+      ],
+      "visibleAlphaBBox": [
+        822,
+        314,
+        991,
+        658
+      ],
+      "sourcePng": "assets/05/actor/indoor/female/standWork.png",
+      "scenePreview": "previews/female_standWork.png",
+      "reviewStatus": "pending",
+      "direction": "three-quarter near cast iron stove",
+      "reviewIssue": "workbench/cooking station still blocked by bed; hearth substitution only"
+    }
+  ],
+  "checks": {
+    "fullCanvasRGBA": 8,
+    "fullCanvasRGBComposites": 8,
+    "changedPixelsOutsideActorAlpha": 0,
+    "oneActorPerComposite": true,
+    "oneLockedRoom": true,
+    "sourcePoseSheetsPerVariant": 1,
+    "maleMacSafariChecked": false,
+    "femaleMacSafariChecked": false
+  },
+  "productionLimitations": [
+    "Furnished G2 mood image has radio, curtain and lights baked; not G5 neutral start.",
+    "Only actor layer transparency and base invariance verified, not full room state layers.",
+    "Sleep shows head above quilt with imperfect depth mask.",
+    "Reading and writing require real chair/desk foreground occlusion.",
+    "standWork uses hearth because bed overlaps actual workshop/cooking access.",
+    "Generated 2x2 reference panels have inconsistent room details and are not production assets.",
+    "Review images and full-scene composites are not meant for assets/05 production source."
+  ],
+  "priorRefs": {
+    "task": "claude/06-greybox/设计/讨论记录/2026-11-14_给GPT的任务单_Claude.md",
+    "g2G4Review": "gpt/05-g2-recomposition-g4-illustration-spec-20261114",
+    "maleReview": "gpt/05-g1-g3-character-validation-20261114",
+    "femaleReview": "gpt/05-g1-female-character-validation-20261114"
+  },
+  "nextGate": "Claude validates 320×180/480×270/1280×720 on Mac + fixes G2 camera and physical space; then accept G1 before G5"
+}
