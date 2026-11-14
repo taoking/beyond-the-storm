@@ -1,0 +1,38 @@
+{
+  "schema": "bts.05.g2-source-binary/1",
+  "target": "assets/05/cabin/g2_layout_review.png",
+  "expected_bytes": 3264731,
+  "expected_sha256": "7f2d72e49c1a520358111845d71b026d041ede1da1d08febdec6d21ac70bbb66",
+  "parts": [
+    {
+      "index": 0,
+      "file": "scene-parts/g2-000.part",
+      "gitBlobSha1": "eac01d033f3e498bfcd80c1cad487f3713de3299",
+      "size": 786432
+    },
+    {
+      "index": 1,
+      "file": "scene-parts/g2-001.part",
+      "gitBlobSha1": "6206c811e4d9b000c2af2bd130475a39e744a1db",
+      "size": 786432
+    },
+    {
+      "index": 2,
+      "file": "scene-parts/g2-002.part",
+      "gitBlobSha1": "53b40535be20a098dce0078192fbf8fafc49a938",
+      "size": 786432
+    },
+    {
+      "index": 3,
+      "file": "scene-parts/g2-003.part",
+      "gitBlobSha1": "c5f6079f58886cc1edb041b84f605b0422a95d4a",
+      "size": 786432
+    },
+    {
+      "index": 4,
+      "file": "scene-parts/g2-004.part",
+      "gitBlobSha1": "5c7cbe09812e90684de8667b3c0e882f5188cf9c",
+      "size": 119003
+    }
+  ]
+}
