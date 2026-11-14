@@ -58,6 +58,18 @@ check("ambience uses separately provided readonly look when available", () => {
  const s=fixture();s.mode="ambience";s.look={weather:"晴",season:"秋",dayPart:"黄昏"};
  assert.equal(adapt(s,"window").weather.weather,"晴");
 });
+check("ambience renderer takes the staged outfit instead of the real actor's winter coat", () => {
+ const s=fixture();s.mode="ambience";s.actor.outfit="outdoor";s.actor.place="gate";
+ s.stage={show:true,place:"armchair",illusion:true,label:"在炉边坐着",outfit:"indoor",pose:"sit",prop:null};
+ const f=adapt(s,"hearth");assert.equal(f.actor.rendered,true);assert.equal(f.actor.outfit,"indoor");
+ assert.equal(s.actor.outfit,"outdoor");
+});
+check("stable G2 weather sprite key passes through without Chinese parsing", () => {
+ const s=fixture();s.look={source:"world",weatherLabel:"暴风雪",weather:"D",
+   weatherKey:"blizzard",season:"winter",dayPart:"夜"};
+ const f=adapt(s,"window");
+ assert.equal(f.weather.weatherKey,"blizzard");assert.equal(f.weather.weather,"暴风雪");
+});
 check("fire out means zero flame AND zero fire glow", () => {
  const s=fixture();s.fire.look="out";const f=adapt(s,"wide");
  assert.equal(f.fire.drawFlame,false);assert.equal(f.fire.drawGlow,false);
