@@ -1,0 +1,35 @@
+name: 05 Restore approved lossless cabin mother PNG
+on:
+  push:
+    branches:
+      - gpt/05-v1.4-mother-art-binaries-20261114
+    paths:
+      - '.github/workflows/05-v14-restore-lossless-master.yml'
+      - 'assets/05/v1.4/.parts/cabin_unlit.part_*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild-lossless-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gpt/05-v1.4-mother-art-binaries-20261114
+          persist-credentials: true
+      - name: Reassemble exact approved v1.2 lossless PNG
+        run: |
+          cat assets/05/v1.4/.parts/cabin_unlit.part_* > assets/05/v1.4/master/cabin_unlit_approved.png
+          echo '41213918be1e899f939436905f0d1447f37209368b092b7cc9b1d91819147af9  assets/05/v1.4/master/cabin_unlit_approved.png' | sha256sum -c -
+          file assets/05/v1.4/master/cabin_unlit_approved.png
+      - name: Commit lossless mother image to the art branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/05/v1.4/master/cabin_unlit_approved.png
+          if git diff --cached --quiet; then echo 'Source already committed'; exit 0; fi
+          git commit -m 'assets(05): restore exact approved lossless v1.2 cabin PNG'
+          git push origin HEAD:gpt/05-v1.4-mother-art-binaries-20261114
