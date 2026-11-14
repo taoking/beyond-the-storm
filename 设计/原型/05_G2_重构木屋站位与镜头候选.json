@@ -1,0 +1,401 @@
+{
+  "schema": "beyond-the-storm.05.g2-recomposition-review/1",
+  "status": "SCHEMATIC REVIEW ONLY (NOT production master, not accepted geometry)",
+  "basedOn": "05 v1.2 target illustration, Claude 03 §3.1, G1 female+male review",
+  "image": "/mnt/data/a_richly_detailed_cinematic_ultra_detailed_cozy.png (conversation artifact only, not in repository)",
+  "previewCanvas": [
+    1672,
+    941
+  ],
+  "requiredNativeFinalCanvas": [
+    2560,
+    1440
+  ],
+  "sRGB": true,
+  "illustrationNotSprites": true,
+  "unlitFirebox": true,
+  "locations": [
+    {
+      "id": "bed",
+      "label": "床",
+      "footAnchor": [
+        1402,
+        815
+      ],
+      "actorHeightPx": 305,
+      "facing": "朝左卧；睡姿没有脚底时锚点取床面中心",
+      "occludedBy": "床前沿、被褥",
+      "status": "candidate",
+      "note": "全床完整；床褥厚度需状态分层"
+    },
+    {
+      "id": "hearth",
+      "label": "柴炉",
+      "footAnchor": [
+        874,
+        550
+      ],
+      "actorHeightPx": 305,
+      "facing": "面向炉门",
+      "occludedBy": "炉台、石阶",
+      "status": "candidate",
+      "note": "唯一火源，添柴/压火/烧水"
+    },
+    {
+      "id": "stove",
+      "label": "料理台",
+      "footAnchor": [
+        1044,
+        532
+      ],
+      "actorHeightPx": 284,
+      "facing": "面向料理台",
+      "occludedBy": "柜台前沿",
+      "status": "candidate",
+      "note": "独立做饭站位，必须与 hearth 分离"
+    },
+    {
+      "id": "woodpile",
+      "label": "柴堆",
+      "footAnchor": [
+        755,
+        530
+      ],
+      "actorHeightPx": 275,
+      "facing": "朝柴篮",
+      "occludedBy": "柴篮前缘",
+      "status": "candidate",
+      "note": "五档柴量必须移除烘焙"
+    },
+    {
+      "id": "shelf",
+      "label": "储物架",
+      "footAnchor": [
+        1067,
+        497
+      ],
+      "actorHeightPx": 280,
+      "facing": "朝架子",
+      "occludedBy": "架前木柜",
+      "status": "candidate",
+      "note": "粮食罐头油罐按库存摆"
+    },
+    {
+      "id": "desk",
+      "label": "书桌",
+      "footAnchor": [
+        326,
+        755
+      ],
+      "actorHeightPx": 310,
+      "facing": "背向镜头/侧后",
+      "occludedBy": "椅背、桌沿",
+      "status": "candidate",
+      "note": "需留饭碗/写字笔位并不互挡"
+    },
+    {
+      "id": "bookshelf",
+      "label": "书架",
+      "footAnchor": [
+        540,
+        540
+      ],
+      "actorHeightPx": 285,
+      "facing": "面向架子",
+      "occludedBy": "扶手椅靠背",
+      "status": "candidate",
+      "note": "空出增量书与一格藏书"
+    },
+    {
+      "id": "workbench",
+      "label": "工作台",
+      "footAnchor": [
+        1272,
+        539
+      ],
+      "actorHeightPx": 278,
+      "facing": "面向工作台",
+      "occludedBy": "桌前缘、工具架",
+      "status": "candidate",
+      "note": "比 v1.2 新增独立工作站"
+    },
+    {
+      "id": "radio",
+      "label": "收音机",
+      "footAnchor": [
+        610,
+        374
+      ],
+      "actorHeightPx": 250,
+      "facing": "面向书架/收音机",
+      "occludedBy": "书架板",
+      "status": "needs_redraw",
+      "note": "图中物件不清楚且更像唱片机，正式图须给拆开状态的收音机明确位置"
+    },
+    {
+      "id": "gramophone",
+      "label": "唱片机",
+      "footAnchor": null,
+      "actorHeightPx": null,
+      "facing": "画外",
+      "occludedBy": "无",
+      "status": "offscreen_proposed",
+      "note": "可保留画外，不能被镜头显示；现有书架器物是否为唱片机需统一"
+    },
+    {
+      "id": "armchair",
+      "label": "扶手椅",
+      "footAnchor": [
+        602,
+        653
+      ],
+      "actorHeightPx": 325,
+      "facing": "三分之二朝左",
+      "occludedBy": "扶手、藤墩",
+      "status": "candidate",
+      "note": "整套椅子和椅边小桌可见"
+    },
+    {
+      "id": "window",
+      "label": "雪窗",
+      "footAnchor": [
+        274,
+        560
+      ],
+      "actorHeightPx": 290,
+      "facing": "面向窗外",
+      "occludedBy": "窗框、桌沿",
+      "status": "candidate",
+      "note": "宽雪窗可见，窗帘须初始缺省"
+    },
+    {
+      "id": "windowsill",
+      "label": "窗台",
+      "footAnchor": [
+        284,
+        542
+      ],
+      "actorHeightPx": 245,
+      "facing": "面向窗边",
+      "occludedBy": "窗框、物件",
+      "status": "candidate",
+      "note": "留玻璃罐与展示空位"
+    },
+    {
+      "id": "instruments",
+      "label": "仪器角",
+      "footAnchor": [
+        1580,
+        456
+      ],
+      "actorHeightPx": 266,
+      "facing": "面向气压计/记录纸",
+      "occludedBy": "衣架、壁板",
+      "status": "needs_redraw",
+      "note": "当前温度表不够，需补气压计、记录纸、煤油暖炉"
+    },
+    {
+      "id": "cellar",
+      "label": "地窖口",
+      "footAnchor": null,
+      "actorHeightPx": null,
+      "facing": "画外",
+      "occludedBy": "无",
+      "status": "offscreen_proposed",
+      "note": "须 Claude 统一画外不占镜头可见率"
+    },
+    {
+      "id": "backdoor",
+      "label": "后门和牵引绳",
+      "footAnchor": null,
+      "actorHeightPx": null,
+      "facing": "画外",
+      "occludedBy": "无",
+      "status": "offscreen_proposed",
+      "note": "仍可画外但要书写明白"
+    },
+    {
+      "id": "door",
+      "label": "门和衣架",
+      "footAnchor": [
+        1485,
+        538
+      ],
+      "actorHeightPx": 302,
+      "facing": "面向门",
+      "occludedBy": "大门、挂衣",
+      "status": "candidate",
+      "note": "相比 v1.2 已有完整门与衣架，外套应可挂取"
+    }
+  ],
+  "additionalOffscreen": [
+    {
+      "id": "springhouse",
+      "reason": "03 §3.1 springhouse is outdoors, never visible in interior cameras"
+    }
+  ],
+  "cameras": [
+    {
+      "id": "wide",
+      "rect": [
+        0,
+        0,
+        1664,
+        936
+      ],
+      "ratio": [
+        16,
+        9
+      ],
+      "mustInclude": [
+        "bed",
+        "workbench",
+        "door",
+        "desk",
+        "armchair",
+        "hearth",
+        "stove"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "window",
+      "rect": [
+        0,
+        92,
+        1152,
+        648
+      ],
+      "ratio": [
+        16,
+        9
+      ],
+      "mustInclude": [
+        "window",
+        "windowsill",
+        "desk",
+        "actor upper body and hands"
+      ],
+      "status": "proposed"
+    },
+    {
+      "id": "hearth",
+      "rect": [
+        390,
+        126,
+        1152,
+        648
+      ],
+      "ratio": [
+        16,
+        9
+      ],
+      "mustInclude": [
+        "hearth",
+        "entire actor in armchair",
+        "armchair",
+        "firebox"
+      ],
+      "status": "proposed"
+    }
+  ],
+  "displaySlots": [
+    {
+      "id": "photo_wall",
+      "label": "照片墙",
+      "rect": [
+        616,
+        170,
+        712,
+        240
+      ],
+      "mustStartEmpty": true,
+      "currentlyEmpty": false,
+      "clearingRequired": true
+    },
+    {
+      "id": "windowsill",
+      "label": "窗台",
+      "rect": [
+        216,
+        421,
+        352,
+        475
+      ],
+      "mustStartEmpty": true,
+      "currentlyEmpty": false,
+      "clearingRequired": true
+    },
+    {
+      "id": "desk_corner",
+      "label": "书桌一角",
+      "rect": [
+        414,
+        528,
+        520,
+        598
+      ],
+      "mustStartEmpty": true,
+      "currentlyEmpty": false,
+      "clearingRequired": true
+    },
+    {
+      "id": "hearth_shelf",
+      "label": "柴炉上方搁板",
+      "rect": [
+        900,
+        239,
+        1022,
+        290
+      ],
+      "mustStartEmpty": true,
+      "currentlyEmpty": false,
+      "clearingRequired": true
+    },
+    {
+      "id": "bedside",
+      "label": "床头",
+      "rect": [
+        1547,
+        522,
+        1650,
+        587
+      ],
+      "mustStartEmpty": true,
+      "currentlyEmpty": false,
+      "clearingRequired": true
+    },
+    {
+      "id": "wall_spare",
+      "label": "墙上展示位",
+      "rect": [
+        1562,
+        165,
+        1650,
+        231
+      ],
+      "mustStartEmpty": true,
+      "currentlyEmpty": false,
+      "clearingRequired": true
+    }
+  ],
+  "improved": [
+    "full bed visible",
+    "independent workshop bench visible",
+    "door/coat rack visible",
+    "hearth and cooking station visually separate",
+    "desk and reading chair preserved"
+  ],
+  "stillBlocking": [
+    "baked light and electricity",
+    "curtains present at start",
+    "repaired/indistinct radio",
+    "instruments incomplete",
+    "all six display spots currently occupied with decoration",
+    "not native 2560x1440",
+    "no independent mask/foreground/lighting",
+    "some benches and furniture placed for mood, not tested with actual characters"
+  ],
+  "authority": "Neither the new preview nor its camera rects are final G5 production coordinates; Claude must recompute full-camera visibility.",
+  "note": "Actor heights/foot anchors are draft in 1672x941 preview coordinates and must be respecified on a genuinely drawn 2560x1440 new composition. Do NOT upscale pixel positions."
+}
