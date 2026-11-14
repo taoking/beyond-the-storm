@@ -1,0 +1,587 @@
+{
+  "schema": "beyond-the-storm.05.G3.draft.v1",
+  "status": "UNAPPROVED / planned layers, NOT existing PNG files",
+  "source": "设计/03_主要内容.md §3.1 + Claude 2026-11-14 valid task list",
+  "count": 43,
+  "layers": [
+    {
+      "id": "fire_look",
+      "name": "柴炉炉膛",
+      "source03_3_1": "壁炉",
+      "stateCount": 5,
+      "states": [
+        "out",
+        "ember",
+        "low",
+        "mid",
+        "high"
+      ],
+      "removeFromV12Base": false,
+      "reason": "当前炉膛熄火，未来需要独立炭/火焰层"
+    },
+    {
+      "id": "woodpile_stock",
+      "name": "柴堆库存",
+      "source03_3_1": "柴堆",
+      "stateCount": 5,
+      "states": [
+        "empty",
+        "quarter",
+        "half",
+        "threeQuarter",
+        "full"
+      ],
+      "removeFromV12Base": true,
+      "reason": "满载柴篮已烘焙"
+    },
+    {
+      "id": "cooking_pot",
+      "name": "料理锅和水壶",
+      "source03_3_1": "灶台和水壶",
+      "stateCount": 5,
+      "states": [
+        "idle",
+        "cooking",
+        "lightSteam",
+        "heavySteam",
+        "boiling"
+      ],
+      "removeFromV12Base": true,
+      "reason": "当前锅具与热汽不能一直固定"
+    },
+    {
+      "id": "shelf_grain",
+      "name": "储物架粮量",
+      "source03_3_1": "储物架",
+      "stateCount": 4,
+      "states": [
+        "empty",
+        "low",
+        "mid",
+        "full"
+      ],
+      "removeFromV12Base": true,
+      "reason": "架上粮食已满"
+    },
+    {
+      "id": "shelf_ingredients",
+      "name": "储物架食材",
+      "source03_3_1": "储物架",
+      "stateCount": 3,
+      "states": [
+        "empty",
+        "few",
+        "many"
+      ],
+      "removeFromV12Base": true,
+      "reason": "食材罐已烘焙"
+    },
+    {
+      "id": "shelf_cans",
+      "name": "罐头",
+      "source03_3_1": "储物架",
+      "stateCount": 3,
+      "states": [
+        "empty",
+        "few",
+        "full"
+      ],
+      "removeFromV12Base": true,
+      "reason": "罐头已烘焙"
+    },
+    {
+      "id": "shelf_fuel",
+      "name": "油罐",
+      "source03_3_1": "储物架",
+      "stateCount": 3,
+      "states": [
+        "empty",
+        "few",
+        "full"
+      ],
+      "removeFromV12Base": true,
+      "reason": "油罐已烘焙"
+    },
+    {
+      "id": "desk_project",
+      "name": "书桌手头慢事",
+      "source03_3_1": "书桌",
+      "stateCount": 5,
+      "states": [
+        "clear",
+        "reading",
+        "writing",
+        "sorting",
+        "weatherRecords"
+      ],
+      "removeFromV12Base": true,
+      "reason": "书本便签已摊开"
+    },
+    {
+      "id": "bookshelf_returns",
+      "name": "书架带回书",
+      "source03_3_1": "书架",
+      "stateCount": 4,
+      "states": [
+        "empty",
+        "one",
+        "few",
+        "many"
+      ],
+      "removeFromV12Base": true,
+      "reason": "整架已满书需留空格"
+    },
+    {
+      "id": "bookshelf_yours",
+      "name": "书架属于你的格子",
+      "source03_3_1": "书架",
+      "stateCount": 3,
+      "states": [
+        "empty",
+        "one",
+        "many"
+      ],
+      "removeFromV12Base": true,
+      "reason": "固定格被书和杂物占用"
+    },
+    {
+      "id": "workbench_project",
+      "name": "工作台进行中的活",
+      "source03_3_1": "工作台",
+      "stateCount": 4,
+      "states": [
+        "empty",
+        "early",
+        "middle",
+        "complete"
+      ],
+      "removeFromV12Base": false,
+      "reason": "工作台缺失要先重构"
+    },
+    {
+      "id": "radio_repair",
+      "name": "收音机修缮",
+      "source03_3_1": "收音机",
+      "stateCount": 3,
+      "states": [
+        "disassembled",
+        "assembledOff",
+        "repairedLit"
+      ],
+      "removeFromV12Base": true,
+      "reason": "已修好且亮着不符合开局"
+    },
+    {
+      "id": "gramophone_repair",
+      "name": "唱片机修缮",
+      "source03_3_1": "唱片机",
+      "stateCount": 3,
+      "states": [
+        "covered",
+        "uncovered",
+        "playing"
+      ],
+      "removeFromV12Base": false,
+      "reason": "唱片机缺失可讨论画外"
+    },
+    {
+      "id": "armchair_blanket",
+      "name": "扶手椅毛毯样式",
+      "source03_3_1": "扶手椅",
+      "stateCount": 4,
+      "states": [
+        "none",
+        "plain",
+        "woven",
+        "patterned"
+      ],
+      "removeFromV12Base": true,
+      "reason": "毛毯已烘焙"
+    },
+    {
+      "id": "armchair_snack",
+      "name": "扶手椅旁吃的",
+      "source03_3_1": "扶手椅",
+      "stateCount": 3,
+      "states": [
+        "empty",
+        "tea",
+        "snacks"
+      ],
+      "removeFromV12Base": true,
+      "reason": "边桌茶杯已烘焙"
+    },
+    {
+      "id": "snow_window_frost",
+      "name": "玻璃结霜",
+      "source03_3_1": "雪窗",
+      "stateCount": 3,
+      "states": [
+        "clean",
+        "edge",
+        "frosted"
+      ],
+      "removeFromV12Base": true,
+      "reason": "白霜和原窗雪合成进背景"
+    },
+    {
+      "id": "window_leak",
+      "name": "窗缝修缮",
+      "source03_3_1": "雪窗",
+      "stateCount": 2,
+      "states": [
+        "leaking",
+        "repaired"
+      ],
+      "removeFromV12Base": false,
+      "reason": "漏风修缮外观未制作"
+    },
+    {
+      "id": "windowsill_jar",
+      "name": "玻璃罐和球果",
+      "source03_3_1": "窗台",
+      "stateCount": 4,
+      "states": [
+        "absent",
+        "empty",
+        "some",
+        "many"
+      ],
+      "removeFromV12Base": true,
+      "reason": "窗台小罐子不能固定代表球果"
+    },
+    {
+      "id": "windowsill_small_style",
+      "name": "窗台小物",
+      "source03_3_1": "窗台",
+      "stateCount": 3,
+      "states": [
+        "empty",
+        "plant",
+        "souvenir"
+      ],
+      "removeFromV12Base": true,
+      "reason": "绿植花器为样式可变"
+    },
+    {
+      "id": "bed_mattress",
+      "name": "床褥薄厚",
+      "source03_3_1": "床",
+      "stateCount": 2,
+      "states": [
+        "thin",
+        "thick"
+      ],
+      "removeFromV12Base": true,
+      "reason": "现为厚被且床被裁掉一半"
+    },
+    {
+      "id": "instrument_barometer",
+      "name": "气压计",
+      "source03_3_1": "仪器角",
+      "stateCount": 2,
+      "states": [
+        "absent",
+        "repaired"
+      ],
+      "removeFromV12Base": false,
+      "reason": "缺少正式气压计"
+    },
+    {
+      "id": "instrument_record",
+      "name": "温度记录纸",
+      "source03_3_1": "仪器角",
+      "stateCount": 3,
+      "states": [
+        "empty",
+        "partial",
+        "filled"
+      ],
+      "removeFromV12Base": false,
+      "reason": "缺少记录纸"
+    },
+    {
+      "id": "instrument_oilheater",
+      "name": "煤油暖炉",
+      "source03_3_1": "仪器角",
+      "stateCount": 3,
+      "states": [
+        "broken",
+        "readyOff",
+        "readyOn"
+      ],
+      "removeFromV12Base": false,
+      "reason": "缺少暖炉"
+    },
+    {
+      "id": "backdoor_rope_snow",
+      "name": "后门牵引绳上的雪",
+      "source03_3_1": "后门和牵引绳",
+      "stateCount": 3,
+      "states": [
+        "dry",
+        "lightSnow",
+        "covered"
+      ],
+      "removeFromV12Base": false,
+      "reason": "后门拟放画外"
+    },
+    {
+      "id": "springhouse_steam",
+      "name": "泉屋水汽",
+      "source03_3_1": "短廊和泉屋",
+      "stateCount": 3,
+      "states": [
+        "none",
+        "low",
+        "high"
+      ],
+      "removeFromV12Base": false,
+      "reason": "泉屋属于画外屋檐区"
+    },
+    {
+      "id": "coat_rack",
+      "name": "外套挂取",
+      "source03_3_1": "门和衣架",
+      "stateCount": 2,
+      "states": [
+        "coatHanging",
+        "coatAway"
+      ],
+      "removeFromV12Base": false,
+      "reason": "缺门与衣架"
+    },
+    {
+      "id": "curtain_repair",
+      "name": "窗帘修好与样式",
+      "source03_3_1": "雪窗",
+      "stateCount": 4,
+      "states": [
+        "absent",
+        "plain",
+        "patternA",
+        "patternB"
+      ],
+      "removeFromV12Base": true,
+      "reason": "窗帘在目标图里开局就已挂好"
+    },
+    {
+      "id": "water_pipe",
+      "name": "水管修缮",
+      "source03_3_1": "工作台",
+      "stateCount": 3,
+      "states": [
+        "broken",
+        "patched",
+        "working"
+      ],
+      "removeFromV12Base": false,
+      "reason": "水管没画出"
+    },
+    {
+      "id": "oil_lamp_left",
+      "name": "窗边油灯",
+      "source03_3_1": "灯",
+      "stateCount": 2,
+      "states": [
+        "off",
+        "on"
+      ],
+      "removeFromV12Base": true,
+      "reason": "油灯本体可开局有但亮光不可烘焙"
+    },
+    {
+      "id": "oil_lamp_right",
+      "name": "炉边油灯",
+      "source03_3_1": "灯",
+      "stateCount": 2,
+      "states": [
+        "off",
+        "on"
+      ],
+      "removeFromV12Base": true,
+      "reason": "每盏油灯要独立开关"
+    },
+    {
+      "id": "electric_desk",
+      "name": "书桌电灯",
+      "source03_3_1": "灯",
+      "stateCount": 3,
+      "states": [
+        "notBuilt",
+        "off",
+        "on"
+      ],
+      "removeFromV12Base": true,
+      "reason": "太阳能修好前不该出现电灯"
+    },
+    {
+      "id": "electric_ceiling",
+      "name": "顶灯",
+      "source03_3_1": "灯",
+      "stateCount": 3,
+      "states": [
+        "notBuilt",
+        "off",
+        "on"
+      ],
+      "removeFromV12Base": true,
+      "reason": "吊灯的电光现在烘焙"
+    },
+    {
+      "id": "electric_kitchen",
+      "name": "料理台电灯",
+      "source03_3_1": "灯",
+      "stateCount": 3,
+      "states": [
+        "notBuilt",
+        "off",
+        "on"
+      ],
+      "removeFromV12Base": true,
+      "reason": "料理台电灯现在烘焙"
+    },
+    {
+      "id": "scene_night_light",
+      "name": "冬夜光照",
+      "source03_3_1": "灯",
+      "stateCount": 2,
+      "states": [
+        "neutral",
+        "winterNight"
+      ],
+      "removeFromV12Base": true,
+      "reason": "整间暖光烘焙应改为中性受光"
+    },
+    {
+      "id": "actor_temp_book",
+      "name": "桌上摊开的书",
+      "source03_3_1": "书桌",
+      "stateCount": 2,
+      "states": [
+        "hidden",
+        "onDesk"
+      ],
+      "removeFromV12Base": true,
+      "reason": "活动痕迹不能固定"
+    },
+    {
+      "id": "actor_temp_cup",
+      "name": "茶杯",
+      "source03_3_1": "书桌",
+      "stateCount": 3,
+      "states": [
+        "hidden",
+        "desk",
+        "armchair"
+      ],
+      "removeFromV12Base": true,
+      "reason": "茶杯和蒸汽不能固定"
+    },
+    {
+      "id": "actor_temp_bowl",
+      "name": "饭碗",
+      "source03_3_1": "书桌",
+      "stateCount": 4,
+      "states": [
+        "hidden",
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "removeFromV12Base": false,
+      "reason": "早午书桌晚炉边需留真碗位"
+    },
+    {
+      "id": "display_photo_wall",
+      "name": "照片墙展示",
+      "source03_3_1": "六处固定展示位",
+      "stateCount": 4,
+      "states": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "removeFromV12Base": true,
+      "reason": "墙面画与收藏烘焙"
+    },
+    {
+      "id": "display_windowsill",
+      "name": "窗台展示",
+      "source03_3_1": "六处固定展示位",
+      "stateCount": 4,
+      "states": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "removeFromV12Base": true,
+      "reason": "原有罐子占位"
+    },
+    {
+      "id": "display_desk_corner",
+      "name": "书桌角展示",
+      "source03_3_1": "六处固定展示位",
+      "stateCount": 4,
+      "states": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "removeFromV12Base": true,
+      "reason": "与饭碗共桌必须留空"
+    },
+    {
+      "id": "display_hearth_shelf",
+      "name": "炉上横梁展示",
+      "source03_3_1": "六处固定展示位",
+      "stateCount": 4,
+      "states": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "removeFromV12Base": true,
+      "reason": "新增搁板须避开炉管"
+    },
+    {
+      "id": "display_bedside",
+      "name": "床头展示",
+      "source03_3_1": "六处固定展示位",
+      "stateCount": 4,
+      "states": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "removeFromV12Base": true,
+      "reason": "床头不完整"
+    },
+    {
+      "id": "display_wall_spare",
+      "name": "墙上另一处展示",
+      "source03_3_1": "六处固定展示位",
+      "stateCount": 4,
+      "states": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "removeFromV12Base": true,
+      "reason": "干花和挂图占用墙面"
+    }
+  ],
+  "notes": [
+    "Only the v1.2 atmosphere illustration currently exists; start state and neutral lighting require new original art after G1 approval.",
+    "Window curtains, electric lights and repaired radio must not be in the opening fixed plate.",
+    "Six display areas start empty.",
+    "A single real stove has hearth and prep-table positions.",
+    "All enum values are visual production proposals, NOT approved 06 Snapshot API."
+  ]
+}
