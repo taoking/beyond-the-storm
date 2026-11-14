@@ -16,7 +16,7 @@
 | 天气 PNG 层 | `layers/weather_blizzard_additive.png`、`weather_clear_approx_override.png`、`weather_light_snow_approx_override.png` | 增量暴雪 + 冷色窗景近似覆写，**仍非完整可替换的独立窗外景深** |
 | 从同一母图裁切 | [雪窗](cameras/window_unlit.webp) · [炉边](cameras/hearth_unlit.webp) | 同一间木屋取景，不是为不同镜头重新生成家具 |
 
-**资产目录确实包含 23 张图片**，另有 `manifest.json` 逐文件记录文件大小、Git Blob SHA、已完成和未完成内容。仓库路径 `assets/05/v1.4/` 已在 GitHub 中实地验证。用于恢复无损 PNG 的 6 个分块在 `.parts/`，属于传输中间数据，不是美术图层，也不应被游戏加载。
+**资产目录确实包含 23 张图片**，另有 `manifest.json` 逐文件记录文件大小、Git Blob SHA、已完成和未完成内容。仓库路径 `assets/05/v1.4/` 已在 GitHub 中实地验证。无损 PNG 已成功恢复并通过校验；用于传输的临时分块和一次性恢复流程**已经清理**，仓库保留的是可直接打开和使用的原版 `cabin_unlit_approved.png`。
 
 ## 本轮保持的目标品质
 
