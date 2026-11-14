@@ -123,7 +123,8 @@ function timeLabel(time: VisualTime, minute: number): string {
   if (time === "dusk") return "傍晚";
   // 白天继续保留上午、午间、下午的描述，窗口光照统一用 day 键。
   const part = dayPartOf(((minute % 1440) + 1440) % 1440);
-  return part === "noon" ? "午间" : part === "morning" ? "上午" : "下午";
+  return part === "noon" ? "午间" : part === "morning" ? "上午" :
+    part === "dusk" || part === "evening" ? "傍晚" : "下午";
 }
 
 /** 与 World.weather 独立：只投影已经保存的氛围选择，不重新抽天气。 */
