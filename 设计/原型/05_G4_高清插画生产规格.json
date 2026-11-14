@@ -1,0 +1,177 @@
+{
+  "schema": "beyond-the-storm.05.hd-illustration-spec/1",
+  "status": "G4 technical art spec (approved visual direction; production master NOT approved)",
+  "authority": "Claude 2026-11-14 task list + user U1 U2 U6",
+  "style": {
+    "type": "high_definition_handpainted_illustration",
+    "targetMood": "05 v1.2 cool snowy pine forest, amber lived-in shelter",
+    "pixelArt": false,
+    "nearestNeighbor": false,
+    "resample": "smooth_bilinear_or_bicubic",
+    "color": "sRGB",
+    "requireCrispLighting": true
+  },
+  "canvas": {
+    "width": 2560,
+    "height": 1440,
+    "ratio": "16:9",
+    "nativeArtwork": true,
+    "noUpscaled1672x941": true,
+    "fullCanvasSource": [
+      "background",
+      "lighting",
+      "weather_occlusion_masks"
+    ],
+    "assetFormat": "RGBA PNG"
+  },
+  "windows": [
+    {
+      "id": "snowWindow",
+      "cssPx": [
+        320,
+        180
+      ],
+      "camera": "window"
+    },
+    {
+      "id": "mainSmall",
+      "cssPx": [
+        480,
+        270
+      ],
+      "camera": "window"
+    },
+    {
+      "id": "full",
+      "cssPx": [
+        1280,
+        720
+      ],
+      "camera": "wide"
+    }
+  ],
+  "cameras": [
+    {
+      "id": "wide",
+      "aspect": "16:9",
+      "constraints": [
+        "all mandatory room stations fully in room"
+      ]
+    },
+    {
+      "id": "window",
+      "aspect": "16:9",
+      "constraints": [
+        "full window, desk surface, seated upper body including hands and book or bowl"
+      ]
+    },
+    {
+      "id": "hearth",
+      "aspect": "16:9",
+      "constraints": [
+        "entire seated armchair actor + stove firebox"
+      ]
+    }
+  ],
+  "baseline": {
+    "role": "opening_narrative_neutral",
+    "noElectricLampsBeforeSolar": true,
+    "radioRepairedAtStart": false,
+    "curtainsAtStart": false,
+    "bedFullyVisible": true,
+    "workbenchMandatory": true,
+    "stoveStations": [
+      "hearth stove for fuel/boil",
+      "stove cooking preparation counter"
+    ],
+    "windowsTransparent": true,
+    "lightingBaked": false,
+    "fireBaked": false
+  },
+  "characters": {
+    "variants": [
+      "male",
+      "female"
+    ],
+    "oneProtagonistAtATime": true,
+    "garment": [
+      "indoor",
+      "outdoor"
+    ],
+    "poseKeys": [
+      "sleep",
+      "sit",
+      "sitRead",
+      "sitWrite",
+      "sitHold",
+      "standWork",
+      "standLook",
+      "crouch"
+    ],
+    "walkSprites": false,
+    "poseTransition": "simple alpha crossfade",
+    "framesPerPose": "1–4 only when justified",
+    "characterOrigin": "same source identity within each variant",
+    "bodyDepth": "location-dependent scale/occlusion under G2",
+    "hasOneFootAnchorPerPlace": true
+  },
+  "animation": {
+    "fireFramesPerState": [
+      3,
+      4
+    ],
+    "weatherSnow": "programmatic particles, weather forest layers consistent"
+  },
+  "snapshotRule": "Only display real Snapshot.stage and look fields; never invent world time/actions",
+  "manifestRequiredFields": [
+    "id",
+    "file",
+    "x",
+    "y",
+    "width",
+    "height",
+    "zOrder",
+    "defaultVisible",
+    "visibleWhen"
+  ],
+  "manifestEntryExample": {
+    "id": "female_sitRead_armchair",
+    "file": "actor/indoor/female/sitRead_armchair.png",
+    "x": 960,
+    "y": 480,
+    "width": 240,
+    "height": 440,
+    "zOrder": 60,
+    "defaultVisible": false,
+    "visibleWhen": {
+      "stage.pose": "sitRead",
+      "stage.place": "armchair",
+      "stage.outfit": "indoor",
+      "stage.actorVariant": "female (proposed, not 06 field)"
+    },
+    "origin": "top-left of cropped transparent PNG"
+  },
+  "productionSteps": [
+    "G1 verify male/female four poses, especially full bed and actual writing desk posture",
+    "G2 approved full scene layout, location depth anchors, 16:9 cameras, six empty display spots",
+    "G3 remove baked state objects; check 43 proposed layers against 03",
+    "G5 draw native 2560x1440 neutral opening baseline with transparent glass; only two lighting states winter day/night",
+    "G6 static layered forest with variable sky; weather particles are separate",
+    "G7 fire out/ember/low/mid/high and localized light falloff",
+    "G8 full eight-pose male/female sprite sets only when G1 accepted"
+  ],
+  "deprecated": [
+    "480x270 logic canvas",
+    "640x360 original pixel density debate",
+    "integer-only scale",
+    "image-rendering:pixelated",
+    "nearest-neighbor upscaling",
+    "new GIF walk cycles"
+  ],
+  "scope": {
+    "G1_designReview": "identity/poses visually acceptable pending site fixes",
+    "G2_layout": "not finalized",
+    "G3_layers": "draft 43 groups",
+    "G5": "not started"
+  }
+}
