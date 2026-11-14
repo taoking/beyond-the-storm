@@ -1,0 +1,26 @@
+{
+  "status": "8 compositor snapshots are identity-consistent and scene-locked, NOT final G1 approval",
+  "masterSize": [
+    1672,
+    941
+  ],
+  "sourceMasterSha256": "7f2d72e49c1a520358111845d71b026d041ede1da1d08febdec6d21ac70bbb66",
+  "totalFullCanvasRGBA": 8,
+  "totalSceneComposites": 8,
+  "outsideAlphaPixelsChanged": 0,
+  "sameArtboardSourceWithinEachGender": true,
+  "sourceBoard2x2RejectedForProduction": true,
+  "failedPhysicalReview": {
+    "bed": "All limbs under blanket as intentional sleep staging; needs better foreground depth",
+    "stove": "Prep/workbench walkway occluded by bed; hearth substituted",
+    "sitRead": "Armchair/footstool occlusion only polygon approximation",
+    "sitWrite": "Hand-to-desk contact and chair occlusion needs careful artist pass"
+  },
+  "pending": {
+    "g1VisualApproval": true,
+    "g2Native2560Master": true,
+    "g2ActorPathTest": true,
+    "g5NeutralBase": true,
+    "actualMacWindowReviewByClaude": true
+  }
+}
