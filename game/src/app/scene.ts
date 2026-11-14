@@ -3,6 +3,7 @@
 import { CAMERAS, visibleIn, type CameraId } from "../core/cameras.ts";
 import { PLACES, type PlaceId } from "../core/content.ts";
 import type { Snapshot } from "../core/view.ts";
+import type { WeatherArtKey } from "../core/weather.ts";
 
 export const SCENE_W = 960;
 export const SCENE_H = 270;
@@ -47,6 +48,18 @@ export const CROP: Record<"window" | "hearth", [number, number, number, number]>
 };
 
 const FIRE_COLOR: Record<string, string> = { out: "#2a2f33", ember: "#7a3b2a", low: "#c9793f", mid: "#f0a04b", high: "#ffcf6b" };
+/** 灰盒按 G2 的稳定素材键绘色。以后只须替换成真实天气贴图，不解析天气中文字。 */
+const WEATHER_COLOR: Record<WeatherArtKey, string> = {
+  clear: "#80a6c3",
+  cloudy: "#708fa6",
+  lightSnow: "#9eb4c5",
+  heavySnow: "#889fb3",
+  blizzard: "#687c95",
+  coldRain: "#596f88",
+  fog: "#9aa8ab",
+  freezingRain: "#677d90",
+  thunderstorm: "#3b526d",
+};
 const TRACE_NAME: Record<string, string> = {
   bowl: "碗",
   cup: "杯",
@@ -96,10 +109,14 @@ export function drawScene(ctx: CanvasRenderingContext2D, snap: Snapshot, opt: Dr
   // 雪窗是独立展示投影：正常显示真实天气，氛围只显示选中的演出天气。
   // 户外临时专注同样可能处于冻结状态，但不代表一定选择了氛围天气。
   const look = snap.look;
-  ctx.fillStyle = look.source === "ambience" ? "#39506b" :
-    look.source === "missing" ? "#344453" :
-    /雪/.test(look.weatherLabel ?? "") ? "#8fa9bb" : "#6f8ea6";
+  ctx.fillStyle = look.source === "missing"
+    ? "#344453"
+    : WEATHER_COLOR[look.weatherKey ?? "cloudy"];
   ctx.fillRect(70, 44, 140, 52);
+  if (look.time === "night" || look.time === "dusk") {
+    ctx.fillStyle = look.time === "night" ? "rgba(6,12,34,.64)" : "rgba(31,27,54,.24)";
+    ctx.fillRect(70, 44, 140, 52);
+  }
   ctx.fillStyle = "#101820";
   ctx.font = "10px sans-serif";
   const weatherText = look.source === "missing" ? "（氛围未选择）" :
@@ -146,7 +163,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, snap: Snapshot, opt: Dr
   // 人
   if (snap.stage.show && snap.stage.place) {
     const [x, y] = SPOT[snap.stage.place];
-    ctx.fillStyle = snap.stage.illusion ? "#7193ac" : snap.actor.outfit === "outdoor" ? "#a65049" : "#e4b276";
+    ctx.fillStyle = snap.stage.illusion ? "#7193ac" : snap.stage.outfit === "outdoor" ? "#a65049" : "#e4b276";
     ctx.beginPath();
     ctx.arc(x, y - 10, 7, 0, Math.PI * 2);
     ctx.fill();
