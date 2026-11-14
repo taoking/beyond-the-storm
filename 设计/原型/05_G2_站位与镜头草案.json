@@ -1,0 +1,396 @@
+{
+  "schema": "beyond-the-storm.05.G2.draft.v1",
+  "status": "UNAPPROVED / reference illustration, not production anchors",
+  "source": "claude/06-greybox 设计/03_主要内容.md §3.1 and 2026-11-14_给GPT的任务单_Claude.md",
+  "basis": "05 v1.2 target atmosphere art 1672×941, not a production neutral plate",
+  "canvas": [
+    1672,
+    941
+  ],
+  "units": "source art pixels",
+  "locations": [
+    {
+      "number": 1,
+      "id": "bed",
+      "label": "床",
+      "footAnchor": [
+        1580,
+        680
+      ],
+      "actorHeightPx": 105,
+      "facing": "右侧卧",
+      "occludedBy": "床褥前沿、画框右侧",
+      "status": "partial",
+      "note": "床只在画内露出一部分；睡姿余下身体位于画框外，须改构图"
+    },
+    {
+      "number": 2,
+      "id": "hearth",
+      "label": "柴炉",
+      "footAnchor": [
+        1250,
+        660
+      ],
+      "actorHeightPx": 335,
+      "facing": "面向炉体",
+      "occludedBy": "炉台石砖、炉门框",
+      "status": "visible",
+      "note": "一只真实柴炉，炉前站姿G1样张已制作"
+    },
+    {
+      "number": 3,
+      "id": "stove",
+      "label": "料理台",
+      "footAnchor": [
+        1543,
+        595
+      ],
+      "actorHeightPx": 290,
+      "facing": "面向右侧台面",
+      "occludedBy": "料理台前缘、前景床角",
+      "status": "blocked",
+      "note": "床压住料理台的站位，完整角色不可用，需移位"
+    },
+    {
+      "number": 4,
+      "id": "woodpile",
+      "label": "柴堆",
+      "footAnchor": [
+        1106,
+        635
+      ],
+      "actorHeightPx": 235,
+      "facing": "朝右",
+      "occludedBy": "柴篮",
+      "status": "visible",
+      "note": "现有满载柴篮需移出开局中性母图"
+    },
+    {
+      "number": 5,
+      "id": "shelf",
+      "label": "储物架",
+      "footAnchor": [
+        1602,
+        460
+      ],
+      "actorHeightPx": 255,
+      "facing": "朝右",
+      "occludedBy": "吊柜和料理台",
+      "status": "partial",
+      "note": "粮食、罐头、油罐要按库存分层"
+    },
+    {
+      "number": 6,
+      "id": "desk",
+      "label": "书桌",
+      "footAnchor": [
+        637,
+        702
+      ],
+      "actorHeightPx": 250,
+      "facing": "背向镜头",
+      "occludedBy": "椅背、桌沿、椅子毛毯",
+      "status": "visible",
+      "note": "已完成写字背影试片；还须给早餐午餐留碗位"
+    },
+    {
+      "number": 7,
+      "id": "bookshelf",
+      "label": "书架",
+      "footAnchor": [
+        932,
+        526
+      ],
+      "actorHeightPx": 250,
+      "facing": "面向书架",
+      "occludedBy": "扶手椅靠背、储物格",
+      "status": "partial",
+      "note": "带回的书需要能独立增加"
+    },
+    {
+      "number": 8,
+      "id": "workbench",
+      "label": "工作台",
+      "footAnchor": null,
+      "actorHeightPx": null,
+      "facing": "待定",
+      "occludedBy": "新绘工作台遮挡",
+      "status": "missing",
+      "note": "v1.2 原画根本没有工作台，不能给伪造锚点"
+    },
+    {
+      "number": 9,
+      "id": "radio",
+      "label": "收音机",
+      "footAnchor": [
+        952,
+        421
+      ],
+      "actorHeightPx": 245,
+      "facing": "面向架子",
+      "occludedBy": "书架前缘",
+      "status": "visible",
+      "note": "当前已修好发亮，开局应为拆开"
+    },
+    {
+      "number": 10,
+      "id": "gramophone",
+      "label": "唱片机",
+      "footAnchor": null,
+      "actorHeightPx": null,
+      "facing": "画外",
+      "occludedBy": "画外",
+      "status": "offscreen",
+      "note": "建议画外，需评审同意，画外任何镜头都看不到人"
+    },
+    {
+      "number": 11,
+      "id": "armchair",
+      "label": "扶手椅",
+      "footAnchor": [
+        868,
+        682
+      ],
+      "actorHeightPx": 308,
+      "facing": "三分之二朝左",
+      "occludedBy": "扶手、前方藤墩",
+      "status": "visible",
+      "note": "读书姿态可辨，需保留完整坐姿"
+    },
+    {
+      "number": 12,
+      "id": "window",
+      "label": "雪窗",
+      "footAnchor": [
+        573,
+        577
+      ],
+      "actorHeightPx": 250,
+      "facing": "向窗",
+      "occludedBy": "书桌、窗帘",
+      "status": "visible",
+      "note": "窗帘需为状态层"
+    },
+    {
+      "number": 13,
+      "id": "windowsill",
+      "label": "窗台",
+      "footAnchor": [
+        400,
+        540
+      ],
+      "actorHeightPx": 238,
+      "facing": "向窗",
+      "occludedBy": "窗框、前方桌面",
+      "status": "visible",
+      "note": "罐子与球果应独立呈现"
+    },
+    {
+      "number": 14,
+      "id": "instruments",
+      "label": "仪器角",
+      "footAnchor": [
+        1122,
+        438
+      ],
+      "actorHeightPx": 235,
+      "facing": "朝气象仪器",
+      "occludedBy": "炉管、墙面挂图",
+      "status": "partial",
+      "note": "气压计、纸记录、煤油暖炉缺失"
+    },
+    {
+      "number": 15,
+      "id": "cellar",
+      "label": "地窖口",
+      "footAnchor": null,
+      "actorHeightPx": null,
+      "facing": "画外",
+      "occludedBy": "画外",
+      "status": "offscreen",
+      "note": "任务单允许提议画外"
+    },
+    {
+      "number": 16,
+      "id": "backdoor",
+      "label": "后门",
+      "footAnchor": null,
+      "actorHeightPx": null,
+      "facing": "画外",
+      "occludedBy": "画外",
+      "status": "offscreen",
+      "note": "绳索与后门建议画外"
+    },
+    {
+      "number": 17,
+      "id": "door",
+      "label": "门和衣架",
+      "footAnchor": null,
+      "actorHeightPx": null,
+      "facing": "待定",
+      "occludedBy": "待加入的门/衣架",
+      "status": "offscreen",
+      "note": "原图无门和衣架，正式母图应补入"
+    },
+    {
+      "number": 18,
+      "id": "springhouse",
+      "label": "短廊和泉屋",
+      "footAnchor": null,
+      "actorHeightPx": null,
+      "facing": "画外",
+      "occludedBy": "画外",
+      "status": "offscreen",
+      "note": "03 §3.1额外项，内核id springhouse属于屋檐区"
+    }
+  ],
+  "cameras": [
+    {
+      "id": "wide",
+      "rect": [
+        4,
+        2,
+        1664,
+        936
+      ],
+      "required": "whole cabin (baseline itself has cropped bed)",
+      "ratio": "16:9"
+    },
+    {
+      "id": "window",
+      "rect": [
+        0,
+        80,
+        1152,
+        648
+      ],
+      "required": "snow window, desk surface, upper body of seated writer",
+      "ratio": "16:9"
+    },
+    {
+      "id": "hearth",
+      "rect": [
+        648,
+        177,
+        1024,
+        576
+      ],
+      "required": "entire reading seated pose and real stove firebox",
+      "ratio": "16:9"
+    }
+  ],
+  "displaySlots": [
+    {
+      "id": "photo_wall",
+      "label": "照片墙",
+      "rect": [
+        1034,
+        200,
+        1142,
+        295
+      ],
+      "proposedCapacity": 3,
+      "initialEmpty": true,
+      "requiresClearingBakedDecor": true
+    },
+    {
+      "id": "windowsill",
+      "label": "窗台",
+      "rect": [
+        306,
+        460,
+        451,
+        526
+      ],
+      "proposedCapacity": 3,
+      "initialEmpty": true,
+      "requiresClearingBakedDecor": true
+    },
+    {
+      "id": "desk_corner",
+      "label": "书桌一角",
+      "rect": [
+        355,
+        554,
+        529,
+        625
+      ],
+      "proposedCapacity": 3,
+      "initialEmpty": true,
+      "requiresClearingBakedDecor": true
+    },
+    {
+      "id": "hearth_shelf",
+      "label": "柴炉上方横梁／搁板",
+      "rect": [
+        1191,
+        300,
+        1352,
+        354
+      ],
+      "proposedCapacity": 3,
+      "initialEmpty": true,
+      "requiresClearingBakedDecor": true
+    },
+    {
+      "id": "bedside",
+      "label": "床头",
+      "rect": [
+        1523,
+        442,
+        1623,
+        504
+      ],
+      "proposedCapacity": 3,
+      "initialEmpty": true,
+      "requiresClearingBakedDecor": true
+    },
+    {
+      "id": "wall_spare",
+      "label": "墙上一处",
+      "rect": [
+        1436,
+        168,
+        1540,
+        259
+      ],
+      "proposedCapacity": 3,
+      "initialEmpty": true,
+      "requiresClearingBakedDecor": true
+    }
+  ],
+  "semantics": {
+    "hearth": "single cast-iron wood stove: fire/tea/boiling",
+    "stove": "separate cooking preparation station: meal/ingredients",
+    "mealLocation": "breakfast/lunch desk; dinner hearth",
+    "bed": "partial now, full bed mandatory in redrawn master",
+    "workbench": "missing now, mandatory in redrawn master"
+  },
+  "cameraVisibilityNote": "Offscreen and missing places are never visible in any camera; do not invent in-frame anchors",
+  "proposedRedraw": {
+    "size": [
+      2560,
+      1440
+    ],
+    "status": "SCHEMATIC ONLY, not production coordinates",
+    "need": [
+      "fully visible bed",
+      "separate workbench",
+      "door+coat rack",
+      "complete instruments corner",
+      "two realistic working positions in kitchen/hearth",
+      "six empty display slots"
+    ],
+    "offscreenCandidates": [
+      "gramophone",
+      "cellar",
+      "backdoor",
+      "springhouse"
+    ]
+  },
+  "filesInUserHandoffZip": [
+    "previews/g2_location_camera_display_map.png",
+    "previews/g2_recomposition_2560x1440_schematic.png",
+    "assets/05/planning/locations_g2_draft.json"
+  ]
+}
