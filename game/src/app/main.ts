@@ -29,10 +29,9 @@ function presetOf(value: string): FocusPreset {
 function renderTop(s: Snapshot): string {
   const dots = "●".repeat(s.focus.dots) + "○".repeat(CONFIG.shares.perDay - s.focus.dots);
   const projected = s.look.source === "ambience";
-  const headline = projected ? `氛围 · ${s.look.seasonLabel ?? ""}` : s.world.dayLabel;
-  const weather = s.look.source === "missing" ? "氛围未选择" :
-    (s.look.weatherLabel ?? s.world.look);
-  const part = s.look.dayPart ?? s.world.dayPart;
+  const headline = projected ? `氛围 · ${s.look.seasonLabel}` : s.world.dayLabel;
+  const weather = s.look.weatherLabel;
+  const part = s.look.dayPart;
   return `
     <strong>${esc(headline)}</strong>
     <span>${esc(weather)}</span>

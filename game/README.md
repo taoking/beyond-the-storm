@@ -44,16 +44,17 @@ tools/         长跑、采样、指标报告
 
 内核和界面之间只有两样东西：`game.ts` 里 `cmd` 开头的命令，和 `view.ts` 的 `present()`。换界面不用动内核。
 
-## G2：画面与世界分离（06 v0.3）
+## G2：画面与世界分离（06 v0.3、v0.3.1）
 
-本阶段由 GPT 临时接手 06 的只读表现部分；原 G0 世界模拟、专注、项目经济、存档与自动化不改。输出依然只有 `present(game, wall, calendar): Snapshot`。
+只读表现部分由 GPT 实现（v0.3），Claude 评审后并入并做了小修（v0.3.1）；G0 世界模拟、专注、项目经济、存档与自动化不改。输出依然只有 `present(game, wall, calendar): Snapshot`。
 
 新增的**只读字段**：
 
 - `snapshot.stage.activity`：真正的 Activity.kind；当世界没有行动、氛围是独立演出或者户外临时专注是空屋时为 `null`。
 - `snapshot.stage.pose`：九种可供精灵选择的姿态键（`sleep / sit / sitRead / sitWrite / sitHold / standWork / standLook / crouch / walk`），不通过解析中文活动说明生成。
 - `snapshot.stage.prop`：当前可绘制道具（书、日志、杯、碗、壶、工具等），没有就为 `null`。
-- `snapshot.look`：当前**实际应该绘制**的季节、天气、时段；`source` 清楚区分 `world`（真实）、`ambience`（冻结的选择）和 `missing`（旧存档/没有有效选择）。`snapshot.world` 依然报告真正的世界事实，两个投影不会互相覆盖。
+- `snapshot.stage.visible`：按 `stage.place` 算的各镜头可见与否；`actor.visible` 是他真实位置的事实。
+- `snapshot.look`：当前**实际应该绘制**的季节、天气、时段；`source` 区分 `world`（真实）和 `ambience`（冻结的选择）。`look.dayPart` 是光（按季节天黑），`look.dayPartKey` 是内核作息的七个时段键，和 `world.dayPart` 同口径。`snapshot.world` 依然报告真正的世界事实，两个投影不会互相覆盖。
 - `fire.look`、`jar.cones`、`jar.pending` 保持旧有语义，画面不能自行生火、摆球果或计份。
 
 `src/app/` 的**色块灰盒**已使用这些展示字段。正式像素画和场景坐标仍待 05 生产，不能认为有 `poseKey` 就已经拥有全部角色帧。

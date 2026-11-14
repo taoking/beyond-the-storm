@@ -19,5 +19,12 @@ export function deserialize(text: string): SaveFile {
   }
   if (file.version > SAVE_VERSION) throw new Error(`存档来自更新的版本（${file.version}），这一版读不了`);
   // 以后改了存档结构，在这里按 version 一级级迁移
+  repair(file.game);
   return file;
+}
+
+/** 命令走不到、只有存档被改坏才会有的组合，读档时修回能解释的状态 */
+function repair(g: Game): void {
+  // 氛围态却没有选的画面：回到真实的今天（世界本来就停着，不补时间）
+  if (g.mode === "ambience" && !g.ambience) g.mode = "companion";
 }

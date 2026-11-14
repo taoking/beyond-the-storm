@@ -387,7 +387,8 @@ interface LeisureDef {
   id: string;
   /** 这会儿想做它的程度；0 是不做 */
   weight(w: World, t: number): number;
-  build(w: World, t: number): { label: string; phases: Phase[]; text: string };
+  /** variant：同一件闲暇的不同做法，给表现层读的结构化标记（例如 yardStroll 的 "sit" 是坐在门口） */
+  build(w: World, t: number): { label: string; phases: Phase[]; text: string; variant?: string };
   /** 你在做这类现实任务、或者正在休息时，他更爱做它（02 第 6.3 节） */
   nudge: string[];
 }
@@ -481,7 +482,7 @@ const LEISURE: LeisureDef[] = [
     },
     build: (w, t) =>
       seasonOf(w.day).season === "summer" && t >= 18 * 60
-        ? { label: "坐在门口", phases: [{ place: "gate", minutes: span(w, 20, 30) }], text: "傍晚在门口坐了一阵。" }
+        ? { label: "坐在门口", phases: [{ place: "gate", minutes: span(w, 20, 30) }], text: "傍晚在门口坐了一阵。", variant: "sit" }
         : { label: "在院子里走走", phases: [{ place: "gate", minutes: span(w, 15, 20) }], text: "在院子里走了走。" },
     nudge: [],
   },
@@ -535,7 +536,9 @@ function leisureActivity(w: World, t: number): Activity {
     const last = built.phases[built.phases.length - 1];
     last.minutes = Math.max(5, last.minutes - (total - room));
   }
-  return activity("leisure", built.label, "leisure", built.phases, { id: def.id, text: built.text }, true);
+  const data: Activity["data"] = { id: def.id, text: built.text };
+  if (built.variant) data.variant = built.variant;
+  return activity("leisure", built.label, "leisure", built.phases, data, true);
 }
 
 // ---------- 项目 ----------

@@ -1,6 +1,6 @@
 // G2 表现层：只读真实活动、地点与独立氛围选择，映射给精灵和天气图层。
 // 不改世界状态、不推进游戏、不创建事件，不解析中文叙述来判断动作。
-import { dayPartOf, seasonOf, SEASON_NAME } from "./calendar.ts";
+import { dayPartOf, seasonOf, SEASON_NAME, type DayPart } from "./calendar.ts";
 import { CONFIG, type Season, type WeatherTier } from "./config.ts";
 import { PROJECTS } from "./content.ts";
 import type { Game } from "./game.ts";
@@ -18,13 +18,8 @@ export interface PoseProjection {
   prop: PropKey;
 }
 
-/** 可以当作独立绘制的姿态，不是另一个角色状态机。 */
-export interface PoseContext {
-  /** 当前世界日与真实活动所处时刻；只为判别已开始的闲暇变体，不更改日程。 */
-  day: number;
-  minuteOfDay: number;
-}
-export function actorPose(actor: ActorState, context?: PoseContext): PoseProjection {
+/** 可以当作独立绘制的姿态，不是另一个角色状态机。只读 Activity 的 kind、地点和 data。 */
+export function actorPose(actor: ActorState): PoseProjection {
   const a = actor.activity;
   if (actor.asleep || a?.kind === "sleep") return { activity: a?.kind ?? null, pose: "sleep", prop: null };
   if (!a) return { activity: null, pose: null, prop: null };
@@ -46,12 +41,11 @@ export function actorPose(actor: ActorState, context?: PoseContext): PoseProject
   if (kind === "observe") return { activity: kind, pose: "standLook", prop: "instrument" };
   if (kind === "project") {
     const id = a.data.id;
-    // 这是整理书面气象记录，不是拿工具修理观测仪器。
-    if (id === "weatherRecords") return { activity: kind, pose: "sitWrite", prop: "journal" };
     const def = PROJECTS.find((p) => p.id === id);
-    return def?.kind === "read"
-      ? { activity: kind, pose: isSeat ? "sitRead" : "standLook", prop: "book" }
-      : { activity: kind, pose: place === "cellar" ? "crouch" : "standWork", prop: "tools" };
+    if (def?.kind === "read") return { activity: kind, pose: isSeat ? "sitRead" : "standLook", prop: "book" };
+    // 书桌上做的不是读书的事（整理气象记录这类）是写写抄抄，不是拿工具修东西
+    if (isDesk) return { activity: kind, pose: "sitWrite", prop: "journal" };
+    return { activity: kind, pose: place === "cellar" ? "crouch" : "standWork", prop: "tools" };
   }
   if (kind === "leisure") {
     if (leisureId === "readIdle") return { activity: kind, pose: isSeat ? "sitRead" : "standLook", prop: "book" };
@@ -63,16 +57,8 @@ export function actorPose(actor: ActorState, context?: PoseContext): PoseProject
     if (leisureId === "radio") return { activity: kind, pose: "standLook", prop: null };
     if (leisureId === "tidyTools") return { activity: kind, pose: "standWork", prop: "tools" };
     if (leisureId === "waterPlant") return { activity: kind, pose: "standWork", prop: "cup" };
-    if (leisureId === "yardStroll") {
-      // 06 同一个 ID 在夏季 18:00 后用于「坐在门口」，平时用于散步。
-      // 根据活动开始的分钟而非当前钟点判断，避免跨 18:00 误切姿态。
-      const phase = a.phases[a.phase];
-      const elapsed = phase ? Math.max(0, phase.minutes - a.left) : 0;
-      const startedAt = (context?.minuteOfDay ?? 0) - elapsed;
-      const sitting = context && seasonOf(context.day).season === "summer" &&
-        startedAt >= 18 * 60 && place === "gate";
-      return { activity: kind, pose: sitting ? "sit" : "walk", prop: null };
-    }
+    // 夏天傍晚的「坐在门口」由内核在开始时标成 variant: "sit"；没有标记的（含老存档）按走走算
+    if (leisureId === "yardStroll") return { activity: kind, pose: a.data.variant === "sit" ? "sit" : "walk", prop: null };
     return { activity: kind, pose: "standLook", prop: null };
   }
   if (kind === "request") {
@@ -96,16 +82,24 @@ export function actorPose(actor: ActorState, context?: PoseContext): PoseProject
 
 export type VisualTime = "dawn" | "day" | "dusk" | "night";
 export interface LookProjection {
-  /** world 是事实，ambience 是冻结演出，missing 表示缺失选择，不偷用真实天气。 */
-  source: "world" | "ambience" | "missing";
-  season: Season | null;
-  seasonLabel: string | null;
-  weather: WeatherTier | null;
-  weatherLabel: string | null;
-  /** 给美术素材查表的稳定 ID，渲染器不用匹配中文天气描述。 */
+  /** world 是真实世界；ambience 是你选的、冻结着的画面。两者不混。 */
+  source: "world" | "ambience";
+  season: Season;
+  seasonLabel: string;
+  weather: WeatherTier;
+  weatherLabel: string;
+  /** 给美术素材查表的稳定 ID，渲染器不用匹配中文天气描述。老存档里认不出的天气名是 null */
   weatherKey: WeatherArtKey | null;
-  time: VisualTime | null;
-  dayPart: string | null;
+  /** 画面的光：按当季天黑的钟点分四档。冬天 17:00 以后就是 night */
+  time: VisualTime;
+  /** 光的中文说法，跟 time 走：冬天 17:30 是「夜」。和 world.dayPart（作息上的时段）不是一回事 */
+  dayPart: string;
+  /**
+   * 内核作息的七个时段键（calendar.ts 的 DayPart），只看钟点、不看季节：冬天 17:30 是 afternoon。
+   * 画面要按时段选东西时读它，不读中文。氛围态没有真实钟点，按所选时段取代表键：
+   * dawn→dawn、day→noon、dusk→dusk、night→night。
+   */
+  dayPartKey: DayPart;
 }
 
 function visualTime(minute: number, season: Season): VisualTime {
@@ -127,8 +121,11 @@ function timeLabel(time: VisualTime, minute: number): string {
     part === "dusk" || part === "evening" ? "傍晚" : "下午";
 }
 
+const AMBIENCE_DAY_PART: Record<VisualTime, DayPart> = { dawn: "dawn", day: "noon", dusk: "dusk", night: "night" };
+
 /** 与 World.weather 独立：只投影已经保存的氛围选择，不重新抽天气。 */
 export function projectedLook(g: Game, w: World, clockMinute: number): LookProjection {
+  // 读档时已把「氛围态却没有选择」修回陪伴（save.ts），这里没有选择就是真实世界
   if (g.mode === "ambience" || g.mode === "outdoorFocus") {
     const selected = g.ambience;
     if (selected) {
@@ -141,10 +138,8 @@ export function projectedLook(g: Game, w: World, clockMinute: number): LookProje
         weatherKey: weatherArtKey(previewLook(selected.season, selected.weather)),
         time: selected.time,
         dayPart: ({ dawn: "清晨", day: "白天", dusk: "傍晚", night: "夜" } as const)[selected.time],
+        dayPartKey: AMBIENCE_DAY_PART[selected.time],
       };
-    }
-    if (g.mode === "ambience") {
-      return { source: "missing", season: null, seasonLabel: null, weather: null, weatherLabel: null, weatherKey: null, time: null, dayPart: null };
     }
   }
   const info = seasonOf(w.day);
@@ -157,5 +152,6 @@ export function projectedLook(g: Game, w: World, clockMinute: number): LookProje
     weatherKey: weatherArtKey(w.weather.look),
     time: visualTime(clockMinute, info.season),
     dayPart: timeLabel(visualTime(clockMinute, info.season), clockMinute),
+    dayPartKey: dayPartOf(((clockMinute % 1440) + 1440) % 1440),
   };
 }

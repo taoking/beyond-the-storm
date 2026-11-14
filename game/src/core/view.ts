@@ -41,6 +41,7 @@ export interface Snapshot {
     stationDay: number;
     look: string;
     tierName: string;
+    /** 作息上的时段（清晨、上午……晚上、夜），只看钟点。画面的光用 look.dayPart */
     dayPart: string;
     /** 只在户外和调试器里显示具体钟点 */
     clock: string;
@@ -59,8 +60,18 @@ export interface Snapshot {
     whereabouts: string;
     visible: Record<CameraId, boolean>;
   };
-  /** 画面里要画的人：氛围态里是不产出的闲暇演出；户外临时专注是空屋 */
-  stage: { show: boolean; place: PlaceId | null; label: string; illusion: boolean; outfit: "indoor" | "outdoor" | null } & PoseProjection;
+  /**
+   * 画面里要画的人：氛围态里是不产出的闲暇演出；户外临时专注是空屋。
+   * visible 按 stage.place 算（画面上哪个镜头看得见这个人）；actor.visible 是他真实位置的事实。
+   */
+  stage: {
+    show: boolean;
+    place: PlaceId | null;
+    label: string;
+    illusion: boolean;
+    outfit: "indoor" | "outdoor" | null;
+    visible: Record<CameraId, boolean>;
+  } & PoseProjection;
   /** 当前实际可绘制的天气、季节和时间；独立氛围和真实世界严格分开。 */
   look: LookProjection;
   fire: { look: string; burn: number; ember: number };
@@ -122,6 +133,10 @@ export function summaryText(s: RoundSummary | null): string {
   return parts.join(" · ");
 }
 
+function stageVisible(place: PlaceId | null): Record<CameraId, boolean> {
+  return Object.fromEntries(CAMERA_IDS.map((c) => [c, place !== null && visibleIn(c, place)])) as Record<CameraId, boolean>;
+}
+
 const MODE_LINE: Record<Mode, string> = {
   companion: "真实的今天",
   ambience: "氛围预览 · 世界暂停",
@@ -139,8 +154,8 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
   const visible = Object.fromEntries(CAMERA_IDS.map((c) => [c, !a.away && visibleIn(c, a.place)])) as Record<CameraId, boolean>;
 
   // 表现姿态只读已有的结构化 Activity/phase/data，永远不解析中文 label。
-  const pose = actorPose(a, { day: w.day, minuteOfDay: t });
-  let stage: Snapshot["stage"];
+  const pose = actorPose(a);
+  let stage: Omit<Snapshot["stage"], "visible">;
   if (g.mode === "outdoorFocus") {
     stage = { show: false, place: null, label: "屋里没人，炉里留着余火", illusion: false, outfit: null, activity: null, pose: null, prop: null };
   } else if (g.mode === "ambience") {
@@ -226,7 +241,7 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
       whereabouts: a.away ? "出门了" : `${label}（${PLACES[a.place].name}）`,
       visible,
     },
-    stage,
+    stage: { ...stage, visible: stageVisible(stage.show ? stage.place : null) },
     look: projectedLook(g, w, t),
     fire: { look: fireLook(w), burn: Math.round(w.fire.burn), ember: w.fire.ember },
     life: {

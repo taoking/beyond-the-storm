@@ -2,10 +2,12 @@
 import { describe, expect, it } from "vitest";
 import { PROJECTS, type PlaceId } from "../src/core/content.ts";
 import { CONFIG } from "../src/core/config.ts";
-import { seasonOf } from "../src/core/calendar.ts";
+import { dayPartOf, seasonOf } from "../src/core/calendar.ts";
+import { CAMERA_IDS, visibleIn } from "../src/core/cameras.ts";
+import { deserialize, serialize } from "../src/core/save.ts";
 import { fixedCalendar } from "../src/core/focus.ts";
-import { cmdEnterAmbience, newGame } from "../src/core/game.ts";
-import type { Activity, ActivityKind, ActorState } from "../src/core/state.ts";
+import { advanceCompanionMinutes, cmdEnterAmbience, newGame } from "../src/core/game.ts";
+import { dayClock, type Activity, type ActivityKind, type ActorState } from "../src/core/state.ts";
 import { present } from "../src/core/view.ts";
 import { actorPose, projectedLook } from "../src/core/visual.ts";
 import { previewLook, weatherArtKey, WEATHER_ART_KEYS } from "../src/core/weather.ts";
@@ -49,15 +51,27 @@ describe("06 G2 actor pose projection reads structured facts only", () => {
     expect(actorPose(actor("leisure","workbench",{id:"tidyTools"}))).toMatchObject({pose:"standWork",prop:"tools"});
     expect(actorPose(actor("meal","stove"))).toMatchObject({pose:"standWork",prop:"pot"});
   });
-  it("sitting at the gate stays seated; earlier walk does not flip on crossing 18:00", () => {
+  it("sitting at the gate reads the kernel's structured variant, not the clock", () => {
+    const sit = actor("leisure","gate",{id:"yardStroll",variant:"sit"});
+    expect(actorPose(sit).pose).toBe("sit");
+    // 没有标记的（白天走走、老存档）按走路
+    expect(actorPose(actor("leisure","gate",{id:"yardStroll"})).pose).toBe("walk");
+  });
+  it("the kernel marks summer-evening yard leisure as sitting and nothing else", () => {
     const summer = Array.from({length:CONFIG.calendar.yearDays},(_,day)=>day)
       .find(day => seasonOf(day).season === "summer")!;
-    const a = actor("leisure","gate",{id:"yardStroll"});
-    expect(actorPose(a,{day:summer,minuteOfDay:18*60+5}).pose).toBe("sit");
-    expect(actorPose(a,{day:summer,minuteOfDay:17*60+55}).pose).toBe("walk");
-    a.activity!.left = 9; // 已走 6 分钟，即在 17:59 开始散步
-    expect(actorPose(a,{day:summer,minuteOfDay:18*60+5}).pose).toBe("walk");
-    expect(actorPose(a,{day:0,minuteOfDay:18*60+5}).pose).toBe("walk");
+    const g = newGame(3);
+    const seen = new Map<string, Set<string>>();
+    for (let i = 0; i < 1440 * (summer + 12); i++) {
+      advanceCompanionMinutes(g, 1);
+      const a = g.world.actor.activity;
+      if (a?.kind !== "leisure" || a.data.id !== "yardStroll") continue;
+      const key = String(a.data.variant ?? "none");
+      if (!seen.has(key)) seen.set(key, new Set());
+      seen.get(key)!.add(a.label);
+    }
+    expect([...(seen.get("sit") ?? [])]).toEqual(["坐在门口"]);
+    expect(seen.get("none")?.has("坐在门口") ?? false).toBe(false);
   });
   it("tea carries a cup while writing carries a journal", () => {
     expect(actorPose(actor("leisure", "armchair", {id:"tea"}))).toMatchObject({pose:"sitHold", prop:"cup"});
@@ -144,13 +158,33 @@ describe("G2 visual look always separates reality from ambience", () => {
     expect(projectedLook(g,g.world,600).weatherKey).toBe("fog");
     expect(projectedLook(g,g.world,600).weatherLabel).toBe("雾");
   });
-  it("ambience with missing/corrupt selection does not borrow current weather", () => {
+  it("a save stuck in ambience without a choice loads back into the real today", () => {
     const g = newGame(3);g.mode="ambience";g.ambience=null;
+    const loaded = deserialize(serialize(g, wall)).game;
+    expect(loaded.mode).toBe("companion");
+    const snap=present(loaded,wall,calendar);
+    expect(snap.look.source).toBe("world");
+    expect(snap.look.weatherLabel).toBe(loaded.world.weather.look);
+  });
+  it("dayPartKey is the kernel's schedule part; dayPart follows the light", () => {
+    const g=newGame(7);
+    // 冬天 17:30：光已经是夜，作息上还是下午
+    const look=projectedLook(g,g.world,17*60+30);
+    expect(look).toMatchObject({time:"night",dayPart:"夜",dayPartKey:"afternoon"});
+    expect(present(g,wall,calendar).look.dayPartKey).toBe(dayPartOf(dayClock(g.world) % 1440));
+    g.mode="ambience";g.ambience={season:"summer",weather:"A",time:"day"};
+    expect(projectedLook(g,g.world,17*60+30).dayPartKey).toBe("noon");
+  });
+  it("stage.visible follows the staged place, not the real one", () => {
+    const g=newGame(5);
+    g.world.actor.place="gate";
+    expect(present(g,wall,calendar).actor.visible.hearth).toBe(false);
+    cmdEnterAmbience(g,{season:"winter",weather:"B",time:"night"});
     const snap=present(g,wall,calendar);
-    expect(snap.look.source).toBe("missing");
-    expect(snap.look.weather).toBeNull();
-    expect(snap.look.weatherLabel).toBeNull();
-    expect(snap.look.weatherKey).toBeNull();
+    expect(snap.stage.place).toBe("armchair");
+    for (const c of CAMERA_IDS) expect(snap.stage.visible[c]).toBe(visibleIn(c,"armchair"));
+    g.mode="outdoorFocus";
+    expect(Object.values(present(g,wall,calendar).stage.visible).every(v=>!v)).toBe(true);
   });
   it("outdoorFocus can use a selected still view while remaining an empty cabin", () => {
     const g = newGame(5);g.mode="outdoorFocus";

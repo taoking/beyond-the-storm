@@ -1,6 +1,6 @@
 // 灰盒场景：色块和文字，只为看清「人在哪、在做什么、火怎么样」。
 // 坐标是灰盒自己随手排的，不是 05 的母场景；镜头框只是把 cameras.ts 里那几处地点框起来。
-import { CAMERAS, visibleIn, type CameraId } from "../core/cameras.ts";
+import { CAMERAS, type CameraId } from "../core/cameras.ts";
 import { PLACES, type PlaceId } from "../core/content.ts";
 import type { Snapshot } from "../core/view.ts";
 import type { WeatherArtKey } from "../core/weather.ts";
@@ -109,9 +109,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, snap: Snapshot, opt: Dr
   // 雪窗是独立展示投影：正常显示真实天气，氛围只显示选中的演出天气。
   // 户外临时专注同样可能处于冻结状态，但不代表一定选择了氛围天气。
   const look = snap.look;
-  ctx.fillStyle = look.source === "missing"
-    ? "#344453"
-    : WEATHER_COLOR[look.weatherKey ?? "cloudy"];
+  ctx.fillStyle = WEATHER_COLOR[look.weatherKey ?? "cloudy"];
   ctx.fillRect(70, 44, 140, 52);
   if (look.time === "night" || look.time === "dusk") {
     ctx.fillStyle = look.time === "night" ? "rgba(6,12,34,.64)" : "rgba(31,27,54,.24)";
@@ -119,9 +117,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, snap: Snapshot, opt: Dr
   }
   ctx.fillStyle = "#101820";
   ctx.font = "10px sans-serif";
-  const weatherText = look.source === "missing" ? "（氛围未选择）" :
-    look.source === "ambience" ? `（氛围）${look.weatherLabel ?? ""}` :
-    look.weatherLabel ?? "";
+  const weatherText = look.source === "ambience" ? `（氛围）${look.weatherLabel}` : look.weatherLabel;
   ctx.fillText(weatherText, 76, 58);
 
   // 炉火
@@ -188,7 +184,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, snap: Snapshot, opt: Dr
 
 export function cameraCaption(snap: Snapshot, cam: CameraId, size: string): string {
   // 文案同样按演出位置判断，不能用真实 actor.visible 去判断冻结的幻影人物。
-  const seen = snap.stage.show && snap.stage.place !== null && visibleIn(cam, snap.stage.place);
+  const seen = snap.stage.visible[cam];
   const where = seen ? "看得见人" : `空景 · ${snap.stage.show ? snap.actor.whereabouts : snap.stage.label}`;
   return `${size} · ${CAMERAS[cam].name} · ${where}`;
 }
