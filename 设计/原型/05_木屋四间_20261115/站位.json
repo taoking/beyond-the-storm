@@ -1,0 +1,1350 @@
+{
+  "schema": "beyond-the-storm.05.four-rooms-candidate/1",
+  "status": "候选，待用户看图及Claude空间复核；G5未开始",
+  "basis": [
+    "HANDOFF.md §4.1",
+    "木屋分四间任务单.md",
+    "03 v3.3 §3.1",
+    "用户本轮：默认观测间，雪窗第一眼可见"
+  ],
+  "canvas": [
+    1664,
+    936
+  ],
+  "sourceCanvas": [
+    1672,
+    941
+  ],
+  "sourceCrop": [
+    4,
+    2,
+    1664,
+    936
+  ],
+  "rectConvention": "[x,y,width,height]，像素坐标原点左上；polygon绝对像素；plan坐标只用于俯视拓扑，非游戏移动格",
+  "defaultRoom": "observation",
+  "roomOrder": [
+    "hearth",
+    "observation",
+    "kitchen",
+    "bedroom"
+  ],
+  "viewRule": {
+    "wholeRoom": true,
+    "autoFollow": false,
+    "autoSwitch": false,
+    "crops": false,
+    "actorOnlyWhenInSelectedRoom": true,
+    "roomIdsAreProposed": true,
+    "note": "本轮不改变06旧camera字段或适配器；roomId待Claude内核接入，不将旧hearth镜头id误作房间API"
+  },
+  "floorPlan": {
+    "bounds": [
+      0,
+      0,
+      12,
+      8
+    ],
+    "notConstructionDrawing": true,
+    "backdoorAndSpringPassageSameDoor": true,
+    "springhouse": [
+      9,
+      6.3,
+      2.3,
+      1.5
+    ],
+    "shortPassage": [
+      8,
+      6.4,
+      1,
+      1
+    ],
+    "cellar": "院子，本轮无场景",
+    "note": "炉间居中，卧室西、观测间东、灶间南；北向在图上方。正门在灶间西墙，后门在东墙，出后门进入带顶短廊通泉屋，牵引绳向林边。"
+  },
+  "rooms": [
+    {
+      "id": "hearth",
+      "label": "炉间",
+      "planRect": [
+        4,
+        0,
+        4,
+        4
+      ],
+      "windows": [
+        {
+          "id": "hearth_north",
+          "regions": [
+            [
+              648,
+              151,
+              112,
+              114
+            ]
+          ],
+          "planPoint": [
+            6.4,
+            0
+          ],
+          "planSpan": 0.6
+        }
+      ],
+      "lamp": {
+        "left": 366,
+        "top": 591,
+        "height": 75,
+        "lightCenter": [
+          389,
+          612
+        ],
+        "id": "oil_lamp_hearth",
+        "body": "layers/hearth_lamp.png",
+        "glow": "layers/hearth_lamp_light.png",
+        "separate": true,
+        "initialType": "oil",
+        "planPoint": [
+          4.6,
+          2.8
+        ]
+      },
+      "glow": {
+        "source": [
+          1030,
+          488
+        ],
+        "floor": [
+          [
+            1000,
+            531
+          ],
+          [
+            1110,
+            530
+          ],
+          [
+            1460,
+            900
+          ],
+          [
+            600,
+            900
+          ]
+        ]
+      },
+      "locations": [
+        {
+          "id": "hearth",
+          "label": "柴炉",
+          "footAnchor": [
+            1170,
+            674
+          ],
+          "standingHeightPx": 421,
+          "planPoint": [
+            6.2,
+            0.6
+          ],
+          "facing": "朝左炉门",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_hearth.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "woodpile",
+          "label": "柴堆",
+          "footAnchor": [
+            820,
+            660
+          ],
+          "standingHeightPx": 418,
+          "planPoint": [
+            5.2,
+            1.2
+          ],
+          "facing": "朝后偏左空柴架",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_woodpile.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "armchair",
+          "label": "扶手椅",
+          "footAnchor": [
+            650,
+            860
+          ],
+          "standingHeightPx": 458,
+          "planPoint": [
+            5.3,
+            2.8
+          ],
+          "facing": "朝右前方柴炉",
+          "occludedBy": [
+            "armchair_front"
+          ],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_armchair.png",
+          "shadowRadius": [
+            27,
+            7
+          ],
+          "planLabel": "扶手椅、小桌、藤墩"
+        },
+        {
+          "id": "radio",
+          "label": "收音机",
+          "footAnchor": [
+            306,
+            640
+          ],
+          "standingHeightPx": 414,
+          "planPoint": [
+            4.7,
+            0.6
+          ],
+          "facing": "朝后收音机",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_radio.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "gramophone",
+          "label": "唱片机",
+          "footAnchor": [
+            1360,
+            646
+          ],
+          "standingHeightPx": 415,
+          "planPoint": [
+            7.5,
+            0.7
+          ],
+          "facing": "朝后蒙布唱片机",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_gramophone.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        }
+      ],
+      "canvas": [
+        1664,
+        936
+      ],
+      "candidate": "hearth_empty_day.png",
+      "neutralStructure": "layers/hearth_structure.png",
+      "view": "从南侧看北墙和两侧墙，完整房间；不是裁切镜头",
+      "depthScale": {
+        "formula": "standingHeightPx = round(0.2 * footY + 286)",
+        "slope": 0.2,
+        "intercept": 286,
+        "validFootY": [
+          630,
+          900
+        ],
+        "note": "按此房间实际摆放暂标；正式底图原生重绘后重标。坐姿按真实座高适配，sleep头肩按床面透视，不以露头高度代表身高。"
+      },
+      "artworkSource": "sources/hearth_cleaned.png",
+      "occluders": [
+        {
+          "id": "armchair_front",
+          "file": "layers/hearth_occluder.png",
+          "source": "posePlacements[sitRead].occlusionPolygons"
+        }
+      ]
+    },
+    {
+      "id": "observation",
+      "label": "观测间",
+      "planRect": [
+        8,
+        0,
+        4,
+        4
+      ],
+      "windows": [
+        {
+          "id": "snow_window",
+          "regions": [
+            [
+              389,
+              150,
+              568,
+              340
+            ]
+          ],
+          "planPoint": [
+            10,
+            0
+          ],
+          "planSpan": 1.8
+        }
+      ],
+      "lamp": {
+        "left": 1550,
+        "top": 401,
+        "height": 75,
+        "lightCenter": [
+          1573,
+          421
+        ],
+        "id": "oil_lamp_observation",
+        "body": "layers/observation_lamp.png",
+        "glow": "layers/observation_lamp_light.png",
+        "separate": true,
+        "initialType": "oil",
+        "planPoint": [
+          11.3,
+          3.4
+        ]
+      },
+      "glow": {
+        "source": [
+          116,
+          610
+        ],
+        "floor": [
+          [
+            68,
+            688
+          ],
+          [
+            166,
+            687
+          ],
+          [
+            525,
+            907
+          ],
+          [
+            90,
+            907
+          ]
+        ]
+      },
+      "locations": [
+        {
+          "id": "window",
+          "label": "雪窗",
+          "footAnchor": [
+            1015,
+            790
+          ],
+          "standingHeightPx": 444,
+          "planPoint": [
+            10.2,
+            0.7
+          ],
+          "facing": "朝左后雪窗",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_window.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "windowsill",
+          "label": "窗台",
+          "footAnchor": [
+            1015,
+            790
+          ],
+          "standingHeightPx": 444,
+          "planPoint": [
+            10,
+            0.3
+          ],
+          "facing": "朝左后窗台",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_windowsill.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "desk",
+          "label": "书桌",
+          "footAnchor": [
+            780,
+            860
+          ],
+          "standingHeightPx": 458,
+          "planPoint": [
+            10,
+            1.6
+          ],
+          "facing": "左前方，四分之三背影",
+          "occludedBy": [
+            "desk_chair_back"
+          ],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_desk.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "bookshelf",
+          "label": "书架",
+          "footAnchor": [
+            1200,
+            794
+          ],
+          "standingHeightPx": 445,
+          "planPoint": [
+            11.4,
+            1.3
+          ],
+          "facing": "朝后书架",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_bookshelf.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "instruments",
+          "label": "仪器角",
+          "footAnchor": [
+            1455,
+            853
+          ],
+          "standingHeightPx": 457,
+          "planPoint": [
+            11.4,
+            2.7
+          ],
+          "facing": "朝右后气压计与记录纸",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_instruments.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        }
+      ],
+      "canvas": [
+        1664,
+        936
+      ],
+      "candidate": "observation_empty_day.png",
+      "neutralStructure": "layers/observation_structure.png",
+      "view": "从南侧看北墙和两侧墙，完整房间；不是裁切镜头",
+      "depthScale": {
+        "formula": "standingHeightPx = round(0.2 * footY + 286)",
+        "slope": 0.2,
+        "intercept": 286,
+        "validFootY": [
+          630,
+          900
+        ],
+        "note": "按此房间实际摆放暂标；正式底图原生重绘后重标。坐姿按真实座高适配，sleep头肩按床面透视，不以露头高度代表身高。"
+      },
+      "occluders": [
+        {
+          "id": "desk_chair_back",
+          "file": "layers/observation_occluder.png",
+          "source": "posePlacements[sitWrite].occlusionPolygons"
+        }
+      ]
+    },
+    {
+      "id": "kitchen",
+      "label": "灶间",
+      "planRect": [
+        4,
+        4,
+        4,
+        4
+      ],
+      "windows": [
+        {
+          "id": "main_door_glass",
+          "regions": [
+            [
+              70,
+              242,
+              64,
+              107
+            ]
+          ],
+          "planPoint": [
+            4,
+            6.7
+          ],
+          "onDoor": "main_entry",
+          "planSpan": 0.6
+        },
+        {
+          "id": "back_door_glass",
+          "regions": [
+            [
+              1525,
+              260,
+              57,
+              94
+            ]
+          ],
+          "planPoint": [
+            8,
+            6.7
+          ],
+          "onDoor": "back_to_passage",
+          "planSpan": 0.6
+        }
+      ],
+      "lamp": {
+        "left": 1212,
+        "top": 218,
+        "height": 75,
+        "lightCenter": [
+          1235,
+          239
+        ],
+        "id": "oil_lamp_kitchen",
+        "body": "layers/kitchen_lamp.png",
+        "glow": "layers/kitchen_lamp_light.png",
+        "separate": true,
+        "initialType": "oil",
+        "planPoint": [
+          7.3,
+          4.8
+        ]
+      },
+      "glow": {
+        "source": [
+          934,
+          528
+        ],
+        "floor": [
+          [
+            817,
+            645
+          ],
+          [
+            1049,
+            645
+          ],
+          [
+            1310,
+            913
+          ],
+          [
+            585,
+            913
+          ]
+        ]
+      },
+      "locations": [
+        {
+          "id": "stove",
+          "label": "料理台",
+          "footAnchor": [
+            833,
+            795
+          ],
+          "standingHeightPx": 445,
+          "planPoint": [
+            4.9,
+            5.5
+          ],
+          "facing": "朝左料理台，非热源",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_stove.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "shelf",
+          "label": "储物架",
+          "footAnchor": [
+            395,
+            767
+          ],
+          "standingHeightPx": 439,
+          "planPoint": [
+            4.7,
+            4.8
+          ],
+          "facing": "朝后空储物架",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_shelf.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "workbench",
+          "label": "工作台",
+          "footAnchor": [
+            1240,
+            817
+          ],
+          "standingHeightPx": 449,
+          "planPoint": [
+            7.3,
+            5.5
+          ],
+          "facing": "朝后工作台",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_workbench.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "door",
+          "label": "正门和衣架",
+          "footAnchor": [
+            240,
+            812
+          ],
+          "standingHeightPx": 448,
+          "planPoint": [
+            4,
+            6.7
+          ],
+          "facing": "朝左正门",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_door.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        },
+        {
+          "id": "backdoor",
+          "label": "后门和牵引绳",
+          "footAnchor": [
+            1450,
+            818
+          ],
+          "standingHeightPx": 450,
+          "planPoint": [
+            8,
+            6.7
+          ],
+          "facing": "朝右后门（兼短廊门）",
+          "occludedBy": [],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_backdoor.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        }
+      ],
+      "canvas": [
+        1664,
+        936
+      ],
+      "candidate": "kitchen_empty_day.png",
+      "neutralStructure": "layers/kitchen_structure.png",
+      "view": "从南侧看北墙和两侧墙，完整房间；不是裁切镜头",
+      "depthScale": {
+        "formula": "standingHeightPx = round(0.2 * footY + 286)",
+        "slope": 0.2,
+        "intercept": 286,
+        "validFootY": [
+          630,
+          900
+        ],
+        "note": "按此房间实际摆放暂标；正式底图原生重绘后重标。坐姿按真实座高适配，sleep头肩按床面透视，不以露头高度代表身高。"
+      },
+      "occluders": []
+    },
+    {
+      "id": "bedroom",
+      "label": "卧室",
+      "planRect": [
+        0,
+        0,
+        4,
+        4
+      ],
+      "windows": [
+        {
+          "id": "bedroom_north",
+          "regions": [
+            [
+              389,
+              184,
+              166,
+              162
+            ]
+          ],
+          "planPoint": [
+            1.2,
+            0
+          ],
+          "planSpan": 0.6
+        }
+      ],
+      "lamp": {
+        "left": 1247,
+        "top": 258,
+        "height": 75,
+        "lightCenter": [
+          1270,
+          280
+        ],
+        "id": "oil_lamp_bedroom",
+        "body": "layers/bedroom_lamp.png",
+        "glow": "layers/bedroom_lamp_light.png",
+        "separate": true,
+        "initialType": "oil",
+        "planPoint": [
+          3.3,
+          1.1
+        ]
+      },
+      "glow": {
+        "source": [
+          1515,
+          550
+        ],
+        "floor": [
+          [
+            1483,
+            709
+          ],
+          [
+            1607,
+            749
+          ],
+          [
+            1510,
+            909
+          ],
+          [
+            1115,
+            835
+          ]
+        ]
+      },
+      "locations": [
+        {
+          "id": "bed",
+          "label": "床",
+          "footAnchor": [
+            1335,
+            839
+          ],
+          "standingHeightPx": 454,
+          "planPoint": [
+            1.9,
+            2
+          ],
+          "facing": "朝左前方床，睡姿头向右",
+          "occludedBy": [
+            "bed_cover"
+          ],
+          "actorApplicable": true,
+          "contactShadow": "layers/shadow_bed.png",
+          "shadowRadius": [
+            27,
+            7
+          ]
+        }
+      ],
+      "canvas": [
+        1664,
+        936
+      ],
+      "candidate": "bedroom_empty_day.png",
+      "neutralStructure": "layers/bedroom_structure.png",
+      "view": "从南侧看北墙和两侧墙，完整房间；不是裁切镜头",
+      "depthScale": {
+        "formula": "standingHeightPx = round(0.2 * footY + 286)",
+        "slope": 0.2,
+        "intercept": 286,
+        "validFootY": [
+          630,
+          900
+        ],
+        "note": "按此房间实际摆放暂标；正式底图原生重绘后重标。坐姿按真实座高适配，sleep头肩按床面透视，不以露头高度代表身高。"
+      },
+      "occluders": [
+        {
+          "id": "bed_cover",
+          "file": "layers/bedroom_occluder.png",
+          "source": "posePlacements.occlusionPolygons"
+        }
+      ],
+      "nightSnowLight": {
+        "ellipse": [
+          1090,
+          535,
+          200,
+          115
+        ],
+        "maxOpacity": 0.22,
+        "file": "layers/bedroom_snowlight_night.png",
+        "note": "冬夜雪光轻提枕边头肩，炉火熄灭时仍有可读轮廓；仅候选受光"
+      }
+    }
+  ],
+  "outsideLocations": [
+    {
+      "id": "springhouse",
+      "label": "泉屋",
+      "roomId": null,
+      "throughRoom": "kitchen",
+      "throughDoor": "back_to_passage",
+      "actorInRoom": false,
+      "planPoint": [
+        10.2,
+        7.1
+      ],
+      "note": "短廊门画在灶间，泉屋及人物在泉屋的活动不在室内绘制"
+    },
+    {
+      "id": "cellar",
+      "label": "地窖口",
+      "roomId": null,
+      "actorInRoom": false,
+      "note": "03 §3.2 院子，四间均不画"
+    }
+  ],
+  "doors": [
+    {
+      "id": "hearth_bedroom",
+      "from": "hearth",
+      "to": "bedroom",
+      "planPoint": [
+        4,
+        2.2
+      ],
+      "width": 0.95,
+      "screens": {
+        "hearth": {
+          "polygon": [
+            [
+              58,
+              150
+            ],
+            [
+              155,
+              181
+            ],
+            [
+              155,
+              630
+            ],
+            [
+              58,
+              678
+            ]
+          ]
+        },
+        "bedroom": {
+          "polygon": [
+            [
+              1483,
+              111
+            ],
+            [
+              1613,
+              64
+            ],
+            [
+              1613,
+              769
+            ],
+            [
+              1483,
+              708
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "hearth_observation",
+      "from": "hearth",
+      "to": "observation",
+      "planPoint": [
+        8,
+        2.2
+      ],
+      "width": 0.95,
+      "screens": {
+        "hearth": {
+          "polygon": [
+            [
+              1530,
+              173
+            ],
+            [
+              1623,
+              144
+            ],
+            [
+              1623,
+              652
+            ],
+            [
+              1530,
+              598
+            ]
+          ]
+        },
+        "observation": {
+          "polygon": [
+            [
+              60,
+              188
+            ],
+            [
+              166,
+              245
+            ],
+            [
+              166,
+              741
+            ],
+            [
+              60,
+              850
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "hearth_kitchen",
+      "from": "hearth",
+      "to": "kitchen",
+      "planPoint": [
+        6,
+        4
+      ],
+      "width": 1.1,
+      "screens": {
+        "hearth": {
+          "offscreen": true,
+          "reason": "南门在取景点后方，炉间画面不画假门"
+        },
+        "kitchen": {
+          "polygon": [
+            [
+              811,
+              227
+            ],
+            [
+              1050,
+              227
+            ],
+            [
+              1050,
+              652
+            ],
+            [
+              811,
+              652
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "main_entry",
+      "from": "kitchen",
+      "to": "yard",
+      "planPoint": [
+        4,
+        6.7
+      ],
+      "width": 1,
+      "screens": {
+        "kitchen": {
+          "polygon": [
+            [
+              42,
+              172
+            ],
+            [
+              159,
+              228
+            ],
+            [
+              159,
+              759
+            ],
+            [
+              42,
+              812
+            ]
+          ],
+          "glass": true
+        }
+      }
+    },
+    {
+      "id": "back_to_passage",
+      "from": "kitchen",
+      "to": "springhouse_passage",
+      "planPoint": [
+        8,
+        6.7
+      ],
+      "width": 1,
+      "screens": {
+        "kitchen": {
+          "polygon": [
+            [
+              1490,
+              222
+            ],
+            [
+              1614,
+              183
+            ],
+            [
+              1614,
+              784
+            ],
+            [
+              1490,
+              727
+            ]
+          ],
+          "glass": true
+        }
+      },
+      "alsoBackdoor": true,
+      "ropeRoute": "从短廊往防风林；本轮只画门边牵引绳"
+    }
+  ],
+  "posePlacements": [
+    {
+      "id": "sitRead",
+      "roomId": "hearth",
+      "place": "armchair",
+      "source": "sources/male_sitRead.png",
+      "left": 460,
+      "top": 470,
+      "height": 390,
+      "footAnchor": [
+        650,
+        860
+      ],
+      "facing": "朝右前方柴炉，侧前方完整坐姿",
+      "occlusionPolygons": [
+        [
+          [
+            701,
+            604
+          ],
+          [
+            765,
+            633
+          ],
+          [
+            762,
+            725
+          ],
+          [
+            735,
+            754
+          ],
+          [
+            706,
+            721
+          ]
+        ]
+      ],
+      "note": "小桌、藤墩不遮双脚；椅前扶手单独回盖"
+    },
+    {
+      "id": "sitWrite",
+      "roomId": "observation",
+      "place": "desk",
+      "source": "sources/male_sitWrite.png",
+      "left": 600,
+      "top": 440,
+      "height": 420,
+      "footAnchor": [
+        780,
+        860
+      ],
+      "facing": "左前方书桌，四分之三背影",
+      "occlusionPolygons": [
+        [
+          [
+            783,
+            564
+          ],
+          [
+            832,
+            553
+          ],
+          [
+            887,
+            579
+          ],
+          [
+            916,
+            635
+          ],
+          [
+            895,
+            690
+          ],
+          [
+            845,
+            717
+          ],
+          [
+            815,
+            697
+          ]
+        ],
+        [
+          [
+            901,
+            625
+          ],
+          [
+            927,
+            621
+          ],
+          [
+            931,
+            762
+          ],
+          [
+            908,
+            784
+          ]
+        ]
+      ],
+      "note": "椅背/椅柱前景回盖；桌面本子属于人物临时道具；碗位在左侧"
+    },
+    {
+      "id": "standWork",
+      "roomId": "kitchen",
+      "place": "stove",
+      "source": "sources/male_standWork.png",
+      "left": 755,
+      "top": 350,
+      "height": 445,
+      "footAnchor": [
+        833,
+        795
+      ],
+      "facing": "朝左料理台，双手端锅，双脚可见",
+      "occlusionPolygons": [],
+      "note": "沿用上轮基本通过的站姿，在料理台右前方干活；料理台不是第二只炉"
+    },
+    {
+      "id": "sleep",
+      "roomId": "bedroom",
+      "place": "bed",
+      "source": "sources/male_sleep.png",
+      "left": 990,
+      "top": 480,
+      "width": 190,
+      "footAnchor": null,
+      "bedContactAnchor": [
+        1107,
+        552
+      ],
+      "facing": "头在右侧枕上，面朝观众，身体在薄被下",
+      "occlusionPolygons": [
+        [
+          [
+            330,
+            560
+          ],
+          [
+            950,
+            510
+          ],
+          [
+            1060,
+            564
+          ],
+          [
+            1185,
+            570
+          ],
+          [
+            1240,
+            556
+          ],
+          [
+            1240,
+            694
+          ],
+          [
+            570,
+            811
+          ],
+          [
+            330,
+            722
+          ]
+        ]
+      ],
+      "note": "这里只绘露出的头肩，床面接触锚点不冒充脚底；站立/起床锚点在location。"
+    }
+  ],
+  "displayAreas": [
+    {
+      "id": "photo_wall",
+      "roomId": "hearth",
+      "label": "照片墙",
+      "rect": [
+        292,
+        145,
+        288,
+        150
+      ],
+      "startsEmpty": true
+    },
+    {
+      "id": "hearth_shelf",
+      "roomId": "hearth",
+      "label": "炉上搁板",
+      "rect": [
+        910,
+        208,
+        230,
+        33
+      ],
+      "startsEmpty": true
+    },
+    {
+      "id": "windowsill",
+      "roomId": "observation",
+      "label": "窗台",
+      "rect": [
+        428,
+        470,
+        350,
+        33
+      ],
+      "startsEmpty": true
+    },
+    {
+      "id": "desk_corner",
+      "roomId": "observation",
+      "label": "书桌一角",
+      "rect": [
+        405,
+        545,
+        115,
+        38
+      ],
+      "startsEmpty": true
+    },
+    {
+      "id": "bedside",
+      "roomId": "bedroom",
+      "label": "床头",
+      "rect": [
+        1202,
+        318,
+        138,
+        27
+      ],
+      "startsEmpty": true
+    },
+    {
+      "id": "wall_spare",
+      "roomId": "bedroom",
+      "label": "墙上一处",
+      "rect": [
+        649,
+        163,
+        245,
+        180
+      ],
+      "startsEmpty": true
+    }
+  ],
+  "stateLayerRegroup": {
+    "source": "../05_G3_状态层清单草案.json",
+    "sourceCount": 43,
+    "table": "状态层按房间.json",
+    "status": "43组逐一归属；每间油灯展开，已有候选层与尚未制作的43组状态美术分别标记。"
+  },
+  "activityPropAreas": [
+    {
+      "roomId": "hearth",
+      "place": "armchair",
+      "purpose": "小桌茶杯和晚饭盘预留，不改变饭点内核",
+      "rect": [
+        298,
+        655,
+        95,
+        40
+      ]
+    },
+    {
+      "roomId": "hearth",
+      "place": "hearth",
+      "purpose": "炉顶水壶预留",
+      "rect": [
+        1018,
+        337,
+        75,
+        30
+      ]
+    },
+    {
+      "roomId": "observation",
+      "place": "desk",
+      "purpose": "饭碗预留，早午改点仍待后续",
+      "rect": [
+        858,
+        546,
+        90,
+        35
+      ]
+    },
+    {
+      "roomId": "kitchen",
+      "place": "stove",
+      "purpose": "料理锅与食材预留",
+      "rect": [
+        532,
+        469,
+        150,
+        26
+      ]
+    }
+  ]
+}

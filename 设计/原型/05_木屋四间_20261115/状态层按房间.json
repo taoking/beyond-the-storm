@@ -1,0 +1,676 @@
+{
+  "schema": "beyond-the-storm.05.four-room-G3-map/1",
+  "status": "分房对照，非43组状态美术已完成",
+  "source": "../05_G3_状态层清单草案.json",
+  "sourceCount": 43,
+  "rows": [
+    {
+      "sourceId": "fire_look",
+      "name": "柴炉炉膛",
+      "rooms": [
+        "hearth"
+      ],
+      "sourceStates": [
+        "out",
+        "ember",
+        "low",
+        "mid",
+        "high"
+      ],
+      "candidateFiles": [
+        "layers/fire_low.png",
+        "layers/fire_mid.png",
+        "layers/fire_high.png"
+      ],
+      "status": "三档静态火候选；out隐藏；ember及正式多帧待做"
+    },
+    {
+      "sourceId": "woodpile_stock",
+      "name": "柴堆库存",
+      "rooms": [
+        "hearth"
+      ],
+      "sourceStates": [
+        "empty",
+        "quarter",
+        "half",
+        "threeQuarter",
+        "full"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "cooking_pot",
+      "name": "料理锅（灶间）与水壶（炉间）",
+      "rooms": [
+        "hearth",
+        "kitchen"
+      ],
+      "sourceStates": [
+        "idle",
+        "cooking",
+        "lightSteam",
+        "heavySteam",
+        "boiling"
+      ],
+      "candidateFiles": [],
+      "status": "端锅在灶间站姿内；独立锅/壶/蒸汽待做；水壶只放柴炉"
+    },
+    {
+      "sourceId": "shelf_grain",
+      "name": "储物架粮量",
+      "rooms": [
+        "kitchen"
+      ],
+      "sourceStates": [
+        "empty",
+        "low",
+        "mid",
+        "full"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "shelf_ingredients",
+      "name": "储物架食材",
+      "rooms": [
+        "kitchen"
+      ],
+      "sourceStates": [
+        "empty",
+        "few",
+        "many"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "shelf_cans",
+      "name": "罐头",
+      "rooms": [
+        "kitchen"
+      ],
+      "sourceStates": [
+        "empty",
+        "few",
+        "full"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "shelf_fuel",
+      "name": "油罐",
+      "rooms": [
+        "kitchen"
+      ],
+      "sourceStates": [
+        "empty",
+        "few",
+        "full"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "desk_project",
+      "name": "书桌手头慢事",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "clear",
+        "reading",
+        "writing",
+        "sorting",
+        "weatherRecords"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "bookshelf_returns",
+      "name": "书架带回书",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "empty",
+        "one",
+        "few",
+        "many"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "bookshelf_yours",
+      "name": "书架属于你的格子",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "empty",
+        "one",
+        "many"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "workbench_project",
+      "name": "工作台进行中的活",
+      "rooms": [
+        "kitchen"
+      ],
+      "sourceStates": [
+        "empty",
+        "early",
+        "middle",
+        "complete"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "radio_repair",
+      "name": "收音机修缮",
+      "rooms": [
+        "hearth"
+      ],
+      "sourceStates": [
+        "disassembled",
+        "assembledOff",
+        "repairedLit"
+      ],
+      "candidateFiles": [],
+      "status": "开局造型暂在候选结构；完整替换/修缮层尚未拆，不能当正式clean plate"
+    },
+    {
+      "sourceId": "gramophone_repair",
+      "name": "唱片机修缮",
+      "rooms": [
+        "hearth"
+      ],
+      "sourceStates": [
+        "covered",
+        "uncovered",
+        "playing"
+      ],
+      "candidateFiles": [],
+      "status": "开局造型暂在候选结构；完整替换/修缮层尚未拆，不能当正式clean plate"
+    },
+    {
+      "sourceId": "armchair_blanket",
+      "name": "扶手椅毛毯样式",
+      "rooms": [
+        "hearth"
+      ],
+      "sourceStates": [
+        "none",
+        "plain",
+        "woven",
+        "patterned"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "armchair_snack",
+      "name": "扶手椅旁吃的",
+      "rooms": [
+        "hearth"
+      ],
+      "sourceStates": [
+        "empty",
+        "tea",
+        "snacks"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "snow_window_frost",
+      "name": "玻璃结霜",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "clean",
+        "edge",
+        "frosted"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "window_leak",
+      "name": "窗缝修缮",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "leaking",
+        "repaired"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "windowsill_jar",
+      "name": "玻璃罐和球果",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "absent",
+        "empty",
+        "some",
+        "many"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "windowsill_small_style",
+      "name": "窗台小物",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "empty",
+        "plant",
+        "souvenir"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "bed_mattress",
+      "name": "床褥薄厚",
+      "rooms": [
+        "bedroom"
+      ],
+      "sourceStates": [
+        "thin",
+        "thick"
+      ],
+      "candidateFiles": [],
+      "status": "开局造型暂在候选结构；完整替换/修缮层尚未拆，不能当正式clean plate"
+    },
+    {
+      "sourceId": "instrument_barometer",
+      "name": "气压计",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "absent",
+        "repaired"
+      ],
+      "candidateFiles": [],
+      "status": "开局造型暂在候选结构；完整替换/修缮层尚未拆，不能当正式clean plate"
+    },
+    {
+      "sourceId": "instrument_record",
+      "name": "温度记录纸",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "empty",
+        "partial",
+        "filled"
+      ],
+      "candidateFiles": [],
+      "status": "开局造型暂在候选结构；完整替换/修缮层尚未拆，不能当正式clean plate"
+    },
+    {
+      "sourceId": "instrument_oilheater",
+      "name": "煤油暖炉",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "broken",
+        "readyOff",
+        "readyOn"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属",
+      "note": "03：设备开局能用但没有油，候选熄灭；旧草案broken不是当前开局规则；不画第二只柴炉"
+    },
+    {
+      "sourceId": "backdoor_rope_snow",
+      "name": "后门牵引绳上的雪",
+      "rooms": [
+        "kitchen"
+      ],
+      "sourceStates": [
+        "dry",
+        "lightSnow",
+        "covered"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "springhouse_steam",
+      "name": "泉屋水汽",
+      "rooms": [
+        "outside"
+      ],
+      "sourceStates": [
+        "none",
+        "low",
+        "high"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属",
+      "note": "泉屋在室外；灶间只画短廊门，本轮不交泉屋水汽"
+    },
+    {
+      "sourceId": "coat_rack",
+      "name": "外套挂取",
+      "rooms": [
+        "kitchen"
+      ],
+      "sourceStates": [
+        "coatHanging",
+        "coatAway"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "curtain_repair",
+      "name": "窗帘修好与样式",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "absent",
+        "plain",
+        "patternA",
+        "patternB"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "water_pipe",
+      "name": "水管修缮",
+      "rooms": [
+        "kitchen"
+      ],
+      "sourceStates": [
+        "broken",
+        "patched",
+        "working"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属",
+      "note": "开局断管/封口，修好水龙头另层；不在观测间仪器上改"
+    },
+    {
+      "sourceId": "oil_lamp_left",
+      "name": "窗边油灯",
+      "rooms": [
+        "observation",
+        "kitchen"
+      ],
+      "sourceStates": [
+        "off",
+        "on"
+      ],
+      "candidateFiles": [
+        "layers/observation_lamp.png",
+        "layers/observation_lamp_light.png",
+        "layers/kitchen_lamp.png",
+        "layers/kitchen_lamp_light.png"
+      ],
+      "status": "已拆每间一盏油灯本体与光；原两组不是只准两盏灯"
+    },
+    {
+      "sourceId": "oil_lamp_right",
+      "name": "炉边油灯",
+      "rooms": [
+        "hearth",
+        "bedroom"
+      ],
+      "sourceStates": [
+        "off",
+        "on"
+      ],
+      "candidateFiles": [
+        "layers/hearth_lamp.png",
+        "layers/hearth_lamp_light.png",
+        "layers/bedroom_lamp.png",
+        "layers/bedroom_lamp_light.png"
+      ],
+      "status": "已拆每间一盏油灯本体与光；原两组不是只准两盏灯"
+    },
+    {
+      "sourceId": "electric_desk",
+      "name": "书桌电灯",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "notBuilt",
+        "off",
+        "on"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "electric_ceiling",
+      "name": "顶灯",
+      "rooms": [
+        "hearth",
+        "observation",
+        "kitchen",
+        "bedroom"
+      ],
+      "sourceStates": [
+        "notBuilt",
+        "off",
+        "on"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "electric_kitchen",
+      "name": "料理台电灯",
+      "rooms": [
+        "kitchen"
+      ],
+      "sourceStates": [
+        "notBuilt",
+        "off",
+        "on"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "scene_night_light",
+      "name": "冬夜光照",
+      "rooms": [
+        "hearth",
+        "observation",
+        "kitchen",
+        "bedroom"
+      ],
+      "sourceStates": [
+        "neutral",
+        "winterNight"
+      ],
+      "candidateFiles": [
+        "layers/hearth_night.png",
+        "layers/observation_night.png",
+        "layers/kitchen_night.png",
+        "layers/bedroom_night.png"
+      ],
+      "status": "每间夜色候选；正式材质受光待G5/G7"
+    },
+    {
+      "sourceId": "actor_temp_book",
+      "name": "桌上摊开的书",
+      "rooms": [
+        "observation",
+        "hearth"
+      ],
+      "sourceStates": [
+        "hidden",
+        "onDesk"
+      ],
+      "candidateFiles": [
+        "layers/observation_actor_sitWrite.png",
+        "layers/hearth_actor_sitRead.png"
+      ],
+      "status": "本子/书在当前姿态候选内，独立道具及遗留痕迹待做"
+    },
+    {
+      "sourceId": "actor_temp_cup",
+      "name": "茶杯",
+      "rooms": [
+        "observation",
+        "hearth"
+      ],
+      "sourceStates": [
+        "hidden",
+        "desk",
+        "armchair"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "actor_temp_bowl",
+      "name": "饭碗",
+      "rooms": [
+        "observation",
+        "hearth",
+        "kitchen"
+      ],
+      "sourceStates": [
+        "hidden",
+        "breakfast",
+        "lunch",
+        "dinner"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属"
+    },
+    {
+      "sourceId": "display_photo_wall",
+      "name": "照片墙展示",
+      "rooms": [
+        "hearth"
+      ],
+      "sourceStates": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属",
+      "note": "本轮六处范围在站位JSON，开局为空；内容素材未做"
+    },
+    {
+      "sourceId": "display_windowsill",
+      "name": "窗台展示",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属",
+      "note": "本轮六处范围在站位JSON，开局为空；内容素材未做"
+    },
+    {
+      "sourceId": "display_desk_corner",
+      "name": "书桌角展示",
+      "rooms": [
+        "observation"
+      ],
+      "sourceStates": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属",
+      "note": "本轮六处范围在站位JSON，开局为空；内容素材未做"
+    },
+    {
+      "sourceId": "display_hearth_shelf",
+      "name": "炉上横梁展示",
+      "rooms": [
+        "hearth"
+      ],
+      "sourceStates": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属",
+      "note": "本轮六处范围在站位JSON，开局为空；内容素材未做"
+    },
+    {
+      "sourceId": "display_bedside",
+      "name": "床头展示",
+      "rooms": [
+        "bedroom"
+      ],
+      "sourceStates": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属",
+      "note": "本轮六处范围在站位JSON，开局为空；内容素材未做"
+    },
+    {
+      "sourceId": "display_wall_spare",
+      "name": "墙上另一处展示",
+      "rooms": [
+        "bedroom"
+      ],
+      "sourceStates": [
+        "empty",
+        "one",
+        "two",
+        "three"
+      ],
+      "candidateFiles": [],
+      "status": "未绘制完整状态，仅分房归属",
+      "note": "本轮六处范围在站位JSON，开局为空；内容素材未做"
+    }
+  ],
+  "newPerRoomLighting": {
+    "oilLamps": 4,
+    "doorwayFirelight": "layers/{room}_firelight_low/mid/high.png；三间同源炉火，out隐藏，非四个独立热源"
+  },
+  "notes": [
+    "真正世界条件仍等Claude只读Snapshot对照；本文件不新增字段",
+    "早午书桌晚饭炉边仍未改内核，只预留摆碗空间",
+    "本轮拆窗、阴影、姿态、前景与受光候选；其余G3未完成逐项如实列出"
+  ]
+}

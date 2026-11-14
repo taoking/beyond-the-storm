@@ -1,7 +1,7 @@
 {
   "schema": "beyond-the-storm.05.hd-illustration-spec/1",
-  "status": "G4 technical art spec (approved visual direction; production master NOT approved)",
-  "authority": "Claude 2026-11-14 task list + user U1 U2 U6",
+  "status": "G4 four-room specification; composition candidates await review; G5 not started",
+  "authority": "03 v3.3 + root four-room task + user 2026-11-15 default observation",
   "style": {
     "type": "high_definition_handpainted_illustration",
     "targetMood": "05 v1.2 cool snowy pine forest, amber lived-in shelter",
@@ -22,7 +22,8 @@
       "lighting",
       "weather_occlusion_masks"
     ],
-    "assetFormat": "RGBA PNG"
+    "assetFormat": "RGBA PNG",
+    "scope": "each of four independent rooms; future native production only"
   },
   "windows": [
     {
@@ -31,7 +32,8 @@
         320,
         180
       ],
-      "camera": "window"
+      "initialRoom": "observation",
+      "wholeRoom": true
     },
     {
       "id": "mainSmall",
@@ -39,7 +41,8 @@
         480,
         270
       ],
-      "camera": "window"
+      "initialRoom": "observation",
+      "wholeRoom": true
     },
     {
       "id": "full",
@@ -47,30 +50,8 @@
         1280,
         720
       ],
-      "camera": "wide"
-    }
-  ],
-  "cameras": [
-    {
-      "id": "wide",
-      "aspect": "16:9",
-      "constraints": [
-        "all mandatory room stations fully in room"
-      ]
-    },
-    {
-      "id": "window",
-      "aspect": "16:9",
-      "constraints": [
-        "full window, desk surface, seated upper body including hands and book or bowl"
-      ]
-    },
-    {
-      "id": "hearth",
-      "aspect": "16:9",
-      "constraints": [
-        "entire seated armchair actor + stove firebox"
-      ]
+      "initialRoom": "observation",
+      "wholeRoom": true
     }
   ],
   "baseline": {
@@ -86,7 +67,8 @@
     ],
     "windowsTransparent": true,
     "lightingBaked": false,
-    "fireBaked": false
+    "fireBaked": false,
+    "independentOilLamps": "one per room; body and glow separate"
   },
   "characters": {
     "variants": [
@@ -111,7 +93,7 @@
     "poseTransition": "simple alpha crossfade",
     "framesPerPose": "1–4 only when justified",
     "characterOrigin": "one male identity across all production poses",
-    "bodyDepth": "location-dependent scale/occlusion under G2",
+    "bodyDepth": "one footY-to-standingHeight line per room; same JSON for actual placements",
     "hasOneFootAnchorPerPlace": true,
     "referenceOnlyVariants": [
       "female"
@@ -153,13 +135,12 @@
     "origin": "top-left of cropped transparent PNG"
   },
   "productionSteps": [
-    "G1 male four poses only; female remains visual reference outside development",
-    "G2 approved full scene layout, location depth anchors, 16:9 cameras, six empty display spots",
-    "G3 remove baked state objects; check 43 proposed layers against 03",
-    "G5 draw native 2560x1440 neutral opening baseline with transparent glass; only two lighting states winter day/night",
-    "G6 static layered forest with variable sky; weather particles are separate",
-    "G7 fire out/ember/low/mid/high and localized light falloff",
-    "G8 full male eight-pose set only after G1 accepted"
+    "G1/G2 four empty rooms + male four poses + floorplan + unique station JSON; user/Claude review",
+    "G3 regroup 43 draft groups per room; inventory and repair states remain pending",
+    "G5 each room native 2560x1440 neutral opening plate with transparent glass, after user approval",
+    "G6 independent exterior views",
+    "G7 formal fire and doorway/receiver light masks, not baked into plates",
+    "G8 full male pose set only, no female production"
   ],
   "deprecated": [
     "480x270 logic canvas",
@@ -167,12 +148,44 @@
     "integer-only scale",
     "image-rendering:pixelated",
     "nearest-neighbor upscaling",
-    "new GIF walk cycles"
+    "new GIF walk cycles",
+    "wide/window/hearth crop cameras",
+    "single-room panorama as production baseline"
   ],
   "scope": {
     "G1_designReview": "Male reading passed and standing broadly passed last round; revised writing/sleeping candidates await user and Claude review",
-    "G2_layout": "not finalized",
+    "G2_layout": "four-room candidates, unapproved",
     "G3_layers": "draft 43 groups",
     "G5": "not started"
+  },
+  "rooms": [
+    {
+      "id": "hearth",
+      "label": "炉间",
+      "wholeCanvas": true
+    },
+    {
+      "id": "observation",
+      "label": "观测间",
+      "wholeCanvas": true
+    },
+    {
+      "id": "kitchen",
+      "label": "灶间",
+      "wholeCanvas": true
+    },
+    {
+      "id": "bedroom",
+      "label": "卧室",
+      "wholeCanvas": true
+    }
+  ],
+  "roomSelection": {
+    "default": "observation",
+    "autoFollow": false,
+    "cropViews": false,
+    "idsAreProposed": true,
+    "candidateCoordinates": "05_木屋四间_20261115/站位.json",
+    "note": "旧适配器camera在Claude房间内核完成后另迁移，不把此规格当已落地API"
   }
 }

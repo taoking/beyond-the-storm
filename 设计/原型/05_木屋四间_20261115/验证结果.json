@@ -1,0 +1,348 @@
+{
+  "status": "PASS",
+  "browser": "installed Google Chrome, headless",
+  "deviceScaleFactor": 1,
+  "geometry": [
+    {
+      "room": "hearth",
+      "locations": 5,
+      "transparentGlassPixels": 9298,
+      "standingHeightRange": [
+        421,
+        418,
+        458,
+        414,
+        415
+      ]
+    },
+    {
+      "room": "observation",
+      "locations": 5,
+      "transparentGlassPixels": 152114,
+      "standingHeightRange": [
+        444,
+        444,
+        458,
+        445,
+        457
+      ]
+    },
+    {
+      "room": "kitchen",
+      "locations": 5,
+      "transparentGlassPixels": 6946,
+      "standingHeightRange": [
+        445,
+        439,
+        449,
+        448,
+        450
+      ]
+    },
+    {
+      "room": "bedroom",
+      "locations": 1,
+      "transparentGlassPixels": 20975,
+      "standingHeightRange": [
+        454
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "room": "hearth",
+      "time": "day",
+      "size": 320,
+      "width": 320,
+      "height": 180,
+      "screenshot": "previews/browser_hearth_day_320.png",
+      "actor": true
+    },
+    {
+      "room": "hearth",
+      "time": "day",
+      "size": 480,
+      "width": 480,
+      "height": 270,
+      "screenshot": "previews/browser_hearth_day_480.png",
+      "actor": true
+    },
+    {
+      "room": "hearth",
+      "time": "day",
+      "size": 1280,
+      "width": 1280,
+      "height": 720,
+      "screenshot": "previews/browser_hearth_day_1280.png",
+      "actor": true
+    },
+    {
+      "room": "hearth",
+      "time": "night",
+      "size": 320,
+      "width": 320,
+      "height": 180,
+      "screenshot": "previews/browser_hearth_night_320.png",
+      "actor": true
+    },
+    {
+      "room": "hearth",
+      "time": "night",
+      "size": 480,
+      "width": 480,
+      "height": 270,
+      "screenshot": "previews/browser_hearth_night_480.png",
+      "actor": true
+    },
+    {
+      "room": "hearth",
+      "time": "night",
+      "size": 1280,
+      "width": 1280,
+      "height": 720,
+      "screenshot": "previews/browser_hearth_night_1280.png",
+      "actor": true
+    },
+    {
+      "room": "observation",
+      "time": "day",
+      "size": 320,
+      "width": 320,
+      "height": 180,
+      "screenshot": "previews/browser_observation_day_320.png",
+      "actor": true
+    },
+    {
+      "room": "observation",
+      "time": "day",
+      "size": 480,
+      "width": 480,
+      "height": 270,
+      "screenshot": "previews/browser_observation_day_480.png",
+      "actor": true
+    },
+    {
+      "room": "observation",
+      "time": "day",
+      "size": 1280,
+      "width": 1280,
+      "height": 720,
+      "screenshot": "previews/browser_observation_day_1280.png",
+      "actor": true
+    },
+    {
+      "room": "observation",
+      "time": "night",
+      "size": 320,
+      "width": 320,
+      "height": 180,
+      "screenshot": "previews/browser_observation_night_320.png",
+      "actor": true
+    },
+    {
+      "room": "observation",
+      "time": "night",
+      "size": 480,
+      "width": 480,
+      "height": 270,
+      "screenshot": "previews/browser_observation_night_480.png",
+      "actor": true
+    },
+    {
+      "room": "observation",
+      "time": "night",
+      "size": 1280,
+      "width": 1280,
+      "height": 720,
+      "screenshot": "previews/browser_observation_night_1280.png",
+      "actor": true
+    },
+    {
+      "room": "kitchen",
+      "time": "day",
+      "size": 320,
+      "width": 320,
+      "height": 180,
+      "screenshot": "previews/browser_kitchen_day_320.png",
+      "actor": true
+    },
+    {
+      "room": "kitchen",
+      "time": "day",
+      "size": 480,
+      "width": 480,
+      "height": 270,
+      "screenshot": "previews/browser_kitchen_day_480.png",
+      "actor": true
+    },
+    {
+      "room": "kitchen",
+      "time": "day",
+      "size": 1280,
+      "width": 1280,
+      "height": 720,
+      "screenshot": "previews/browser_kitchen_day_1280.png",
+      "actor": true
+    },
+    {
+      "room": "kitchen",
+      "time": "night",
+      "size": 320,
+      "width": 320,
+      "height": 180,
+      "screenshot": "previews/browser_kitchen_night_320.png",
+      "actor": true
+    },
+    {
+      "room": "kitchen",
+      "time": "night",
+      "size": 480,
+      "width": 480,
+      "height": 270,
+      "screenshot": "previews/browser_kitchen_night_480.png",
+      "actor": true
+    },
+    {
+      "room": "kitchen",
+      "time": "night",
+      "size": 1280,
+      "width": 1280,
+      "height": 720,
+      "screenshot": "previews/browser_kitchen_night_1280.png",
+      "actor": true
+    },
+    {
+      "room": "bedroom",
+      "time": "day",
+      "size": 320,
+      "width": 320,
+      "height": 180,
+      "screenshot": "previews/browser_bedroom_day_320.png",
+      "actor": true
+    },
+    {
+      "room": "bedroom",
+      "time": "day",
+      "size": 480,
+      "width": 480,
+      "height": 270,
+      "screenshot": "previews/browser_bedroom_day_480.png",
+      "actor": true
+    },
+    {
+      "room": "bedroom",
+      "time": "day",
+      "size": 1280,
+      "width": 1280,
+      "height": 720,
+      "screenshot": "previews/browser_bedroom_day_1280.png",
+      "actor": true
+    },
+    {
+      "room": "bedroom",
+      "time": "night",
+      "size": 320,
+      "width": 320,
+      "height": 180,
+      "screenshot": "previews/browser_bedroom_night_320.png",
+      "actor": true
+    },
+    {
+      "room": "bedroom",
+      "time": "night",
+      "size": 480,
+      "width": 480,
+      "height": 270,
+      "screenshot": "previews/browser_bedroom_night_480.png",
+      "actor": true
+    },
+    {
+      "room": "bedroom",
+      "time": "night",
+      "size": 1280,
+      "width": 1280,
+      "height": 720,
+      "screenshot": "previews/browser_bedroom_night_1280.png",
+      "actor": true
+    }
+  ],
+  "lightEffects": [
+    {
+      "room": "hearth",
+      "off": [
+        35,
+        38,
+        50,
+        255
+      ],
+      "high": [
+        233,
+        136,
+        14,
+        255
+      ]
+    },
+    {
+      "room": "observation",
+      "off": [
+        27,
+        34,
+        48,
+        255
+      ],
+      "high": [
+        83,
+        71,
+        64,
+        255
+      ]
+    },
+    {
+      "room": "kitchen",
+      "off": [
+        27,
+        34,
+        47,
+        255
+      ],
+      "high": [
+        86,
+        73,
+        65,
+        255
+      ]
+    },
+    {
+      "room": "bedroom",
+      "off": [
+        26,
+        34,
+        48,
+        255
+      ],
+      "high": [
+        89,
+        76,
+        67,
+        255
+      ]
+    }
+  ],
+  "checks": [
+    "默认观测间",
+    "换人物房间不跟随；泉屋不冒充灶间",
+    "输入控件不劫持数字键；画面聚焦1–4换房",
+    "24个真实CSS尺寸画面",
+    "逐间熄火与旺火受光实际像素不同",
+    "16个地点、6展示位、5窗、43状态组完整归属",
+    "窗玻璃真实alpha孔、每站阴影存在",
+    "小平面点只报位置；Esc收起"
+  ],
+  "pageErrors": [],
+  "failedRequests": [],
+  "limitations": [
+    "仅候选与Chrome检查；不代表正式G5、真实Snapshot接入或审美通过",
+    "未测Safari、Mac原生置顶/焦点、后台及合盖",
+    "未复跑内核时间占比；任务单采样只转录"
+  ]
+}

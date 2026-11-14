@@ -1,0 +1,9 @@
+{
+  "tool": "built-in image_gen",
+  "prompts": {
+    "lamp": "Use case: product-mockup. Supporting reusable game illustration layer, NOT formal production asset. ONE small old-fashioned plain brass-and-dark-steel kerosene oil lamp, glass chimney, modest practical shape, complete object on TRUE TRANSPARENT background. Fine handpainted neutral diffuse lighting matching brown timber cabin illustration, crisp silhouette. Lamp UNLIT with dark wick, no flame, no glow, no cast shadow, no table, no hand, no text, no multiple objects, no decorative ornament. Full lamp centered and large within square transparent canvas.",
+    "fire": "Use case: stylized-concept. Supporting isolated flame illustration for a small cast iron wood stove firebox, not a production animation frame. ONE low compact cluster of warm amber/orange flames above a few short dark charred logs and soft red embers, straight-on view, fine handpainted 2D illustration with natural shapes, readable reduced to 90x70. TRUE TRANSPARENT background, no stove, no fireplace, no border, no text, no large ambient light halo beyond flame silhouette. Small cozy wood fire, not a bonfire, not an explosion. Flame and logs together as one isolated object."
+  },
+  "reusedMale": "上轮sources/male_*.png，原图保持不变，本轮只按JSON装配",
+  "reusedExterior": "上轮独立exterior_patch.png，候选冬林参考，非G6"
+}

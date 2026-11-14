@@ -1,0 +1,130 @@
+{
+  "canvas": [
+    1664,
+    936
+  ],
+  "sourceCanvas": [
+    1672,
+    941
+  ],
+  "crop": [
+    4,
+    2,
+    1664,
+    936
+  ],
+  "rooms": {
+    "hearth": {
+      "glassPixels": 9298,
+      "locations": 5,
+      "windowCount": 1,
+      "independentLamp": "oil_lamp_hearth",
+      "doorsToHearth": [],
+      "previews": 12
+    },
+    "observation": {
+      "glassPixels": 152114,
+      "locations": 5,
+      "windowCount": 1,
+      "independentLamp": "oil_lamp_observation",
+      "doorsToHearth": [
+        "hearth_observation"
+      ],
+      "previews": 12
+    },
+    "kitchen": {
+      "glassPixels": 6946,
+      "locations": 5,
+      "windowCount": 2,
+      "independentLamp": "oil_lamp_kitchen",
+      "doorsToHearth": [
+        "hearth_kitchen"
+      ],
+      "previews": 12
+    },
+    "bedroom": {
+      "glassPixels": 20975,
+      "locations": 1,
+      "windowCount": 1,
+      "independentLamp": "oil_lamp_bedroom",
+      "doorsToHearth": [
+        "hearth_bedroom"
+      ],
+      "previews": 12
+    }
+  },
+  "poses": {
+    "sitRead": {
+      "room": "hearth",
+      "place": "armchair",
+      "alphaBounds": [
+        460,
+        470,
+        237,
+        390
+      ],
+      "standingEquivalentPx": 458,
+      "footAnchor": [
+        650,
+        860
+      ],
+      "layer": "layers/hearth_actor_sitRead.png",
+      "nightBoundsMeanLuma": 50.96
+    },
+    "sitWrite": {
+      "room": "observation",
+      "place": "desk",
+      "alphaBounds": [
+        600,
+        440,
+        264,
+        420
+      ],
+      "standingEquivalentPx": 458,
+      "footAnchor": [
+        780,
+        860
+      ],
+      "layer": "layers/observation_actor_sitWrite.png",
+      "nightBoundsMeanLuma": 52.2
+    },
+    "standWork": {
+      "room": "kitchen",
+      "place": "stove",
+      "alphaBounds": [
+        755,
+        350,
+        143,
+        445
+      ],
+      "standingEquivalentPx": 445,
+      "footAnchor": [
+        833,
+        795
+      ],
+      "layer": "layers/kitchen_actor_standWork.png",
+      "nightBoundsMeanLuma": 54.13
+    },
+    "sleep": {
+      "room": "bedroom",
+      "place": "bed",
+      "alphaBounds": [
+        990,
+        480,
+        190,
+        100
+      ],
+      "standingEquivalentPx": 454,
+      "footAnchor": null,
+      "bedContactAnchor": [
+        1107,
+        552
+      ],
+      "layer": "layers/bedroom_actor_sleep.png",
+      "nightBoundsMeanLuma": 76.35
+    }
+  },
+  "limits": [
+    "候选静态装配与几何/像素检查；不是正式生产资产、内核可见率或用户审美通过"
+  ]
+}

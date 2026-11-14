@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>风雪之外 · 木屋四间候选</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#182329;color:#e6ddd0;font:15px/1.6 system-ui,sans-serif}main{padding:28px;max-width:1440px;margin:auto}h1{font-size:25px;margin:0 0 8px}p{max-width:1000px;margin:8px 0 18px;color:#c6c5bf}a{color:#b9dce4}button,select{font:inherit;color:inherit;background:#2a3a41;border:1px solid #5a6566;border-radius:6px;padding:6px 12px}button{cursor:pointer}button[aria-pressed=true]{border-color:#e3bf83;background:#544632}button:focus-visible,select:focus-visible,#frame:focus-visible{outline:3px solid #dfc78d;outline-offset:3px}.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:15px 0}.controls label{display:flex;align-items:center;gap:6px}.scroll{overflow:auto;padding:5px 5px 18px}#frame{position:relative;width:480px;height:270px;overflow:hidden;background:#17222c;isolation:isolate}canvas{display:block;width:100%;height:100%;image-rendering:auto}#where,#timer{position:absolute;top:5px;font-size:11px;line-height:1.4;background:#152027b3;padding:2px 5px;border-radius:3px;pointer-events:none}#where{left:5px;max-width:70%}#timer{right:5px}#roomTrigger{position:absolute;right:6px;bottom:6px;padding:3px 8px;font-size:12px;background:#182329d9;opacity:0;transition:opacity .15s}#frame:hover #roomTrigger,#frame:focus-within #roomTrigger,#roomTrigger[aria-expanded=true]{opacity:1}#roomMenu{position:absolute;right:5px;bottom:39px;width:240px;padding:8px;background:#17242af2;border:1px solid #948367;border-radius:6px}#roomMenu[hidden]{display:none}#mini{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}#mini button{position:relative;padding:5px 2px;font-size:12px}#mini [data-room=bedroom]{grid-area:1/1}#mini [data-room=hearth]{grid-area:1/2}#mini [data-room=observation]{grid-area:1/3}#mini [data-room=kitchen]{grid-area:2/2}#mini [data-occupied=true]::after{content:'●';position:absolute;right:3px;top:-3px;color:#eec887;font-size:10px}#roomMenu small{font-size:10px;color:#cec7bb}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin:22px 0}.gallery img{display:block;width:100%;height:auto}.gallery a{display:block}.gallery span{display:block;padding:4px 0}.overview{max-width:960px;width:100%;height:auto}.plan{max-width:1000px;width:100%;height:auto}details{margin:20px 0}code{font-size:13px}#detail{font-size:13px;color:#bdc3c2;min-height:1.6em}.tag{font-size:12px;color:#e5c795}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<main>
+<h1>木屋四间 · 构图候选</h1>
+<p>默认观测间。四间各自完整显示，选哪间就停在哪间。他换房后这里保持空屋。<span class="tag">候选演示 · 非游戏存档 · G5 未开始</span></p>
+<div class="controls" id="roomTabs" aria-label="选择房间"></div>
+<div class="controls" aria-label="开发检查控件">
+ <label>真实显示尺寸 <select id="size"><option value="320">320×180</option><option value="480" selected>480×270</option><option value="1280">1280×720</option></select></label>
+ <label>冬季 <select id="time"><option value="day">白天</option><option value="night">夜里</option></select></label>
+ <label>演示人物在 <select id="actor"><option value="none">不显示人物</option><option value="hearth">炉间读书</option><option value="observation" selected>观测间写字</option><option value="kitchen">灶间干活</option><option value="bedroom">卧室睡觉</option><option value="outside">泉屋提水（室外）</option></select></label>
+ <label>炉火 <select id="fire"><option value="out">熄灭</option><option value="low">小</option><option value="mid" selected>中</option><option value="high">旺</option></select></label>
+ <label><input type="checkbox" id="lamp" checked>本间油灯（夜里点亮）</label>
+ <label><input type="checkbox" id="anchors">显示站位/展示位</label>
+</div>
+<div class="scroll"><div id="frame" tabindex="0" aria-label="房间画面，聚焦后数字键1至4选择房间">
+ <canvas id="scene" width="1664" height="936" aria-label="所选房间的独立分层候选"></canvas>
+ <span id="where"></span><span id="timer">25:00</span>
+ <button id="roomTrigger" aria-expanded="false" aria-controls="roomMenu">房间</button>
+ <div id="roomMenu" hidden><div id="mini" aria-label="小平面选择器建议"></div><small id="miniOutside"></small><small>描边＝当前房间　●＝演示人物位置<br>小平面为交互建议，待用户看图；点只报位置。</small></div>
+</div></div>
+<p id="detail" aria-live="polite"></p>
+<p>上方人物、时段、炉火是开发用演示选项，放在被测窗口外；不控制游戏角色。计时是静态布局样例。数字键只在画面获得焦点时生效，输入控件内不切房。</p>
+<div class="gallery" id="gallery"></div>
+<details><summary>俯视平面与门窗关系</summary><a href="俯视平面.png"><img class="plan" src="俯视平面.png" alt="炉间居中，卧室西、观测间东、灶间南，后门通短廊和室外泉屋"></a></details>
+<details open><summary>四间 320×180 总览：空屋／有人白天／有人夜里</summary><a href="四间总览_320.png"><img class="overview" src="四间总览_320.png" alt="四房间四姿态的真实像素尺寸对照"></a></details>
+<p><a href="站位.json">唯一站位 JSON</a> · <a href="状态层按房间.json">43 组状态分房对照</a> · <a href="README.md">说明、命令与限制</a> · <a href="生成提示词.json">完整生图提示词</a></p>
+<p>中性结构没有灯火，玻璃为透明孔；独立雪林、逐间夜色、油灯、三档炉光/门洞暖光、人物、遮挡、阴影在同一画布装配。开局修缮设备造型尚未拆成完整替换状态，本目录不是正式 clean plate。</p>
+</main>
+<script src="data.js"></script><script>
+'use strict';
+const spec=window.FOUR_ROOMS;
+const $=id=>document.getElementById(id);
+const canvas=$('scene'),ctx=canvas.getContext('2d');
+const [W,H]=spec.canvas;
+canvas.width=W;canvas.height=H;
+let selected=spec.defaultRoom,revision=0;
+const cache=new Map();
+const names=Object.fromEntries(spec.rooms.map(r=>[r.id,r.label]));
+const activities={hearth:'读书',observation:'写字',kitchen:'收拾食材',bedroom:'睡觉',outside:'提水'};
+function image(src){if(!cache.has(src))cache.set(src,new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(new Error('无法读取 '+src));i.src=src}));return cache.get(src)}
+function offscreen(){const c=document.createElement('canvas');c.width=W;c.height=H;return c}
+async function timed(src,time,room){const c=offscreen(),cctx=c.getContext('2d');cctx.drawImage(await image(src),0,0);if(time==='night'){cctx.globalCompositeOperation='source-atop';cctx.drawImage(await image(`layers/${room}_night.png`),0,0)}return c}
+function schedule(){window.reviewReady=draw().catch(e=>{$('detail').textContent=e.message;throw e});return window.reviewReady}
+function choose(room){selected=room;$('roomMenu').hidden=true;$('roomTrigger').setAttribute('aria-expanded','false');schedule()}
+for(const r of spec.rooms){
+ const button=document.createElement('button');button.textContent=`${spec.roomOrder.indexOf(r.id)+1} ${r.label}`;button.dataset.room=r.id;button.onclick=()=>choose(r.id);$('roomTabs').append(button);
+ const mini=button.cloneNode(true);mini.onclick=()=>choose(r.id);$('mini').append(mini);
+ const a=document.createElement('a');a.href=`${r.id}_empty_day.png`;a.innerHTML=`<img src="${r.id}_empty_day.png" alt="${r.label}空屋白天候选"><span>${r.label} · 空屋候选</span>`;$('gallery').append(a);
+}
+async function draw(){
+ const token=++revision,room=selected,time=$('time').value,actorRoom=$('actor').value,fire=$('fire').value;
+ const r=spec.rooms.find(r=>r.id===room),p=spec.posePlacements.find(p=>p.roomId===room),shown=actorRoom===room;
+ const plate=await timed(r.neutralStructure,time,room);
+ const plateCtx=plate.getContext('2d');plateCtx.drawImage(await timed(r.lamp.body,time,room),0,0);
+ const parts=[await image(`layers/${room}_exterior_${time}.png`),plate];
+ if(shown){parts.push(await image(p.id==='sleep'?'layers/shadow_sleep_head.png':r.locations.find(l=>l.id===p.place).contactShadow));parts.push(await timed(`layers/${room}_actor_${p.id}.png`,time,room));parts.push(await timed(`layers/${room}_foreground_${p.id}.png`,time,room))}
+ const light=fire==='out'?null:await image(`layers/${room}_firelight_${fire}.png`);
+ const doorLight=fire==='out'?null:await image(`layers/${room}_doorlight_${fire}.png`);
+ const lamp=time==='night'&&$('lamp').checked?await image(r.lamp.glow):null;
+ const flame=room==='hearth'&&fire!=='out'?await image(`layers/fire_${fire}.png`):null;
+ const snowLight=time==='night'&&r.nightSnowLight?await image(r.nightSnowLight.file):null;
+ if(token!==revision)return;
+ ctx.clearRect(0,0,W,H);ctx.globalCompositeOperation='source-over';ctx.imageSmoothingEnabled=true;
+ for(const part of parts.slice(0,2))ctx.drawImage(part,0,0);
+ ctx.globalCompositeOperation='screen';if(doorLight)ctx.drawImage(doorLight,0,0);
+ ctx.globalCompositeOperation='source-over';for(const part of parts.slice(2))ctx.drawImage(part,0,0);
+ ctx.globalCompositeOperation='screen';for(const part of [snowLight,light,lamp])if(part)ctx.drawImage(part,0,0);
+ ctx.globalCompositeOperation='source-over';if(flame)ctx.drawImage(flame,0,0);
+ if($('anchors').checked){
+   ctx.lineWidth=3;ctx.font='24px system-ui';
+   for(const l of r.locations){const [x,y]=l.footAnchor;ctx.strokeStyle='#86d9e6';ctx.strokeRect(x-l.standingHeightPx*.13,y-l.standingHeightPx,l.standingHeightPx*.26,l.standingHeightPx);ctx.fillStyle='#d4f2f7';ctx.fillText(`${l.label} ${l.standingHeightPx}px`,x-35,y+28)}
+   for(const d of spec.displayAreas.filter(d=>d.roomId===room)){ctx.strokeStyle='#e8c580';ctx.strokeRect(...d.rect);ctx.fillStyle='#f1dfbd';ctx.fillText(d.label,d.rect[0],d.rect[1]-8)}
+ }
+ const w=+$('size').value;$('frame').style.width=w+'px';$('frame').style.height=w*9/16+'px';
+ $('where').textContent=actorRoom==='none'?'演示：空屋':actorRoom==='outside'?'演示：他在泉屋提水':`演示：他在${names[actorRoom]}${activities[actorRoom]}`;
+ $('miniOutside').textContent=actorRoom==='outside'?'● 泉屋（室外）　':'';
+ $('detail').textContent=`${names[room]} · ${w}×${w*9/16} CSS 像素 · ${shown?'本间人物可见':'保持空屋'} · ${time==='night'?'冬夜':'冬昼'} · ${fire==='out'?'炉火熄灭，四间炉光都隐藏':'所有房间暖光来自同一只柴炉'}。`;
+ document.querySelectorAll('[data-room]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.room===room));b.dataset.occupied=String(b.dataset.room===actorRoom)});
+ canvas.dataset.room=room;canvas.dataset.actor=shown?p.id:'none';canvas.dataset.time=time;canvas.dataset.fire=fire;
+ window.reviewState={selected:room,actorRoom,shown,time,fire,size:w};
+}
+for(const id of ['size','time','actor','fire','lamp','anchors'])$(id).addEventListener('change',schedule);
+$('roomTrigger').onclick=()=>{const open=$('roomMenu').hidden;$('roomMenu').hidden=!open;$('roomTrigger').setAttribute('aria-expanded',String(open))};
+$('frame').addEventListener('keydown',e=>{
+ if(e.key==='Escape'){$('roomMenu').hidden=true;$('roomTrigger').setAttribute('aria-expanded','false');return}
+ if(!$('roomMenu').hidden||e.target.matches('input,textarea,select,[contenteditable=true]'))return;
+ const n=Number(e.key);if(n>=1&&n<=4){e.preventDefault();choose(spec.roomOrder[n-1])}
+});
+schedule();
+</script></html>

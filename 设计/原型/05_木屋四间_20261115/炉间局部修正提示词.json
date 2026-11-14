@@ -1,0 +1,6 @@
+{
+  "tool": "built-in image_gen",
+  "source": "sources/hearth.png",
+  "output": "sources/hearth_cleaned.png",
+  "prompt": "Use case: precise-object-edit. Input is the EMPTY central hearth room candidate. Change ONLY one tiny area: REMOVE the two closed books/manuals resting on the right end of the dismantled radio's shelf, at approx x475..572 y385..427. Leave the shelf top EMPTY there, seamlessly restore its plain wood. Preserve the dismantled radio itself. Preserve EVERY other object, camera, doorway positions, window, stove, leather armchair, stool, gramophone cover, neutral lighting and all dimensions. No new objects, no new light, no people, no textual labels. Output same 1672x941 composition candidate, opaque image. Do not recompose or shift furniture."
+}
