@@ -71,3 +71,9 @@ node --experimental-strip-types "设计/原型/05_v1.0_06真实快照冒烟.mjs"
 
 新增测试位于 `tests/visual.test.ts`。自动化见 `../.github/workflows/06-g2-presentation.yml`。**这不是 Safari/macOS 长时间运行或完整野外 G2 验收**；野外吃饭 D6 仍是暂行规则。
 
+
+**06 v0.3 合并前修订：** `stage.outfit` 现在表示舞台人物的衣着，独立氛围即使实际人物在院外也保持室内便服；`actor.outfit` 仍表示真实世界。季节性窗景光照读取 `look.time`（复用 `CONFIG.outing.dusk`），贴图按 `look.weatherKey` 选择，不匹配天气中文名。做饭、理书架、听收音机和门口静坐等已配独立姿态/道具，不再一律拿修理工具。
+
+完整修订和示例：[七项评审修正](../设计/讨论记录/2026-11-14_06v0.3合并前七项修正_GPT.md)。[06 CI](https://github.com/taoking/beyond-the-storm/actions/runs/43560966432) / [05 CI](https://github.com/taoking/beyond-the-storm/actions/runs/43560966425) 验收通过，最新 **125 + 18** 条测试；CI 不再写死临时分支，合并后继续对 push/PR 生效。
+
+
