@@ -1,12 +1,14 @@
 // G2 只读表现层：有结构化姿态/道具和独立氛围，不改变 02/03/06 事实模型。
 import { describe, expect, it } from "vitest";
 import { PROJECTS, type PlaceId } from "../src/core/content.ts";
+import { CONFIG } from "../src/core/config.ts";
+import { seasonOf } from "../src/core/calendar.ts";
 import { fixedCalendar } from "../src/core/focus.ts";
 import { cmdEnterAmbience, newGame } from "../src/core/game.ts";
 import type { Activity, ActivityKind, ActorState } from "../src/core/state.ts";
 import { present } from "../src/core/view.ts";
 import { actorPose, projectedLook } from "../src/core/visual.ts";
-import { previewLook } from "../src/core/weather.ts";
+import { previewLook, weatherArtKey, WEATHER_ART_KEYS } from "../src/core/weather.ts";
 
 const calendar = fixedCalendar(0);
 const wall = 1780000000000;
@@ -32,8 +34,30 @@ describe("06 G2 actor pose projection reads structured facts only", () => {
     expect(actorPose(actor("project", "workbench", { id: repairId }))).toMatchObject({pose:"standWork", prop:"tools"});
   });
   it("keeps cooking and sitting for the same meal as separate prop/pose states", () => {
-    expect(actorPose(actor("meal", "stove", {meal:"dinner"}))).toMatchObject({pose:"standWork", prop:"tools"});
+    expect(actorPose(actor("meal", "stove", {meal:"dinner"}))).toMatchObject({pose:"standWork", prop:"pot"});
     expect(actorPose(actor("meal", "armchair", {meal:"dinner"}))).toMatchObject({pose:"sitHold", prop:"bowl"});
+  });
+  it("weather-records project means writing and records, not repairing equipment", () => {
+    const a = actor("project", "desk", {id:"weatherRecords"});
+    expect(actorPose(a)).toMatchObject({pose:"sitWrite",prop:"journal"});
+    a.activity!.label="this sentence is not parsed";
+    expect(actorPose(a).pose).toBe("sitWrite");
+  });
+  it("radio listening, bookshelf tidying and cooking never give out repair tools", () => {
+    expect(actorPose(actor("leisure","radio",{id:"radio"}))).toMatchObject({pose:"standLook",prop:null});
+    expect(actorPose(actor("leisure","bookshelf",{id:"tidyShelf"}))).toMatchObject({pose:"standWork",prop:"book"});
+    expect(actorPose(actor("leisure","workbench",{id:"tidyTools"}))).toMatchObject({pose:"standWork",prop:"tools"});
+    expect(actorPose(actor("meal","stove"))).toMatchObject({pose:"standWork",prop:"pot"});
+  });
+  it("sitting at the gate stays seated; earlier walk does not flip on crossing 18:00", () => {
+    const summer = Array.from({length:CONFIG.calendar.yearDays},(_,day)=>day)
+      .find(day => seasonOf(day).season === "summer")!;
+    const a = actor("leisure","gate",{id:"yardStroll"});
+    expect(actorPose(a,{day:summer,minuteOfDay:18*60+5}).pose).toBe("sit");
+    expect(actorPose(a,{day:summer,minuteOfDay:17*60+55}).pose).toBe("walk");
+    a.activity!.left = 9; // 已走 6 分钟，即在 17:59 开始散步
+    expect(actorPose(a,{day:summer,minuteOfDay:18*60+5}).pose).toBe("walk");
+    expect(actorPose(a,{day:0,minuteOfDay:18*60+5}).pose).toBe("walk");
   });
   it("tea carries a cup while writing carries a journal", () => {
     expect(actorPose(actor("leisure", "armchair", {id:"tea"}))).toMatchObject({pose:"sitHold", prop:"cup"});
@@ -68,6 +92,7 @@ describe("G2 visual look always separates reality from ambience", () => {
     const snap = present(g, wall, calendar);
     expect(snap.look.source).toBe("world");
     expect(snap.look.weatherLabel).toBe(g.world.weather.look);
+    expect(snap.look.weatherKey).toBe(weatherArtKey(g.world.weather.look));
     expect(snap.world.look).toBe(g.world.weather.look);
     expect(JSON.stringify(g)).toBe(before);
   });
@@ -82,10 +107,41 @@ describe("G2 visual look always separates reality from ambience", () => {
     expect(snap.world.look).toBe(real);
     expect(snap.look).toMatchObject({
       source:"ambience",season:"autumn",weather:"C",weatherLabel:previewLook("autumn","C"),
-      time:"dusk", dayPart:"傍晚",
+      time:"dusk", dayPart:"傍晚",weatherKey:weatherArtKey(previewLook("autumn","C")),
     });
     expect(snap.stage).toMatchObject({illusion:true,place:"armchair",pose:"sit",activity:null,prop:null});
     expect(JSON.stringify(g.world)).toBe(beforeWorld);
+  });
+  it("winter window is night at 17:00 using existing per-season dusk configuration", () => {
+    const g=newGame(7), before=JSON.stringify(g);
+    // day zero begins in winter; use the same dusk threshold as outdoor return safety.
+    expect(CONFIG.outing.dusk.winter).toBe(17*60);
+    const at1659=projectedLook(g,g.world,16*60+59);
+    const at1700=projectedLook(g,g.world,17*60);
+    expect(at1659.time).toBe("dusk");
+    expect(at1700.time).toBe("night");
+    expect(at1700.dayPart).toBe("夜");
+    expect(JSON.stringify(g)).toBe(before);
+  });
+  it("seasonal evening and twilight differ between winter and summer", () => {
+    const g=newGame(7), summer=Array.from({length:CONFIG.calendar.yearDays},(_,day)=>day)
+      .find(day => seasonOf(day).season === "summer")!;
+    g.world.day=summer;
+    expect(projectedLook(g,g.world,19*60).time).toBe("day");
+    expect(projectedLook(g,g.world,19*60+45).time).toBe("dusk");
+    expect(projectedLook(g,g.world,20*60).time).toBe("night");
+  });
+  it("all weather descriptions have typed drawable keys and unknown stays explicit", () => {
+    expect(Object.keys(WEATHER_ART_KEYS)).toHaveLength(9);
+    expect(Object.values(WEATHER_ART_KEYS)).toHaveLength(new Set(Object.values(WEATHER_ART_KEYS)).size);
+    expect(weatherArtKey("小雪")).toBe("lightSnow");
+    expect(weatherArtKey("冻雨")).toBe("freezingRain");
+    expect(weatherArtKey("暴风雪")).toBe("blizzard");
+    expect(weatherArtKey("new weather")).toBeNull();
+    const g=newGame(4);
+    g.world.weather.look="雾";
+    expect(projectedLook(g,g.world,600).weatherKey).toBe("fog");
+    expect(projectedLook(g,g.world,600).weatherLabel).toBe("雾");
   });
   it("ambience with missing/corrupt selection does not borrow current weather", () => {
     const g = newGame(3);g.mode="ambience";g.ambience=null;
@@ -93,6 +149,7 @@ describe("G2 visual look always separates reality from ambience", () => {
     expect(snap.look.source).toBe("missing");
     expect(snap.look.weather).toBeNull();
     expect(snap.look.weatherLabel).toBeNull();
+    expect(snap.look.weatherKey).toBeNull();
   });
   it("outdoorFocus can use a selected still view while remaining an empty cabin", () => {
     const g = newGame(5);g.mode="outdoorFocus";
@@ -140,6 +197,19 @@ describe("G2 stage projection is for appearance, not a second world", () => {
     expect(snap.jar.pending).toBe(g.world.pendingCones);
     expect(snap.fire.look).toMatch(/^(out|ember|low|mid|high)$/);
     expect(JSON.stringify(g)).toBe(before);
+  });
+  it("independent ambience actor wears indoor clothes even if real actor is outdoors", () => {
+    const g=newGame(8);
+    g.world.actor.asleep=false;
+    g.world.actor.away=false;
+    g.world.actor.place="gate";
+    g.world.actor.outfit="outdoor";
+    cmdEnterAmbience(g,{season:"winter",weather:"D",time:"night"});
+    const original=JSON.stringify(g.world);
+    const snap=present(g,wall,calendar);
+    expect(snap.actor.outfit).toBe("outdoor");
+    expect(snap.stage).toMatchObject({show:true,place:"armchair",outfit:"indoor",illusion:true,pose:"sit"});
+    expect(JSON.stringify(g.world)).toBe(original);
   });
   it("ambience is not a real action or a second active task", () => {
     const g=newGame(12);
