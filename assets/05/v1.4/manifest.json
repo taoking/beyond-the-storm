@@ -1,0 +1,159 @@
+{
+  "schema": "beyond-the-storm.05-v1.4-mother-art/1",
+  "baseline": "gpt/05-v1.3-fire-weather-states-20261114",
+  "authoritative_style": "05 v0.9 user-selected visual target + 05 v1.0 + approved 05 v1.2 original, not 05 v1.1 dull art",
+  "master": {
+    "path": "master/cabin_unlit_approved.png",
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB",
+    "approved_v12_sha256": "41213918be1e899f939436905f0d1447f37209368b092b7cc9b1d91819147af9",
+    "verified_by": "GitHub Actions 43556619259"
+  },
+  "asset_class": "high-fidelity fixed-scene source and lookdev overlays; not complete independent editable source",
+  "scene_previews": {
+    "out": "master/cabin_unlit_approved.png",
+    "ember": "previews/fire_ember.webp",
+    "low": "previews/fire_low.webp",
+    "mid": "previews/fire_mid.webp",
+    "high": "previews/fire_high.webp",
+    "clearMoonlit": "previews/winter_clear_moonlit.webp",
+    "lightSnow": "previews/winter_light_snow.webp",
+    "storm": "master/cabin_unlit_approved.png",
+    "blizzard": "previews/winter_blizzard.webp"
+  },
+  "layer_notes": "Fire/glow are RGBA; blizzard is additive; clear/light weather are approximate cold-color window overrides (not independent all-weather scenery)",
+  "fulfilled_mother_scene": "one fixed interior mother cabin, not three unrelated rooms",
+  "source_cameras": [
+    "wide=master",
+    "cameras/window_unlit.webp",
+    "cameras/hearth_unlit.webp"
+  ],
+  "not_yet_done": [
+    "True independent editable exterior window layers for clear/light/storm/blizzard",
+    "Spring summer autumn landscape mother plates with matching cabin perspective",
+    "Dawn/day/dusk changes of independent exterior and reflected interior light",
+    "Repair and furniture state overlays and six display slots",
+    "Nine consistent character sprite poses and actual animation",
+    "All genuine stove out/ember/low/mid/high animated frames with reflection occlusion masks",
+    "Separate courtyard / pine forest / creek valley / frozen lake high-fidelity outdoor scene mothers",
+    "320x180 and 480x270 Mac native viewport aesthetic approval"
+  ],
+  "github_files": [
+    {
+      "path": "cameras/hearth_unlit.webp",
+      "bytes": 205836,
+      "git_blob_sha": "d5dcb78eb7c2db868af9da9138b560ca78bf7f97"
+    },
+    {
+      "path": "cameras/window_unlit.webp",
+      "bytes": 198042,
+      "git_blob_sha": "235c22f15116dbca594c18c39bff87a92233009c"
+    },
+    {
+      "path": "contact_sheet_6_web.jpg",
+      "bytes": 771909,
+      "git_blob_sha": "94213b15ed5efa224aed09f59629416ca194a60c"
+    },
+    {
+      "path": "layers/fire_ember.png",
+      "bytes": 25337,
+      "git_blob_sha": "c772a51e38619e5a92d0262bbfbd4e3e9401c6c8"
+    },
+    {
+      "path": "layers/fire_high.png",
+      "bytes": 29061,
+      "git_blob_sha": "4ca1b80e280508d1aaaf0f1ad487b3474c2278bf"
+    },
+    {
+      "path": "layers/fire_low.png",
+      "bytes": 26766,
+      "git_blob_sha": "0add4699bd762f17fd522feb5b965d0886ffbeb1"
+    },
+    {
+      "path": "layers/fire_mid.png",
+      "bytes": 28691,
+      "git_blob_sha": "cc930070a58948c701d02bf55705eb524bdc3524"
+    },
+    {
+      "path": "layers/glow_ember.png",
+      "bytes": 11503,
+      "git_blob_sha": "1c5543a9d605525d9bab510a68797acec06d67ee"
+    },
+    {
+      "path": "layers/glow_high.png",
+      "bytes": 44366,
+      "git_blob_sha": "4bdcbd8290ddeb9e16798e0da36b3a3864c15c2f"
+    },
+    {
+      "path": "layers/glow_low.png",
+      "bytes": 19177,
+      "git_blob_sha": "8208f815aa7ac16f8a5d1663958ad4ba1b6b442d"
+    },
+    {
+      "path": "layers/glow_mid.png",
+      "bytes": 37445,
+      "git_blob_sha": "131a1474dba33365ea8954a5bfd75a9c93b40f8e"
+    },
+    {
+      "path": "layers/weather_blizzard_additive.png",
+      "bytes": 130611,
+      "git_blob_sha": "ef29e7ee4e369541e6944d5229b5dc71b9ba956c"
+    },
+    {
+      "path": "layers/weather_clear_approx_override.png",
+      "bytes": 537875,
+      "git_blob_sha": "2a9795bbbea74d1ba0ddf21a751dc5bed94048af"
+    },
+    {
+      "path": "layers/weather_light_snow_approx_override.png",
+      "bytes": 540659,
+      "git_blob_sha": "efbe77e632415b9661762349cfd3ece379ec688d"
+    },
+    {
+      "path": "master/cabin_unlit_approved.png",
+      "bytes": 3444481,
+      "git_blob_sha": "c137c87081b494a8cbabe0fd54b97fcfbe2409b4"
+    },
+    {
+      "path": "master/cabin_unlit_approved.webp",
+      "bytes": 802930,
+      "git_blob_sha": "487c94269ca3d256d367b359b5829ee8ba60d400"
+    },
+    {
+      "path": "previews/fire_ember.webp",
+      "bytes": 754720,
+      "git_blob_sha": "8a0ee0e65cca263225af5b6610ad81825040df9e"
+    },
+    {
+      "path": "previews/fire_high.webp",
+      "bytes": 747688,
+      "git_blob_sha": "fbd2238a01abb7cea2e29f77c0e295d49f797de1"
+    },
+    {
+      "path": "previews/fire_low.webp",
+      "bytes": 753686,
+      "git_blob_sha": "e9d57ce826169371650adb85aa1ff69c7e100e54"
+    },
+    {
+      "path": "previews/fire_mid.webp",
+      "bytes": 751698,
+      "git_blob_sha": "b3d4cc7fb12ccea3cf6a75bf1185568c034b2b8c"
+    },
+    {
+      "path": "previews/winter_blizzard.webp",
+      "bytes": 756886,
+      "git_blob_sha": "09cb16f7428d621617d09fa7d0100f1778c3e7f0"
+    },
+    {
+      "path": "previews/winter_clear_moonlit.webp",
+      "bytes": 747948,
+      "git_blob_sha": "4f283c836565769f3d2064883297e316df1b6be4"
+    },
+    {
+      "path": "previews/winter_light_snow.webp",
+      "bytes": 746434,
+      "git_blob_sha": "beabd8f85be520ef85fda2ebc1256b619da8cf2a"
+    }
+  ]
+}
