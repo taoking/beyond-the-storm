@@ -89,7 +89,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A assets/05 deliverables/05/g1-g2-20261114
+          git add -f -A assets/05 deliverables/05/g1-g2-20261114
           if git diff --cached --quiet; then
             echo "No new art changes to commit"
             exit 0
