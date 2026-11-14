@@ -1,0 +1,219 @@
+{
+  "schema": "beyond-the-storm.05.large-binary-upload/1",
+  "archive": "beyond_storm_05_G1_G2_dual_actor_locked_scene_20261114.zip",
+  "expected_sha256": "250e3c57a9e52fd3289ebfe6c400b195e44066eebbe19fda58586b8355c4c838",
+  "expected_bytes": 36108530,
+  "parts": [
+    {
+      "index": 0,
+      "file": "archive-parts/archive.part-000.bin",
+      "size": 1048576,
+      "gitBlobSha1": "9f061365e0843983bfdcf12c6fc69476b85bbc01"
+    },
+    {
+      "index": 1,
+      "file": "archive-parts/archive.part-001.bin",
+      "size": 1048576,
+      "gitBlobSha1": "e4e9bdb30b69ca8ef2ccf010f68596d6f87729f1"
+    },
+    {
+      "index": 2,
+      "file": "archive-parts/archive.part-002.bin",
+      "size": 1048576,
+      "gitBlobSha1": "41ca0ae929df20776facfd7c3a6fbb15f8b9958d"
+    },
+    {
+      "index": 3,
+      "file": "archive-parts/archive.part-003.bin",
+      "size": 1048576,
+      "gitBlobSha1": "0ffe3dbec6e77b31cdc0da3b67692bd8c3427885"
+    },
+    {
+      "index": 4,
+      "file": "archive-parts/archive.part-004.bin",
+      "size": 1048576,
+      "gitBlobSha1": "e9c60ca8fed354b4d9e09b74214b6cecd4b2a8fe"
+    },
+    {
+      "index": 5,
+      "file": "archive-parts/archive.part-005.bin",
+      "size": 1048576,
+      "gitBlobSha1": "e357173d4d2c8a2705b296a94df6efa57d93267a"
+    },
+    {
+      "index": 6,
+      "file": "archive-parts/archive.part-006.bin",
+      "size": 1048576,
+      "gitBlobSha1": "2be4793e72cd99a862a0c4e744fdd44d85a45388"
+    },
+    {
+      "index": 7,
+      "file": "archive-parts/archive.part-007.bin",
+      "size": 1048576,
+      "gitBlobSha1": "6bc7968e09a49b2ad6222bb3b9d9603da6ee6477"
+    },
+    {
+      "index": 8,
+      "file": "archive-parts/archive.part-008.bin",
+      "size": 1048576,
+      "gitBlobSha1": "c8f2c25a655a3c06fa695b2032b7851ba06a8b56"
+    },
+    {
+      "index": 9,
+      "file": "archive-parts/archive.part-009.bin",
+      "size": 1048576,
+      "gitBlobSha1": "909d5ec0f2b7945ecbe514e5f95c36220bde1187"
+    },
+    {
+      "index": 10,
+      "file": "archive-parts/archive.part-010.bin",
+      "size": 1048576,
+      "gitBlobSha1": "76e019fdb25a880ba1ccd9f0198d87d00c1e165b"
+    },
+    {
+      "index": 11,
+      "file": "archive-parts/archive.part-011.bin",
+      "size": 1048576,
+      "gitBlobSha1": "8c2858214d0e84422b43ce95f02c0be4d6c82746"
+    },
+    {
+      "index": 12,
+      "file": "archive-parts/archive.part-012.bin",
+      "size": 1048576,
+      "gitBlobSha1": "ed4c96e4e2488219dadf0ea175beab7cc9a0c793"
+    },
+    {
+      "index": 13,
+      "file": "archive-parts/archive.part-013.bin",
+      "size": 1048576,
+      "gitBlobSha1": "46c0e9c1eb019c977a8e6025cff08df580e04ce2"
+    },
+    {
+      "index": 14,
+      "file": "archive-parts/archive.part-014.bin",
+      "size": 1048576,
+      "gitBlobSha1": "c1f5ba9a472edfb1f47b970d1917394dd9cbd921"
+    },
+    {
+      "index": 15,
+      "file": "archive-parts/archive.part-015.bin",
+      "size": 1048576,
+      "gitBlobSha1": "0bf1b4af51d604667c3abede4d3b36d4b6ea9bf5"
+    },
+    {
+      "index": 16,
+      "file": "archive-parts/archive.part-016.bin",
+      "size": 1048576,
+      "gitBlobSha1": "fc91ca67f8460d251f01ce6fac347ada27d4fabc"
+    },
+    {
+      "index": 17,
+      "file": "archive-parts/archive.part-017.bin",
+      "size": 1048576,
+      "gitBlobSha1": "7c969d7c865e218a7c8b0b7387a5646ed5e80b57"
+    },
+    {
+      "index": 18,
+      "file": "archive-parts/archive.part-018.bin",
+      "size": 1048576,
+      "gitBlobSha1": "48310acf53e1a862b006658fd7223a9b4be24a0a"
+    },
+    {
+      "index": 19,
+      "file": "archive-parts/archive.part-019.bin",
+      "size": 1048576,
+      "gitBlobSha1": "2fba4d834ee27067aa29568c2a32a433497b6609"
+    },
+    {
+      "index": 20,
+      "file": "archive-parts/archive.part-020.bin",
+      "size": 1048576,
+      "gitBlobSha1": "613928fd2bc8b004ae55c538b5a8a926b63aa0b3"
+    },
+    {
+      "index": 21,
+      "file": "archive-parts/archive.part-021.bin",
+      "size": 1048576,
+      "gitBlobSha1": "78a17aec5ee15d65996bc1597e98996bbc892b25"
+    },
+    {
+      "index": 22,
+      "file": "archive-parts/archive.part-022.bin",
+      "size": 1048576,
+      "gitBlobSha1": "5b7481b1f784cd40ad2d1a9d2f1e91c439688ef5"
+    },
+    {
+      "index": 23,
+      "file": "archive-parts/archive.part-023.bin",
+      "size": 1048576,
+      "gitBlobSha1": "c05872f3333c831a89544ee9f7a9a6bc6e15ed06"
+    },
+    {
+      "index": 24,
+      "file": "archive-parts/archive.part-024.bin",
+      "size": 1048576,
+      "gitBlobSha1": "210901a4e7f23c30130e120c468b27ac47956274"
+    },
+    {
+      "index": 25,
+      "file": "archive-parts/archive.part-025.bin",
+      "size": 1048576,
+      "gitBlobSha1": "55d7f505c69946422734383327607273ac2e93df"
+    },
+    {
+      "index": 26,
+      "file": "archive-parts/archive.part-026.bin",
+      "size": 1048576,
+      "gitBlobSha1": "0567ba93c7dc5127393b75e2f291750fcf8b5f05"
+    },
+    {
+      "index": 27,
+      "file": "archive-parts/archive.part-027.bin",
+      "size": 1048576,
+      "gitBlobSha1": "b61c9fad71232fe84ffdb56971e6b381390a28f4"
+    },
+    {
+      "index": 28,
+      "file": "archive-parts/archive.part-028.bin",
+      "size": 1048576,
+      "gitBlobSha1": "48ac3c89f2652fe088cbfcfb6245cd8b09bdcd28"
+    },
+    {
+      "index": 29,
+      "file": "archive-parts/archive.part-029.bin",
+      "size": 1048576,
+      "gitBlobSha1": "fcb9527e38daa8ac7b981558651ec0a55103c4d6"
+    },
+    {
+      "index": 30,
+      "file": "archive-parts/archive.part-030.bin",
+      "size": 1048576,
+      "gitBlobSha1": "bcb3d818c20095c8c7c8206b02f70d5796fe40c1"
+    },
+    {
+      "index": 31,
+      "file": "archive-parts/archive.part-031.bin",
+      "size": 1048576,
+      "gitBlobSha1": "407212cfdd9ebe797543bccb67f8ef602d92d80a"
+    },
+    {
+      "index": 32,
+      "file": "archive-parts/archive.part-032.bin",
+      "size": 1048576,
+      "gitBlobSha1": "9493bd1b7f70a0bd6ce146a7f1d94dd28c4c1b38"
+    },
+    {
+      "index": 33,
+      "file": "archive-parts/archive.part-033.bin",
+      "size": 1048576,
+      "gitBlobSha1": "f9c358835c1f085799f482e5256bb0aefc800614"
+    },
+    {
+      "index": 34,
+      "file": "archive-parts/archive.part-034.bin",
+      "size": 456946,
+      "gitBlobSha1": "86a9f29b5ddedd4fda59dca18b919e85f5f10fb9"
+    }
+  ],
+  "note": "The exact archive bytes are stored across Git blob files in order; assemble only after checking each part SHA1 and final SHA256."
+}
