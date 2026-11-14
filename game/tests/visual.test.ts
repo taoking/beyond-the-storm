@@ -128,6 +128,7 @@ describe("G2 visual look always separates reality from ambience", () => {
       .find(day => seasonOf(day).season === "summer")!;
     g.world.day=summer;
     expect(projectedLook(g,g.world,19*60).time).toBe("day");
+    expect(projectedLook(g,g.world,19*60).dayPart).toBe("傍晚");
     expect(projectedLook(g,g.world,19*60+45).time).toBe("dusk");
     expect(projectedLook(g,g.world,20*60).time).toBe("night");
   });
