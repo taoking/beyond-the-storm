@@ -1,9 +1,12 @@
 name: 05 G2 art-readonly contract
 
+# Preserve validation after merging into main and on PRs, without pinning a temporary branch.
 on:
   push:
-    branches:
-      - gpt/05-v1.0-readonly-g2-visual-bridge
+    paths:
+      - "设计/原型/05_v1.0_G2只读视觉适配器*"
+      - ".github/workflows/05-g2-visual-bridge.yml"
+  pull_request:
     paths:
       - "设计/原型/05_v1.0_G2只读视觉适配器*"
       - ".github/workflows/05-g2-visual-bridge.yml"
