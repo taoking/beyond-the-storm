@@ -1,0 +1,73 @@
+{
+  "description": "Missing visual previews to add to repository branch gpt/05-g1-newlayout-dual-character-20261114; eight transparent character PNGs already exist in branch",
+  "source_handoff_archive": "beyond_storm_05_G1_G2_dual_actor_locked_scene_20261114.zip",
+  "archive_destination_if_requested": "assets/05/packages/beyond_storm_05_G1_G2_dual_actor_locked_scene_20261114.zip",
+  "files": [
+    {
+      "repo_path": "assets/05/previews/dual_actor/male_sleep.png",
+      "source_member": "previews/male_sleep.png",
+      "bytes": 3266595,
+      "sha256": "b4bb3acffa46f149e2ce6da86b94e36c0f6450762e8d8b2418cb75785b85423f"
+    },
+    {
+      "repo_path": "assets/05/previews/dual_actor/male_sitRead.png",
+      "source_member": "previews/male_sitRead.png",
+      "bytes": 3259254,
+      "sha256": "d0fb21ceeeb894c96b950abdfa819dcef9ccd0aec32ea6dadd88ff9a8d99005b"
+    },
+    {
+      "repo_path": "assets/05/previews/dual_actor/male_sitWrite.png",
+      "source_member": "previews/male_sitWrite.png",
+      "bytes": 3266290,
+      "sha256": "7e6eaaf5c6ead1a95c3961c9108a8d8470a104a195148f2c0e9d9dc6a408e697"
+    },
+    {
+      "repo_path": "assets/05/previews/dual_actor/male_standWork.png",
+      "source_member": "previews/male_standWork.png",
+      "bytes": 3268107,
+      "sha256": "3818362be4965418b327c73b1a264edc39f18e56eaf4ad94e246f0367addf0fc"
+    },
+    {
+      "repo_path": "assets/05/previews/dual_actor/male_4poses_samebase.jpg",
+      "source_member": "previews/male_4poses_samebase.jpg",
+      "bytes": 969227,
+      "sha256": "3df0c56d897f0abd8cc789f5eede1490351e28548bcf6491a67305c11bcb041a"
+    },
+    {
+      "repo_path": "assets/05/previews/dual_actor/female_sleep.png",
+      "source_member": "previews/female_sleep.png",
+      "bytes": 3267688,
+      "sha256": "a29d28b8a03574291cfae492ab078cf19803345b13566bc91811780619008612"
+    },
+    {
+      "repo_path": "assets/05/previews/dual_actor/female_sitRead.png",
+      "source_member": "previews/female_sitRead.png",
+      "bytes": 3259873,
+      "sha256": "ad69b78fd4206d41f732e226368e1708c1f66e360dd361ee0c1e36e480418442"
+    },
+    {
+      "repo_path": "assets/05/previews/dual_actor/female_sitWrite.png",
+      "source_member": "previews/female_sitWrite.png",
+      "bytes": 3268307,
+      "sha256": "ecbcc5344cdf8a4dddf9229f86b9efe4237e08ad3d9def769842b98cbd0a90e1"
+    },
+    {
+      "repo_path": "assets/05/previews/dual_actor/female_standWork.png",
+      "source_member": "previews/female_standWork.png",
+      "bytes": 3269380,
+      "sha256": "783f7e8bc2dee0f5226f006ef894c94b8d6c3bc42d555b37a86dfcab4ef42d00"
+    },
+    {
+      "repo_path": "assets/05/previews/dual_actor/female_4poses_samebase.jpg",
+      "source_member": "previews/female_4poses_samebase.jpg",
+      "bytes": 969451,
+      "sha256": "b6bde47193130878d178274cf177f0261c6efaac27377815925a3430adccfab7"
+    },
+    {
+      "repo_path": "assets/05/cabin/g2_layout_review.png",
+      "source_member": "sources/scene_g2_mood_reference.png",
+      "bytes": 3264731,
+      "sha256": "7f2d72e49c1a520358111845d71b026d041ede1da1d08febdec6d21ac70bbb66"
+    }
+  ]
+}

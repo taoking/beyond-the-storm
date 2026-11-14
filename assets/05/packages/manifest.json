@@ -1,0 +1,225 @@
+{
+  "schema": "beyond-the-storm.05.g1-on-g2/1",
+  "status": "REVIEW_ONLY",
+  "base": "G2 1672x941 candidate; NOT G5 neutral native 2560",
+  "baseSha256": "7f2d72e49c1a520358111845d71b026d041ede1da1d08febdec6d21ac70bbb66",
+  "canvas": [
+    1672,
+    941
+  ],
+  "sameBaseAcrossEight": true,
+  "heroVariants": [
+    "male",
+    "female"
+  ],
+  "poses": [
+    "sleep",
+    "sitRead",
+    "sitWrite",
+    "standWork"
+  ],
+  "layers": [
+    {
+      "variant": "male",
+      "pose": "sleep",
+      "place": "bed",
+      "actorRect": [
+        1275,
+        532,
+        313,
+        101
+      ],
+      "visibleAlphaBBox": [
+        1289,
+        532,
+        1588,
+        620
+      ],
+      "footAnchor": "undefined for sleep; approximate otherwise",
+      "image": "assets/05/actor/indoor/male/sleep.png",
+      "preview": "previews/male_sleep.png",
+      "outsideAlphaBackgroundChangedPixels": 0,
+      "flipHorizontal": true,
+      "notes": "Head at right pillow; body under quilt; full bed itself visible",
+      "reviewStatus": "pending proportions/occlusion and authentic 2560 production scene"
+    },
+    {
+      "variant": "male",
+      "pose": "sitRead",
+      "place": "armchair",
+      "actorRect": [
+        513,
+        377,
+        221,
+        304
+      ],
+      "visibleAlphaBBox": [
+        513,
+        377,
+        726,
+        681
+      ],
+      "footAnchor": "undefined for sleep; approximate otherwise",
+      "image": "assets/05/actor/indoor/male/sitRead.png",
+      "preview": "previews/male_sitRead.png",
+      "outsideAlphaBackgroundChangedPixels": 0,
+      "flipHorizontal": false,
+      "notes": "Reading chair occupies x480..730 and feet are foreground of stool",
+      "reviewStatus": "pending proportions/occlusion and authentic 2560 production scene"
+    },
+    {
+      "variant": "male",
+      "pose": "sitWrite",
+      "place": "desk",
+      "actorRect": [
+        288,
+        409,
+        238,
+        297
+      ],
+      "visibleAlphaBBox": [
+        288,
+        409,
+        526,
+        701
+      ],
+      "footAnchor": "undefined for sleep; approximate otherwise",
+      "image": "assets/05/actor/indoor/male/sitWrite.png",
+      "preview": "previews/male_sitWrite.png",
+      "outsideAlphaBackgroundChangedPixels": 0,
+      "flipHorizontal": true,
+      "notes": "Rear-facing writer looks left toward actual desk rather than outward",
+      "reviewStatus": "pending proportions/occlusion and authentic 2560 production scene"
+    },
+    {
+      "variant": "male",
+      "pose": "standWork",
+      "place": "hearth",
+      "actorRect": [
+        822,
+        314,
+        169,
+        344
+      ],
+      "visibleAlphaBBox": [
+        837,
+        314,
+        991,
+        658
+      ],
+      "footAnchor": "undefined for sleep; approximate otherwise",
+      "image": "assets/05/actor/indoor/male/standWork.png",
+      "preview": "previews/male_standWork.png",
+      "outsideAlphaBackgroundChangedPixels": 0,
+      "flipHorizontal": false,
+      "notes": "Use real hearth position; prep/workbench front clearance obstructed by bed",
+      "reviewStatus": "pending proportions/occlusion and authentic 2560 production scene"
+    },
+    {
+      "variant": "female",
+      "pose": "sleep",
+      "place": "bed",
+      "actorRect": [
+        1275,
+        532,
+        313,
+        101
+      ],
+      "visibleAlphaBBox": [
+        1333,
+        532,
+        1588,
+        633
+      ],
+      "footAnchor": "undefined for sleep; approximate otherwise",
+      "image": "assets/05/actor/indoor/female/sleep.png",
+      "preview": "previews/female_sleep.png",
+      "outsideAlphaBackgroundChangedPixels": 0,
+      "flipHorizontal": true,
+      "notes": "Head at right pillow; body under quilt; full bed itself visible",
+      "reviewStatus": "pending proportions/occlusion and authentic 2560 production scene"
+    },
+    {
+      "variant": "female",
+      "pose": "sitRead",
+      "place": "armchair",
+      "actorRect": [
+        513,
+        377,
+        221,
+        304
+      ],
+      "visibleAlphaBBox": [
+        513,
+        377,
+        696,
+        681
+      ],
+      "footAnchor": "undefined for sleep; approximate otherwise",
+      "image": "assets/05/actor/indoor/female/sitRead.png",
+      "preview": "previews/female_sitRead.png",
+      "outsideAlphaBackgroundChangedPixels": 0,
+      "flipHorizontal": false,
+      "notes": "Reading chair occupies x480..730 and feet are foreground of stool",
+      "reviewStatus": "pending proportions/occlusion and authentic 2560 production scene"
+    },
+    {
+      "variant": "female",
+      "pose": "sitWrite",
+      "place": "desk",
+      "actorRect": [
+        288,
+        409,
+        238,
+        297
+      ],
+      "visibleAlphaBBox": [
+        289,
+        409,
+        526,
+        706
+      ],
+      "footAnchor": "undefined for sleep; approximate otherwise",
+      "image": "assets/05/actor/indoor/female/sitWrite.png",
+      "preview": "previews/female_sitWrite.png",
+      "outsideAlphaBackgroundChangedPixels": 0,
+      "flipHorizontal": true,
+      "notes": "Rear-facing writer looks left toward actual desk rather than outward",
+      "reviewStatus": "pending proportions/occlusion and authentic 2560 production scene"
+    },
+    {
+      "variant": "female",
+      "pose": "standWork",
+      "place": "hearth",
+      "actorRect": [
+        822,
+        314,
+        169,
+        344
+      ],
+      "visibleAlphaBBox": [
+        822,
+        314,
+        991,
+        658
+      ],
+      "footAnchor": "undefined for sleep; approximate otherwise",
+      "image": "assets/05/actor/indoor/female/standWork.png",
+      "preview": "previews/female_standWork.png",
+      "outsideAlphaBackgroundChangedPixels": 0,
+      "flipHorizontal": false,
+      "notes": "Use real hearth position; prep/workbench front clearance obstructed by bed",
+      "reviewStatus": "pending proportions/occlusion and authentic 2560 production scene"
+    }
+  ],
+  "blocking": [
+    "workbench path occluded by forward bed",
+    "fixed radio/lights/curtains not starter state",
+    "window weather baked",
+    "tentative furniture occlusion polygons"
+  ],
+  "sourceBoardsOnlyAsReference": [
+    "雪夜山居四时图.png",
+    "冬夜小屋四时光影.png"
+  ]
+}
