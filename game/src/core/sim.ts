@@ -376,7 +376,7 @@ function mealActivity(meal: MealSlot, source: string): Activity {
 
 function teaPhases(w: World): Phase[] {
   return [
-    { place: "stove", minutes: 5, label: "在泡茶" },
+    { place: "hearth", minutes: 5, label: "在泡茶" },
     { place: "armchair", minutes: intBetween(w.rng.actor, 20, 30), label: "在炉边喝茶" },
   ];
 }
@@ -912,7 +912,7 @@ function decide(w: World): Activity {
     return activity("fetchWater", "去泉屋提水", "necessity", [{ place: "springhouse", minutes: C.IMPL.fetchWaterMinutes }]);
   }
   if (!d.waterBoiled) {
-    return activity("boilWater", "在烧水", "necessity", [{ place: "stove", minutes: C.IMPL.boilWaterMinutes }]);
+    return activity("boilWater", "在烧水", "necessity", [{ place: "hearth", minutes: C.IMPL.boilWaterMinutes }]);
   }
   if (!d.observed) {
     const place: PlaceId = yardWeather(w) ? "vane" : "instruments";
@@ -920,7 +920,7 @@ function decide(w: World): Activity {
     return activity("observe", label, "observe", [{ place, minutes: C.IMPL.observeMinutes }]);
   }
   if (w.actor.thirst >= C.IMPL.thirstIntervalMinutes) {
-    return activity("drink", "在喝水", "necessity", [{ place: "stove", minutes: C.IMPL.drinkMinutes }], {}, true);
+    return activity("drink", "在喝水", "necessity", [{ place: "hearth", minutes: C.IMPL.drinkMinutes }], {}, true);
   }
 
   // 攒着的小事，插在两件事之间
@@ -1077,7 +1077,7 @@ export function complete(w: World, act: Activity): void {
     case "boilWater":
       d.waterBoiled = true;
       w.actor.thirst = 0;
-      leaveTrace(w, "kettleSteam", "stove", 30);
+      leaveTrace(w, "kettleSteam", "hearth", 30);
       break;
     case "drink":
       w.actor.thirst = 0;

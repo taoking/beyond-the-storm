@@ -1,10 +1,10 @@
 // 06 第 4 节的指标：人物可见率、活动密度、时间配比。给 04/05 做构图和回访设计用。
 // 用法：node tools/report.ts [--runs N] [--days D]
 // 采样条件：正常陪伴、不出门、不专注（没有任务类别的轻推），他照自己的习惯做项目；从入冬第一天起。
-import { CAMERA_IDS, CAMERAS } from "../src/core/cameras.ts";
 import { seasonOf, SEASON_NAME } from "../src/core/calendar.ts";
 import { PLACES, type PlaceId } from "../src/core/content.ts";
 import { advanceCompanionMinutes, newGame } from "../src/core/game.ts";
+import { placesIn, ROOM_IDS, ROOMS, roomOf } from "../src/core/rooms.ts";
 import { createTelemetry, type Telemetry } from "../src/core/telemetry.ts";
 
 const args = process.argv.slice(2);
@@ -16,7 +16,7 @@ const pct = (a: number, b: number): string => `${((a / Math.max(1, b)) * 100).to
 function add(into: Telemetry, t: Telemetry): void {
   into.companionMinutes += t.companionMinutes;
   into.awakeMinutes += t.awakeMinutes;
-  for (const c of CAMERA_IDS) into.visibleAwake[c] += t.visibleAwake[c];
+  for (const r of ROOM_IDS) into.visibleAwake[r] += t.visibleAwake[r];
   for (const [z, n] of Object.entries(t.zoneAwake)) into.zoneAwake[z as keyof Telemetry["zoneAwake"]] += n;
   for (const [p, n] of Object.entries(t.placeAwake)) into.placeAwake[p] = (into.placeAwake[p] ?? 0) + n;
   for (const [c, n] of Object.entries(t.category)) into.category[c] = (into.category[c] ?? 0) + n;
@@ -64,7 +64,7 @@ for (let seed = 0; seed < runs; seed++) {
       // 这一天的增量
       delta.companionMinutes -= prev.companionMinutes;
       delta.awakeMinutes -= prev.awakeMinutes;
-      for (const c of CAMERA_IDS) delta.visibleAwake[c] -= prev.visibleAwake[c];
+      for (const r of ROOM_IDS) delta.visibleAwake[r] -= prev.visibleAwake[r];
       for (const z of Object.keys(delta.zoneAwake) as (keyof Telemetry["zoneAwake"])[]) delta.zoneAwake[z] -= prev.zoneAwake[z];
       for (const p of Object.keys(delta.placeAwake)) delta.placeAwake[p] -= prev.placeAwake[p] ?? 0;
       for (const c of Object.keys(delta.category)) delta.category[c] -= prev.category[c] ?? 0;
@@ -86,27 +86,30 @@ const q = (xs: number[], p: number): number => [...xs].sort((a, b) => a - b)[Mat
 
 console.log(`# 灰盒采样：${runs} 个种子 × 入冬起 ${days} 个游戏日`);
 console.log(`\n采样条件：正常陪伴，不出门，不专注，他照自己的习惯做项目。共 ${total.companionMinutes} 个游戏分钟，其中他醒着 ${total.awakeMinutes} 个（${pct(total.awakeMinutes, total.companionMinutes)}）。`);
-console.log("镜头里有哪些地点是假设（src/core/cameras.ts），05 定稿后要重算。\n");
-console.log("## 镜头里看得见他\n");
-console.log("| 镜头 | 占醒着的时间 | 占全部世界时间 | 包括的地点 |");
+console.log("地点归哪间读 assets/05/rooms/g5_20261115/room_locations.json；画面只显示选定的那一间，下面是选了那一间时看得见他的比例。\n");
+console.log("## 各间看得见他\n");
+console.log("| 房间 | 占醒着的时间 | 占全部世界时间 | 包括的地点 |");
 console.log("|---|---|---|---|");
-for (const c of CAMERA_IDS) {
-  const names = c.startsWith("wide") ? CAMERAS[c].note : CAMERAS[c].places.map((p) => PLACES[p].name).join("、");
-  console.log(`| ${CAMERAS[c].name} | ${pct(total.visibleAwake[c], total.awakeMinutes)} | ${pct(total.visibleAwake[c], total.companionMinutes)} | ${names} |`);
+for (const r of ROOM_IDS) {
+  const names = placesIn(r).map((p) => PLACES[p].name).join("、");
+  console.log(`| ${ROOMS[r].name} | ${pct(total.visibleAwake[r], total.awakeMinutes)} | ${pct(total.visibleAwake[r], total.companionMinutes)} | ${names} |`);
 }
+const inRooms = ROOM_IDS.reduce((n, r) => n + total.visibleAwake[r], 0);
+console.log(`| 四间都不在（院子、屋边、泉屋和防风林） | ${pct(total.awakeMinutes - inRooms, total.awakeMinutes)} | | |`);
 console.log("\n按季节（占醒着的时间）：\n");
-console.log(`| 季节 | ${CAMERA_IDS.map((c) => CAMERAS[c].name).join(" | ")} |`);
-console.log(`|---|${CAMERA_IDS.map(() => "---").join("|")}|`);
+console.log(`| 季节 | ${ROOM_IDS.map((r) => ROOMS[r].name).join(" | ")} |`);
+console.log(`|---|${ROOM_IDS.map(() => "---").join("|")}|`);
 for (const [season, t] of Object.entries(bySeason)) {
-  console.log(`| ${season} | ${CAMERA_IDS.map((c) => pct(t.visibleAwake[c], t.awakeMinutes)).join(" | ")} |`);
+  console.log(`| ${season} | ${ROOM_IDS.map((r) => pct(t.visibleAwake[r], t.awakeMinutes)).join(" | ")} |`);
 }
 console.log("\n## 他醒着时在哪\n");
 const zoneName = { indoor: "屋里", eaves: "泉屋和防风林", yard: "院子", nearby: "林子边缘和溪湾", away: "野外" } as const;
 console.log("| 区域 | 占醒着的时间 |\n|---|---|");
 for (const [z, n] of Object.entries(total.zoneAwake)) console.log(`| ${zoneName[z as keyof typeof zoneName]} | ${pct(n, total.awakeMinutes)} |`);
-console.log("\n| 地点 | 占醒着的时间 |\n|---|---|");
+console.log("\n| 地点 | 房间 | 占醒着的时间 |\n|---|---|---|");
 for (const [p, n] of Object.entries(total.placeAwake).sort((a, b) => b[1] - a[1])) {
-  console.log(`| ${PLACES[p as PlaceId].name} | ${pct(n, total.awakeMinutes)} |`);
+  const room = roomOf(p as PlaceId);
+  console.log(`| ${PLACES[p as PlaceId].name} | ${room ? ROOMS[room].name : "—"} | ${pct(n, total.awakeMinutes)} |`);
 }
 console.log("\n## 他的时间花在哪（占全部世界时间）\n");
 const catName: Record<string, string> = { sleep: "睡觉", necessity: "必要生活", chore: "活计", observe: "观测", project: "项目", small: "小事", leisure: "闲暇" };

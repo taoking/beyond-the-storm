@@ -304,7 +304,7 @@ describe("身体状态、篝火、昏倒（02 第 9.4、9.7 节）", () => {
     for (const v of [...Object.values(o.body), ...Object.values(o.bag)]) expect(Number.isInteger(v)).toBe(true);
   });
 
-  it("D6 暂行不变：在外面到了饭点没带干粮，这顿没吃上，不算缺餐", () => {
+  it("02 第 9.4 节：在外面到了饭点没带干粮，这顿没吃上，不算缺餐", () => {
     const g = out(ready({ weather: "A" }), { rations: 0, bundles: 0 });
     act(g, { type: "travel", to: "pineForest" });
     while (dayClock(g.world) < CONFIG.meals.lunch + 5) {
@@ -314,7 +314,7 @@ describe("身体状态、篝火、昏倒（02 第 9.4、9.7 节）", () => {
     const lunch = g.world.today.meals.find((m) => m.name === "lunch")!;
     expect(lunch).toMatchObject({ eaten: false, skipped: true });
     expect(g.world.today.missedMeals).toBe(0);
-    expect(CONFIG.IMPL.outingMealWithoutRationsIsMissed).toBe(false);
+    expect(CONFIG.outing.mealWithoutRationsIsMissed).toBe(false);
   });
 });
 

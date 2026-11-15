@@ -729,8 +729,9 @@ describe("给界面的只读投影（06 第 2 节 ViewPresenter）", () => {
     const t = s.g.telemetry;
     expect(t.companionMinutes).toBeGreaterThan(t.awakeMinutes);
     expect(t.awakeMinutes).toBeGreaterThan(900);
-    expect(t.visibleAwake.wideYard).toBeGreaterThanOrEqual(t.visibleAwake.wideIndoor);
-    expect(t.visibleAwake.wideIndoor).toBeGreaterThanOrEqual(t.visibleAwake.window);
+    // 四间加起来就是他醒着待在屋里的时间（地窖口在院子）
+    const rooms = Object.values(t.visibleAwake).reduce((a, b) => a + b, 0);
+    expect(rooms).toBe(t.zoneAwake.indoor);
     const zones = Object.values(t.zoneAwake).reduce((a, b) => a + b, 0);
     expect(zones).toBe(t.awakeMinutes);
   });

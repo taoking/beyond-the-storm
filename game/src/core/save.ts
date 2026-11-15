@@ -2,6 +2,8 @@
 import { AREA_BY_ID } from "./content.ts";
 import { SAVE_VERSION, type Game } from "./game.ts";
 import { fullBody } from "./outing.ts";
+import { ROOM_IDS } from "./rooms.ts";
+import { emptyRooms } from "./telemetry.ts";
 import type { OutingState } from "./state.ts";
 import { minutesToDoor } from "./wild.ts";
 
@@ -31,6 +33,8 @@ export function deserialize(text: string): SaveFile {
 function repair(g: Game): void {
   // 氛围态却没有选的画面：回到真实的今天（世界本来就停着，不补时间）
   if (g.mode === "ambience" && !g.ambience) g.mode = "companion";
+  // 镜头还是雪窗、炉边、全景时的指标：不是世界事实，按四间清零重记
+  if (!ROOM_IDS.every((r) => typeof g.telemetry.visibleAwake[r] === "number")) g.telemetry.visibleAwake = emptyRooms();
   const w = g.world;
   w.wild ??= { taken: {}, harvested: {} };
   // 野外还只有「离家门几分钟」的老存档：带出去的柴捆按根放进背包，身体是满的，人在区域的入口

@@ -178,9 +178,9 @@ export function outdoorMinute(w: World, act: WildAct): OutdoorNote[] {
       o.body.stamina = clamp(o.body.stamina + W.rationStamina);
       bump(w, "吃饭");
     } else {
-      // 没带干粮：这顿在外面没吃上，体力也就没补上。算不算缺餐是暂行的做法，见 IMPL.outingMealWithoutRationsIsMissed
+      // 没带干粮：这顿在外面没吃上，体力也就没补上，不记成缺餐（02 第 9.4 节）
       meal.skipped = true;
-      if (CONFIG.IMPL.outingMealWithoutRationsIsMissed) w.today.missedMeals += 1;
+      if (CONFIG.outing.mealWithoutRationsIsMissed) w.today.missedMeals += 1;
     }
   }
   tickBody(w, act);

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { PROJECTS, type PlaceId } from "../src/core/content.ts";
 import { CONFIG } from "../src/core/config.ts";
 import { dayPartOf, seasonOf } from "../src/core/calendar.ts";
-import { CAMERA_IDS, visibleIn } from "../src/core/cameras.ts";
+import { ROOM_IDS } from "../src/core/rooms.ts";
 import { deserialize, serialize } from "../src/core/save.ts";
 import { fixedCalendar } from "../src/core/focus.ts";
 import { advanceCompanionMinutes, cmdEnterAmbience, newGame } from "../src/core/game.ts";
@@ -178,13 +178,19 @@ describe("G2 visual look always separates reality from ambience", () => {
   it("stage.visible follows the staged place, not the real one", () => {
     const g=newGame(5);
     g.world.actor.place="gate";
-    expect(present(g,wall,calendar).actor.visible.hearth).toBe(false);
+    const real=present(g,wall,calendar);
+    expect(real.actor.room).toBe(null);
+    expect(Object.values(real.actor.visible).every(v=>!v)).toBe(true);
     cmdEnterAmbience(g,{season:"winter",weather:"B",time:"night"});
     const snap=present(g,wall,calendar);
     expect(snap.stage.place).toBe("armchair");
-    for (const c of CAMERA_IDS) expect(snap.stage.visible[c]).toBe(visibleIn(c,"armchair"));
+    expect(snap.stage.room).toBe("hearth_room");
+    for (const r of ROOM_IDS) expect(snap.stage.visible[r]).toBe(r==="hearth_room");
+    expect(snap.actor.room).toBe(null);
     g.mode="outdoorFocus";
-    expect(Object.values(present(g,wall,calendar).stage.visible).every(v=>!v)).toBe(true);
+    const empty=present(g,wall,calendar);
+    expect(empty.stage.room).toBe(null);
+    expect(Object.values(empty.stage.visible).every(v=>!v)).toBe(true);
   });
   it("outdoorFocus can use a selected still view while remaining an empty cabin", () => {
     const g = newGame(5);g.mode="outdoorFocus";

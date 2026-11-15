@@ -1,6 +1,6 @@
 // 只读的投影：把一局游戏的事实整理成界面要的样子。这里的函数都不改状态。
 // 灰盒界面、以后的正式界面、多窗口的从窗口，读的都是这一份。
-import { CAMERA_IDS, visibleIn, type CameraId } from "./cameras.ts";
+import { ROOM_IDS, roomOf, visibleIn, type RoomId } from "./rooms.ts";
 import { clockText, DAY_PART_NAME, dayPartOf, SEASON_NAME, seasonOf } from "./calendar.ts";
 import { CONFIG, type LifeTier } from "./config.ts";
 import { AREA_BY_ID, CROP_BY_ID, GOODS_NAME, PLACES, PROJECTS, STYLES, zoneOf, type Goods, type PlaceId, type Zone } from "./content.ts";
@@ -58,13 +58,15 @@ export interface Snapshot {
     asleep: boolean;
     away: boolean;
     outfit: string;
-    /** 镜头里看不见他的时候，说一句他在哪 */
+    /** 画面里看不见他的时候，说一句他在哪 */
     whereabouts: string;
-    visible: Record<CameraId, boolean>;
+    /** 他真实在哪一间；院子、屋外、出门了是 null */
+    room: RoomId | null;
+    visible: Record<RoomId, boolean>;
   };
   /**
    * 画面里要画的人：氛围态里是不产出的闲暇演出；户外临时专注是空屋。
-   * visible 按 stage.place 算（画面上哪个镜头看得见这个人）；actor.visible 是他真实位置的事实。
+   * room、visible 按 stage.place 算（选了哪一间就画得出这个人）；actor.room、actor.visible 是他真实位置的事实。
    */
   stage: {
     show: boolean;
@@ -72,7 +74,8 @@ export interface Snapshot {
     label: string;
     illusion: boolean;
     outfit: "indoor" | "outdoor" | null;
-    visible: Record<CameraId, boolean>;
+    room: RoomId | null;
+    visible: Record<RoomId, boolean>;
   } & PoseProjection;
   /** 当前实际可绘制的天气、季节和时间；独立氛围和真实世界严格分开。 */
   look: LookProjection;
@@ -155,8 +158,8 @@ const WILD_POSE: Record<WildAct, PoseKey> = { walk: "walk", road: "walk", gather
 
 const percent = (n: number): number => Math.round((n / CONFIG.IMPL.wild.bodyMax) * 100);
 
-function stageVisible(place: PlaceId | null): Record<CameraId, boolean> {
-  return Object.fromEntries(CAMERA_IDS.map((c) => [c, place !== null && visibleIn(c, place)])) as Record<CameraId, boolean>;
+function roomsVisible(place: PlaceId | null): Record<RoomId, boolean> {
+  return Object.fromEntries(ROOM_IDS.map((r) => [r, place !== null && visibleIn(r, place)])) as Record<RoomId, boolean>;
 }
 
 const MODE_LINE: Record<Mode, string> = {
@@ -173,11 +176,11 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
   const t = dayClock(w);
   const fz = frozen(g);
   const label = a.away ? "出门了" : actionLabel(w);
-  const visible = Object.fromEntries(CAMERA_IDS.map((c) => [c, !a.away && visibleIn(c, a.place)])) as Record<CameraId, boolean>;
+  const realPlace = a.away ? null : a.place;
 
   // 表现姿态只读已有的结构化 Activity/phase/data，永远不解析中文 label。
   const pose = actorPose(a);
-  let stage: Omit<Snapshot["stage"], "visible">;
+  let stage: Omit<Snapshot["stage"], "room" | "visible">;
   if (g.mode === "outdoorFocus") {
     stage = { show: false, place: null, label: "屋里没人，炉里留着余火", illusion: false, outfit: null, activity: null, pose: null, prop: null };
   } else if (g.mode === "ambience") {
@@ -262,9 +265,10 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
       away: a.away,
       outfit: a.outfit,
       whereabouts: a.away ? "出门了" : `${label}（${PLACES[a.place].name}）`,
-      visible,
+      room: realPlace && roomOf(realPlace),
+      visible: roomsVisible(realPlace),
     },
-    stage: { ...stage, visible: stageVisible(stage.show ? stage.place : null) },
+    stage: { ...stage, room: stage.show && stage.place ? roomOf(stage.place) : null, visible: roomsVisible(stage.show ? stage.place : null) },
     look: projectedLook(g, w, t),
     fire: { look: fireLook(w), burn: Math.round(w.fire.burn), ember: w.fire.ember },
     life: {
