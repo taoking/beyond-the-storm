@@ -1,0 +1,937 @@
+{
+  "schema": "beyond-the-storm/room-locations/2",
+  "date": "2026-11-15",
+  "status": "G5_PROVISIONAL_ONE_ANCHOR_SOURCE_FOR_CURRENT_SCENES",
+  "canvas": [
+    2560,
+    1440
+  ],
+  "authority": "only source for room/location/display/asset positioning",
+  "sourceScaleIsUpsampled": true,
+  "architecture": {
+    "central": "hearth_room",
+    "connections": [
+      [
+        "hearth_room",
+        "observation_room"
+      ],
+      [
+        "hearth_room",
+        "kitchen_room"
+      ],
+      [
+        "hearth_room",
+        "bedroom"
+      ]
+    ],
+    "kitchenBackDoorAndCoveredWalkwaySameOpening": true,
+    "springhouse": "outdoors",
+    "cellar": "yard",
+    "defaultSelectedRoom": "observation_room",
+    "automaticFollow": false
+  },
+  "rooms": {
+    "hearth_room": {
+      "name": "炉间",
+      "standingHeight": {
+        "model": "linear",
+        "a": 345,
+        "b": 0.28,
+        "equation": "round(345+footY*.28)",
+        "estimated": true
+      },
+      "windows": [
+        {
+          "id": "hearth_room_external",
+          "glassMask": "glass_mask.png",
+          "panesCanvasPolygons": [
+            [
+              [
+                6,
+                83
+              ],
+              [
+                72,
+                104
+              ],
+              [
+                73,
+                839
+              ],
+              [
+                5,
+                847
+              ]
+            ],
+            [
+              [
+                164,
+                107
+              ],
+              [
+                1038,
+                294
+              ],
+              [
+                1038,
+                761
+              ],
+              [
+                900,
+                767
+              ],
+              [
+                900,
+                794
+              ],
+              [
+                815,
+                794
+              ],
+              [
+                815,
+                835
+              ],
+              [
+                712,
+                838
+              ],
+              [
+                712,
+                817
+              ],
+              [
+                167,
+                820
+              ]
+            ],
+            [
+              [
+                1086,
+                305
+              ],
+              [
+                1190,
+                323
+              ],
+              [
+                1190,
+                795
+              ],
+              [
+                1086,
+                794
+              ]
+            ],
+            [
+              [
+                718,
+                830
+              ],
+              [
+                865,
+                827
+              ],
+              [
+                865,
+                967
+              ],
+              [
+                712,
+                964
+              ]
+            ]
+          ],
+          "coordinateSystem": "2560x1440 canvas pixels"
+        }
+      ],
+      "doorways": [
+        {
+          "to": "kitchen_room",
+          "polygon": [
+            [
+              2388,
+              205
+            ],
+            [
+              2559,
+              175
+            ],
+            [
+              2559,
+              964
+            ],
+            [
+              2388,
+              983
+            ]
+          ]
+        }
+      ],
+      "displaySlots": [
+        {
+          "id": "photo_wall",
+          "rect": [
+            1344,
+            307,
+            326,
+            277
+          ],
+          "emptyAtStart": true
+        },
+        {
+          "id": "hearth_shelf",
+          "rect": [
+            1750,
+            410,
+            470,
+            115
+          ],
+          "emptyAtStart": true
+        }
+      ],
+      "actor": {
+        "pose": "sitRead",
+        "rect": [
+          775,
+          591,
+          717,
+          730
+        ],
+        "image": "actor_male_pose.webp",
+        "contact": "actor_contact.webp",
+        "quality": "provisional single-frame preview; G8 separated animation not passed"
+      },
+      "lampAnchor": [
+        1665,
+        565
+      ],
+      "stateLayers": {
+        "woodpile_0": "woodpile_0.webp",
+        "woodpile_1": "woodpile_1.webp",
+        "woodpile_2": "woodpile_2.webp",
+        "woodpile_3": "woodpile_3.webp",
+        "woodpile_4": "woodpile_4.webp",
+        "snack_plate": "snack_plate.webp",
+        "armchair_blanket": "armchair_blanket.webp"
+      }
+    },
+    "observation_room": {
+      "name": "观测间",
+      "standingHeight": {
+        "model": "linear",
+        "a": 345,
+        "b": 0.28,
+        "equation": "round(345+footY*.28)",
+        "estimated": true
+      },
+      "windows": [
+        {
+          "id": "observation_room_external",
+          "glassMask": "glass_mask.png",
+          "panesCanvasPolygons": [
+            [
+              [
+                718,
+                257
+              ],
+              [
+                928,
+                225
+              ],
+              [
+                928,
+                401
+              ],
+              [
+                724,
+                411
+              ]
+            ],
+            [
+              [
+                724,
+                432
+              ],
+              [
+                928,
+                423
+              ],
+              [
+                928,
+                790
+              ],
+              [
+                723,
+                790
+              ]
+            ],
+            [
+              [
+                975,
+                221
+              ],
+              [
+                2231,
+                74
+              ],
+              [
+                2231,
+                795
+              ],
+              [
+                975,
+                795
+              ]
+            ],
+            [
+              [
+                2287,
+                77
+              ],
+              [
+                2479,
+                51
+              ],
+              [
+                2479,
+                251
+              ],
+              [
+                2289,
+                254
+              ]
+            ]
+          ],
+          "coordinateSystem": "2560x1440 canvas pixels"
+        }
+      ],
+      "doorways": [
+        {
+          "to": "hearth_room",
+          "polygon": [
+            [
+              0,
+              208
+            ],
+            [
+              156,
+              197
+            ],
+            [
+              156,
+              1046
+            ],
+            [
+              0,
+              1080
+            ]
+          ]
+        }
+      ],
+      "displaySlots": [
+        {
+          "id": "windowsill",
+          "rect": [
+            925,
+            759,
+            495,
+            100
+          ],
+          "emptyAtStart": true
+        },
+        {
+          "id": "desk_corner",
+          "rect": [
+            1720,
+            900,
+            195,
+            90
+          ],
+          "emptyAtStart": true
+        }
+      ],
+      "actor": {
+        "pose": "sitWrite",
+        "rect": [
+          984,
+          560,
+          603,
+          635
+        ],
+        "image": "actor_male_pose.webp",
+        "contact": "actor_contact.webp",
+        "quality": "provisional single-frame preview; G8 separated animation not passed"
+      },
+      "lampAnchor": [
+        1875,
+        856
+      ],
+      "stateLayers": {
+        "books_few": "books_few.webp",
+        "books_many": "books_many.webp",
+        "cup": "cup.webp",
+        "map": "map.webp"
+      }
+    },
+    "kitchen_room": {
+      "name": "灶间",
+      "standingHeight": {
+        "model": "linear",
+        "a": 345,
+        "b": 0.28,
+        "equation": "round(345+footY*.28)",
+        "estimated": true
+      },
+      "windows": [
+        {
+          "id": "kitchen_room_external",
+          "glassMask": "glass_mask.png",
+          "panesCanvasPolygons": [
+            [
+              [
+                1335,
+                263
+              ],
+              [
+                1612,
+                228
+              ],
+              [
+                1612,
+                653
+              ],
+              [
+                1337,
+                653
+              ]
+            ],
+            [
+              [
+                1654,
+                219
+              ],
+              [
+                2292,
+                132
+              ],
+              [
+                2292,
+                657
+              ],
+              [
+                1654,
+                653
+              ]
+            ],
+            [
+              [
+                2332,
+                121
+              ],
+              [
+                2526,
+                87
+              ],
+              [
+                2526,
+                643
+              ],
+              [
+                2335,
+                645
+              ]
+            ]
+          ],
+          "coordinateSystem": "2560x1440 canvas pixels"
+        }
+      ],
+      "doorways": [
+        {
+          "to": "outdoors_front",
+          "polygon": [
+            [
+              94,
+              350
+            ],
+            [
+              402,
+              357
+            ],
+            [
+              402,
+              948
+            ],
+            [
+              94,
+              957
+            ]
+          ]
+        },
+        {
+          "to": "covered_walkway_backdoor",
+          "polygon": [
+            [
+              603,
+              415
+            ],
+            [
+              790,
+              415
+            ],
+            [
+              790,
+              1004
+            ],
+            [
+              603,
+              1011
+            ]
+          ]
+        },
+        {
+          "to": "hearth_room",
+          "direction": "behind_camera_left",
+          "offscreen": true
+        }
+      ],
+      "displaySlots": [],
+      "actor": {
+        "pose": "standWork",
+        "rect": [
+          1188,
+          468,
+          408,
+          855
+        ],
+        "image": "actor_male_pose.webp",
+        "contact": "actor_contact.webp",
+        "quality": "provisional single-frame preview; G8 separated animation not passed"
+      },
+      "lampAnchor": [
+        2110,
+        707
+      ],
+      "stateLayers": {
+        "stock_sparse": "stock_sparse.webp",
+        "stock_full": "stock_full.webp",
+        "coat": "coat.webp",
+        "herbs": "herbs.webp"
+      }
+    },
+    "bedroom": {
+      "name": "卧室",
+      "standingHeight": {
+        "model": "linear",
+        "a": 345,
+        "b": 0.28,
+        "equation": "round(345+footY*.28)",
+        "estimated": true
+      },
+      "windows": [
+        {
+          "id": "bedroom_external",
+          "glassMask": "glass_mask.png",
+          "panesCanvasPolygons": [
+            [
+              [
+                1038,
+                372
+              ],
+              [
+                1266,
+                339
+              ],
+              [
+                1266,
+                959
+              ],
+              [
+                1038,
+                962
+              ]
+            ],
+            [
+              [
+                1314,
+                345
+              ],
+              [
+                2154,
+                274
+              ],
+              [
+                2154,
+                818
+              ],
+              [
+                1756,
+                818
+              ],
+              [
+                1756,
+                950
+              ],
+              [
+                1314,
+                950
+              ]
+            ],
+            [
+              [
+                1335,
+                296
+              ],
+              [
+                1706,
+                31
+              ],
+              [
+                1706,
+                283
+              ]
+            ],
+            [
+              [
+                1745,
+                28
+              ],
+              [
+                2127,
+                271
+              ],
+              [
+                1745,
+                285
+              ]
+            ]
+          ],
+          "coordinateSystem": "2560x1440 canvas pixels"
+        }
+      ],
+      "doorways": [
+        {
+          "to": "hearth_room",
+          "polygon": [
+            [
+              0,
+              248
+            ],
+            [
+              144,
+              288
+            ],
+            [
+              144,
+              1064
+            ],
+            [
+              0,
+              1097
+            ]
+          ]
+        }
+      ],
+      "displaySlots": [
+        {
+          "id": "bedside",
+          "rect": [
+            240,
+            876,
+            170,
+            144
+          ],
+          "emptyAtStart": true
+        },
+        {
+          "id": "wall_spare",
+          "rect": [
+            445,
+            365,
+            330,
+            210
+          ],
+          "emptyAtStart": true
+        }
+      ],
+      "actor": {
+        "pose": "sleep",
+        "rect": [
+          540,
+          748,
+          724,
+          294
+        ],
+        "image": "actor_male_pose.webp",
+        "contact": "actor_contact.webp",
+        "quality": "provisional single-frame preview; G8 separated animation not passed",
+        "occlusion": "bed_front_occlusion.webp",
+        "sleepHeadDirection": "left_toward_pillow"
+      },
+      "lampAnchor": [
+        288,
+        941
+      ],
+      "stateLayers": {
+        "quilt_thick": "quilt_thick.webp"
+      }
+    }
+  },
+  "locations": {
+    "hearth": {
+      "room": "hearth_room",
+      "label": "柴炉",
+      "footAnchor": [
+        1962,
+        1003
+      ],
+      "standingHeightPx": 626,
+      "facing": "toward_stove",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "woodpile": {
+      "room": "hearth_room",
+      "label": "柴堆",
+      "footAnchor": [
+        2198,
+        1045
+      ],
+      "standingHeightPx": 638,
+      "facing": "toward_basket",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "armchair": {
+      "room": "hearth_room",
+      "label": "扶手椅",
+      "footAnchor": [
+        1148,
+        1268
+      ],
+      "standingHeightPx": 700,
+      "facing": "toward_hearth_right",
+      "occludedBy": [
+        "armchair_front",
+        "side_table"
+      ],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "radio": {
+      "room": "hearth_room",
+      "label": "收音机",
+      "footAnchor": [
+        313,
+        980
+      ],
+      "standingHeightPx": 619,
+      "facing": "toward_radio",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "gramophone": {
+      "room": "hearth_room",
+      "label": "唱片机",
+      "footAnchor": [
+        510,
+        945
+      ],
+      "standingHeightPx": 610,
+      "facing": "toward_gramophone",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "window": {
+      "room": "observation_room",
+      "label": "雪窗",
+      "footAnchor": [
+        1340,
+        824
+      ],
+      "standingHeightPx": 576,
+      "facing": "toward_snow",
+      "occludedBy": [
+        "windowsill_ledge"
+      ],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "windowsill": {
+      "room": "observation_room",
+      "label": "窗台",
+      "footAnchor": [
+        1135,
+        825
+      ],
+      "standingHeightPx": 576,
+      "facing": "toward_window",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "desk": {
+      "room": "observation_room",
+      "label": "书桌",
+      "footAnchor": [
+        1270,
+        1272
+      ],
+      "standingHeightPx": 701,
+      "facing": "three_quarter_back_at_desk",
+      "occludedBy": [
+        "desk_front_edge"
+      ],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "bookshelf": {
+      "room": "observation_room",
+      "label": "书架",
+      "footAnchor": [
+        440,
+        1040
+      ],
+      "standingHeightPx": 636,
+      "facing": "toward_books",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "instruments": {
+      "room": "observation_room",
+      "label": "仪器角",
+      "footAnchor": [
+        2385,
+        1062
+      ],
+      "standingHeightPx": 642,
+      "facing": "toward_barometer",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "stove": {
+      "room": "kitchen_room",
+      "label": "料理台",
+      "footAnchor": [
+        1530,
+        1274
+      ],
+      "standingHeightPx": 702,
+      "facing": "toward_prep_counter",
+      "occludedBy": [
+        "counter_front"
+      ],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "shelf": {
+      "room": "kitchen_room",
+      "label": "储物架",
+      "footAnchor": [
+        925,
+        1060
+      ],
+      "standingHeightPx": 642,
+      "facing": "toward_storage",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "workbench": {
+      "room": "kitchen_room",
+      "label": "工作台",
+      "footAnchor": [
+        280,
+        1205
+      ],
+      "standingHeightPx": 682,
+      "facing": "toward_tools",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "door": {
+      "room": "kitchen_room",
+      "label": "正门/衣架",
+      "footAnchor": [
+        185,
+        1090
+      ],
+      "standingHeightPx": 650,
+      "facing": "toward_front_exit",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "backdoor": {
+      "room": "kitchen_room",
+      "label": "后门/短廊",
+      "footAnchor": [
+        662,
+        1057
+      ],
+      "standingHeightPx": 641,
+      "facing": "toward_covered_walkway",
+      "occludedBy": [],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "bed": {
+      "room": "bedroom",
+      "label": "床",
+      "footAnchor": [
+        757,
+        1180
+      ],
+      "standingHeightPx": 675,
+      "facing": "lying_side_sleep",
+      "occludedBy": [
+        "bedding_front"
+      ],
+      "visibility": "in_selected_room_only",
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
+    },
+    "springhouse": {
+      "room": null,
+      "label": "室外泉屋",
+      "visualProxy": "kitchen_room/backdoor",
+      "footAnchor": null,
+      "standingHeightPx": null,
+      "facing": "outdoor",
+      "occludedBy": [],
+      "visibleOnlyInSelectedRoom": false
+    },
+    "cellar": {
+      "room": null,
+      "label": "院子地窖口",
+      "footAnchor": null,
+      "standingHeightPx": null,
+      "facing": "outdoor",
+      "occludedBy": [],
+      "visibleOnlyInSelectedRoom": false
+    }
+  },
+  "coordinateSystem": "all x/y in published 2560x1440 scene pixels; manually reviewed provisional placement"
+}
