@@ -119,7 +119,10 @@
     "framesPerPose": "1–4 only when justified",
     "characterOrigin": "one male consistent identity through all four rooms",
     "bodyDepth": "location-dependent scale/occlusion under G2",
-    "hasOneFootAnchorPerPlace": true
+    "hasOneFootAnchorPerPlace": true,
+    "referenceOnlyVariants": [
+      "female"
+    ]
   },
   "animation": {
     "fireFramesPerState": [

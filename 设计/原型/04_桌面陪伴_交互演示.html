@@ -319,7 +319,7 @@ function renderPanel(){
  out+='<div class="stat"><span>体温</span><b>温暖</b></div><div class="stat"><span>体力</span><b>充足</b></div><div class="stat"><span>生命</span><b>健康</b></div>';
  out+=hbtn('◇ 演示发现一件旧物',"findSouvenir()",'outline-btn');
  out+=hbtn('✦ 在野外打开专注（世界冻结）',"enterOutdoorFocus()",'wide-btn');
- out+=hbtn('⌂ 模拟走到家门口并返家',"returnHome()",'outline-btn');
+ out+='<a href="04_v1.5_户外按动作走.html">打开户外按动作走试片</a>';
  out+='<p class="panel-note">原版里必须在地图上真实走到家门，不能通过面板瞬间返家。这里的按钮仅用于测试状态切换。</p>';
  }
  else out='<p class="panel-note">选择一个可交互的设施或功能。</p>';
@@ -347,10 +347,10 @@ window.toggleTimer=function(){
 window.toggleTimerFromPanel=function(){if(el('taskName'))state.task=el('taskName').value.trim()||'未命名专注';window.toggleTimer()};
 window.outdoorAction=function(){if(state.mode==='outdoor'){window.returnHome()}else if(state.mode==='outdoor-focus'){window.backOutdoor()}else if(state.mode==='ambient'){window.setMode('companion');close()}else openPanel('pack')};
 window.changePack=function(k,n){var key=k==='food'?'supplyFood':'supplyWood';state[key]=Math.max(0,Math.min(k==='food'?4:3,state[key]+n));renderPanel()};
-window.confirmOutdoor=function(){pause();state.mode='outdoor';state.camera='wide';render();openPanel('outdoor')};
+window.confirmOutdoor=function(){window.location.href="04_v1.5_户外按动作走.html"};
 window.enterOutdoorFocus=function(){state.mode='outdoor-focus';state.camera='wide';render();close()};
 window.backOutdoor=function(){pause();state.mode='outdoor';render();openPanel('outdoor')};
-window.returnHome=function(){pause();state.mode='companion';state.camera='wide';state.eventCount++;state.activity='reading';render();window.openJournal('world')};
+window.returnHome=function(){window.location.href="04_v1.5_户外按动作走.html"};
 window.findSouvenir=function(){state.hasSouvenir=true;el('panelContent').insertAdjacentHTML('beforeend','<div class="entry"><small>演示发现</small><p>找到一卷旧胶卷。以后回家，它可以成为一个真实的慢事或收藏。</p></div>')};
 window.applyStyle=function(n){state.style=n;close()};
 window.simulateLife=function(){state.activity=state.activity==='reading'?'tea':'reading';state.eventCount++;state.jarCount=Math.min(30,state.jarCount+state.pendingSeeds);state.pendingSeeds=0;render();if(state.panel==='journal'||state.panel==='tasks')renderPanel()};

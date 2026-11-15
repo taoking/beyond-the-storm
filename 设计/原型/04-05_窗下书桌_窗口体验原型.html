@@ -145,7 +145,7 @@ footer{margin:25px 0 0;color:#8ea4aa;font-size:11px}
 <div class="control"><button onclick="selectCamera('wide')">全景</button><button onclick="selectCamera('window')">雪窗特写</button><button onclick="selectCamera('hearth')">炉边特写</button></div>
 <div class="divider"></div>
 <div class="cap">世界状态 · MODE</div>
-<div class="control"><button onclick="setMode('companion')" id="modeCompanion">真实陪伴</button><button onclick="setMode('ambient')" id="modeAmbient">氛围预览</button><button onclick="setMode('outdoor')" id="modeOutdoor">户外探索</button><button onclick="setMode('outdoor-focus')" id="modeOutdoorFocus">户外临时专注</button><button onclick="simulateReturnHome()" id="returnHome">模拟走到家门返家</button></div>
+<div class="control"><button onclick="setMode('companion')" id="modeCompanion">真实陪伴</button><button onclick="setMode('ambient')" id="modeAmbient">氛围预览</button><button onclick="setMode('outdoor')" id="modeOutdoor">户外探索</button><button onclick="setMode('outdoor-focus')" id="modeOutdoorFocus">户外临时专注</button><a href="04_v1.5_户外按动作走.html">户外按动作走试片</a></div>
 <div class="cap">氛围演出 · 不推进世界</div>
 <select id="weather" onchange="changeWeather()" aria-label="氛围天气"><option value="snow">冬夜 · 小雪</option><option value="storm">冬夜 · 大雪</option><option value="clear">冬季 · 晴天</option><option value="spring">春融 · 清晨</option><option value="summer">短夏 · 午后</option><option value="autumn">初霜 · 黄昏</option></select>
 <p class="sublabel">切换氛围时只改演示画面；真实世界暂停、不生产、不消耗、不写世界日志。人在户外时切氛围会进入户外临时专注；需要模拟走回家门才能恢复木屋正常陪伴。</p>
@@ -310,7 +310,7 @@ el('actionRead').classList.toggle('on',state.action==='read');el('actionTea').cl
 el('modeCompanion').classList.toggle('on',state.mode==='companion');el('modeAmbient').classList.toggle('on',state.mode==='ambient');el('modeOutdoor').classList.toggle('on',state.mode==='outdoor');el('modeOutdoorFocus').classList.toggle('on',state.mode==='outdoor-focus');
 el('btnWide').classList.toggle('on',!state.mini&&state.camera==='wide');el('btnWindow').classList.toggle('on',!state.mini&&state.camera==='window');el('btnHearth').classList.toggle('on',!state.mini&&state.camera==='hearth');
 el('clock').textContent=String(Math.floor(state.timer/60)).padStart(2,'0')+':'+String(state.timer%60).padStart(2,'0');el('focusButton').textContent=state.running?'Ⅱ 暂停':'▶ 开始专注';
-el('focusButton').disabled=state.mode==='outdoor';el('returnHome').disabled=state.location!=='outside';el('todayButton').setAttribute('aria-expanded',String(!el('todayCard').hidden));
+el('focusButton').disabled=state.mode==='outdoor';el('todayButton').setAttribute('aria-expanded',String(!el('todayCard').hidden));
 var dots='';for(var i=0;i<9;i++)dots+='<i class="'+(i<state.shares?'on':'')+'"></i>';el('dots').innerHTML=dots;
 el('traceHint').textContent='现实手记：已记 '+state.shares+' 份；窗台罐内 '+state.jar+' 颗球果。'+(state.pending?'还有 '+state.pending+' 颗等待人物空闲整理。':'')+' 这只是演示数据。';
 el('todayLocation').textContent=state.actorAway?'在院外整理柴木':state.action==='read'?'在桌前看书':state.action==='tea'?'在桌前泡茶':'在窗边观测';
@@ -330,15 +330,12 @@ window.selectCamera=function(name){if(state.mini){if(name==='wide'){state.mini=f
 window.toggleMini=function(){state.mini=!state.mini;var size=state.mini?320:1280;state.viewport=size;var g=el('game');g.classList.remove('size-320','size-480','size-1280');g.classList.add('size-'+size);g.dataset.size=String(size);state.camera=state.mini?'window':'wide';updateUI();paint(0)};
 window.miniNextCamera=function(){state.miniCamera=state.miniCamera==='window'?'hearth':'window';if(state.viewport!==1280)state.camera=state.miniCamera;updateUI();paint(0)};
 window.setMode=function(name){
+ if(name==='outdoor'||name==='outdoor-focus'){window.location.href='04_v1.5_户外按动作走.html';return;}
+
  if(name==='outdoor'){state.location='outside';state.mode='outdoor';window.stopFocus()}
  else if(name==='outdoor-focus'){state.location='outside';state.mode='outdoor-focus'}
  else if(name==='ambient'){state.mode=state.location==='outside'?'outdoor-focus':'ambient'}
  else if(name==='companion'){state.mode=state.location==='outside'?'outdoor':'companion'}
- updateUI();paint(0)
-};
-window.simulateReturnHome=function(){
- if(state.location!=='outside')return;
- window.stopFocus();state.location='home';state.mode='companion';
  updateUI();paint(0)
 };
 window.changeWeather=function(){state.weather=el('weather').value;state.mode=state.location==='outside'?'outdoor-focus':'ambient';updateUI();paint(0)};

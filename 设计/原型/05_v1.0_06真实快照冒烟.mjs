@@ -1,5 +1,5 @@
 /**
- * 05/G2 cross-check against REAL 06 v0.2 present(): Snapshot, not a mock.
+ * 05/G2 cross-check against REAL 06 v0.5 present(): Snapshot, not a mock.
  * Node 22+: node --experimental-strip-types 设计/原型/05_v1.0_06真实快照冒烟.mjs
  * No game source modifications. This is a read-only renderer integration check.
  */
@@ -37,7 +37,10 @@ for (let minute = 0; minute < 1440; minute++) {
     assert.equal(frame.jar.stagedCones, snap.jar.cones);
     assert.equal(frame.jar.pendingButNotDrawn, snap.jar.pending);
     assert.equal(frame.mode, snap.mode);
-    assert.equal(typeof frame.actor.rendered, "boolean");
+    assert.equal(frame.actor.rendered, Boolean(snap.stage.show && snap.stage.visible[cam === "wide" ? "wideIndoor" : cam]));
+    assert.equal(frame.weather.dayPartKey, snap.look.dayPartKey);
+    assert.equal(frame.weather.time, snap.look.time);
+    assert.equal(frame.weather.source, snap.look.source === "ambience" ? "ambience_projection" : "real_world");
     if (frame.actor.rendered) rendered++; else empty++;
     total++;
   }
