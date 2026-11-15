@@ -28,7 +28,7 @@ def extra_mask(room,day,original):
     brush=Image.new('L',(W,H),0);d=ImageDraw.Draw(brush)
     paint={
     'hearth_room':[
-        [(895,756),(1064,757),(1060,821),(895,820)],
+        [(728,730),(1100,739),(1100,845),(728,845)],
         [(162,809),(711,809),(713,853),(163,853)]],
     'observation_room':[
         [(969,786),(2266,786),(2266,818),(969,818)],
@@ -40,8 +40,10 @@ def extra_mask(room,day,original):
     'bedroom':[
         [(1095,342),(1705,4),(1705,310)],
         [(1730,5),(2262,275),(1730,307)],
+        [(1710,0),(2260,0),(2260,270)],
         [(2121,245),(2260,224),(2260,1043),(2121,1043)],
-        [(1299,939),(2152,920),(2250,1025),(1299,1005)]]}
+        [(1299,939),(2152,920),(2250,1025),(1299,1005)],
+        [(1739,790),(2260,770),(2260,1004),(1739,1004)]]}
     for p in paint[room]:d.polygon(p,fill=255)
     ar=np.asarray(day.convert('RGB')).astype('int16')
     r,g,b=ar[:,:,0],ar[:,:,1],ar[:,:,2]
@@ -68,15 +70,15 @@ def heater_unlit(base):
     return Image.fromarray(out,'RGB').convert('RGBA')
 
 def repair_sleep():
-    actor=Image.open(R/'bedroom/actor_male_pose.webp').convert('RGBA')
+    actor=get_pre('bedroom','actor_male_pose.webp').convert('RGBA')
     ar=np.asarray(actor).copy()
     yy,xx=np.ogrid[:H,:W]
-    fade=np.clip((954-xx)/90,0,1)*np.clip((960-yy)/55,0,1)
+    fade=np.clip((855-xx)/90,0,1)*np.clip((945-yy)/70,0,1)
     ar[:,:,3]=np.uint8(ar[:,:,3]*fade)
     save(Image.fromarray(ar,'RGBA'),'bedroom','actor_male_pose.webp')
     # Pull plaid duvet down below the cheek, retaining cover on the upper body.
     path=R/'bedroom/quilt_thick.webp'
-    quilt=Image.open(path).convert('RGBA')
+    quilt=get_pre('bedroom','quilt_thick.webp').convert('RGBA')
     hole=Image.new('L',(W,H),0);d=ImageDraw.Draw(hole)
     d.ellipse((520,755,950,930),fill=255)
     # Feather to avoid a cutout around the pillow.
