@@ -13,6 +13,7 @@ npm install
 npm test            # 全部自动化测试（约 10 秒）
 npm run typecheck   # 类型检查
 npm run dev         # 灰盒界面，http://localhost:5173
+                    # 美术查看页（开发用）：http://localhost:5173/art.html
 npm run build       # 类型检查 + 打包到 dist/
 npm run longrun     # 无人值守长跑，对照 02 第 5.7 节的验收目标。可加 --runs 300 --years 8 --case bare（outings 是带他出门的那一种）
 npm run sample      # 打印头几天的动作流水：npm run sample -- 3 2（种子 3，2 天）
@@ -39,6 +40,7 @@ src/core/      内核：纯逻辑，不碰 DOM、不读系统时钟，种子固�
   telemetry.ts   可见率、时间配比这些不给玩家看的指标
   save.ts        存档
   longrun.ts     长跑的统计口径，工具和测试共用
+src/art/       美术查看页（art.html，开发用，不进游戏）：layers.ts 把画面状态或世界快照换成要叠的图层，main.ts 是页面
 src/app/       灰盒界面：runtime.ts（心跳、存档、多窗口）、scene.ts（一次画一间的色块场景）、main.ts（面板、选房间）
 tests/         自动化测试，标题里写着对应 02/04/06 的哪一条
 tools/         长跑、采样、指标报告

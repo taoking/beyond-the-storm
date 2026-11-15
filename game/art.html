@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>风雪之外 · 美术查看</title>
+    <style>
+      :root { color-scheme: dark; --bg: #141b21; --panel: #1d262d; --line: #33424c; --text: #dfe6ea; --dim: #8fa1ac; --warm: #e4b276; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.5 -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+      #app { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+      aside { background: var(--panel); border-right: 1px solid var(--line); padding: 14px; overflow-y: auto; max-height: 100vh; position: sticky; top: 0; }
+      h1 { font-size: 15px; margin: 0 0 4px; }
+      h2 { font-size: 12px; color: var(--dim); font-weight: 600; margin: 16px 0 6px; letter-spacing: .05em; }
+      fieldset { border: 0; padding: 0; margin: 0; }
+      fieldset[disabled] { opacity: .4; }
+      label { display: flex; align-items: center; gap: 6px; margin: 3px 0; }
+      label > span:first-child { width: 4.5em; color: var(--dim); flex: none; }
+      select, input[type="number"] { background: #10171c; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px 6px; font: inherit; }
+      input[type="range"] { flex: 1; }
+      .seg { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+      .seg button { background: #10171c; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px; font: inherit; cursor: pointer; }
+      .seg button[aria-pressed="true"] { background: #3a4e5c; border-color: #6d8796; }
+      .hint { color: var(--dim); font-size: 12px; margin: 4px 0; }
+      main { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+      figure { margin: 0; }
+      figcaption { color: var(--dim); font-size: 12px; margin-top: 4px; }
+      canvas { display: block; background: #000; }
+      #smalls { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+      #info { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; max-width: 1280px; }
+      #info p { margin: 2px 0; }
+      #info .miss { color: var(--warm); }
+      #status { color: var(--warm); min-height: 1.5em; }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <aside>
+        <h1>美术查看</h1>
+        <p class="hint">开发用，不是游戏。读 <code>assets/05/rooms/</code> 的分层和 <code>room_locations.json</code>。</p>
+
+        <h2>素材</h2>
+        <label><span>套</span><select id="set"></select></label>
+        <div class="seg" id="rooms"></div>
+
+        <h2>画面状态</h2>
+        <div class="seg" id="source">
+          <button data-v="manual">手动</button>
+          <button data-v="world">接世界</button>
+        </div>
+        <fieldset id="world">
+          <label><span>种子</span><input id="seed" type="number" value="1" min="1" style="width:6em" /></label>
+          <label><span>第几天</span><input id="day" type="number" value="1" min="1" max="400" style="width:6em" /></label>
+          <label><span>钟点</span><input id="minute" type="range" min="0" max="1430" step="10" value="480" /><b id="clock"></b></label>
+          <div class="seg"><button id="back1h">−1 小时</button><button id="next1h">+1 小时</button><button id="nextDay">+1 天</button></div>
+          <p class="hint">从新开局按陪伴状态走到这一刻，用 <code>present()</code> 的快照选图层。往回拨会从头重算。</p>
+        </fieldset>
+        <fieldset id="manual">
+          <label><span>昼夜</span><select id="time"><option value="day">白天</option><option value="night">夜里</option></select></label>
+          <label><span>天气</span><select id="weather"><option value="calm">平静</option><option value="snow">下雪</option><option value="blizzard">暴风雪</option></select></label>
+          <label><span>炉火</span><select id="fire"><option value="out">没生火</option><option value="ember">余烬</option><option value="low">小火</option><option value="high">旺火</option></select></label>
+          <label><span>柴堆</span><select id="wood"><option>0</option><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+          <label><span>粮</span><select id="food"><option value="none">空</option><option value="sparse">少</option><option value="full">满</option></select></label>
+          <label><input type="checkbox" id="lamp" />油灯点着</label>
+          <label><input type="checkbox" id="heater" />观测间暖炉点着</label>
+          <label><input type="checkbox" id="actor" />人物图层</label>
+          <div id="props"></div>
+          <label><span>人形站在</span><select id="dummy"></select></label>
+        </fieldset>
+
+        <h2>检查</h2>
+        <label><span>窗外</span><select id="outside"><option value="art">原样</option><option value="magenta">品红（查窗洞）</option><option value="navy">深蓝（查夜里的窗框）</option></select></label>
+        <label><input type="checkbox" id="ovFoot" />站位（脚底和身高）</label>
+        <label><input type="checkbox" id="ovPane" />玻璃轮廓</label>
+        <label><input type="checkbox" id="ovDoor" />门洞</label>
+        <label><input type="checkbox" id="ovSlot" />展示位</label>
+        <label><input type="checkbox" id="ovActor" />人物框、油灯点</label>
+        <label><input type="checkbox" id="ovSmall" />小窗也画标注</label>
+        <p class="hint">三个画布都按 CSS 尺寸 × 屏幕倍率出图，跟真开这么大的窗口看到的一样；缩小是逐级减半再平滑缩放。</p>
+      </aside>
+      <main>
+        <div id="status"></div>
+        <figure><canvas id="c1280"></canvas><figcaption>1280×720</figcaption></figure>
+        <div id="smalls">
+          <figure><canvas id="c480"></canvas><figcaption>480×270</figcaption></figure>
+          <figure><canvas id="c320"></canvas><figcaption>320×180</figcaption></figure>
+        </div>
+        <div id="info"></div>
+      </main>
+    </div>
+    <script type="module" src="/src/art/main.ts"></script>
+  </body>
+</html>
