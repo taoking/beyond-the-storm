@@ -1,0 +1,30 @@
+name: 05 four-room second-round integrity
+on:
+  push:
+    branches:
+      - gpt/05-four-room-second-round-20261115
+    paths:
+      - "assets/05/rooms/g5_20261115/**"
+      - "设计/讨论记录/2026-11-15_四间第二轮执行图/**"
+      - ".github/workflows/05-four-room-regression.yml"
+  pull_request:
+    paths:
+      - "assets/05/rooms/g5_20261115/**"
+      - "设计/讨论记录/2026-11-15_四间第二轮执行图/**"
+      - ".github/workflows/05-four-room-regression.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install image validation
+        run: pip install "pillow>=11,<13"
+      - name: Validate scene manifests, geometry, visual evidence and alpha contract
+        run: python assets/05/rooms/g5_20261115/validate.py
