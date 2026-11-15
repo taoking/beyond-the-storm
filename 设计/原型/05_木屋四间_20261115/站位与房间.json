@@ -545,8 +545,8 @@
       "approved": false
     },
     "springhouse": {
-      "room": "kitchen_room",
-      "label": "泉屋短廊口",
+      "room": null,
+      "label": "泉屋（室外）；灶间只画短廊门",
       "footAnchor": [
         281,
         755
@@ -554,9 +554,11 @@
       "standingHeightPx": 392,
       "facing": "朝短廊",
       "occludedBy": "与后门共用入口（候选）；泉屋在外",
-      "visibleWhenSelectedRoom": "threshold_only",
+      "visibleWhenSelectedRoom": false,
       "shadowLayer": "required_for_formal_art",
-      "approved": false
+      "approved": false,
+      "visualProxyAt": "kitchen_room/backdoor",
+      "locationIsOutdoors": true
     },
     "bed": {
       "room": "bedroom",
@@ -583,6 +585,10 @@
     },
     "forest": {
       "room": null
+    },
+    "springhouse": {
+      "room": null,
+      "note": "Outdoor springhouse. Door in kitchen is a visual threshold only; never show actor as if indoors."
     }
   },
   "characterPosePreviews": [
