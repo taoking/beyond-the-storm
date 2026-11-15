@@ -155,7 +155,7 @@
           ]
         ]
       ],
-      "glassCoverage": 0.1966,
+      "glassCoverage": 0.19745,
       "files": [
         "actor_contact.webp",
         "actor_male_pose.webp",
@@ -473,7 +473,7 @@
           ]
         ]
       ],
-      "glassCoverage": 0.24061,
+      "glassCoverage": 0.25005,
       "files": [
         "actor_contact.webp",
         "actor_male_pose.webp",
@@ -503,8 +503,8 @@
     },
     {
       "file": "bedroom/actor_male_pose.webp",
-      "bytes": 100454,
-      "sha256": "3fb2affbc46cb2b4b8e5fa42058dff1cfd9517b5dddcf38f08a933e0598f0a83"
+      "bytes": 76126,
+      "sha256": "4e20d85fb8ac9b28f7c7bb9aa40c0266ac2632d8aa1a4e126e3939022d021178"
     },
     {
       "file": "bedroom/bed_front_occlusion.webp",
@@ -528,13 +528,13 @@
     },
     {
       "file": "bedroom/glass_mask.png",
-      "bytes": 10082,
-      "sha256": "9b01d7960b468abc15a7a63375124ecbb6777a06173cb424c9fd94acdd448f4e"
+      "bytes": 10392,
+      "sha256": "02c5cf136415bdd6d07b21e550ce2f80adf6678ae1ee8d4a741a8e1b029a92ce"
     },
     {
       "file": "bedroom/interior_rgba.webp",
-      "bytes": 2184000,
-      "sha256": "3725b856d134e3b17cece55e44de994006e32ed4d0091c1ae87fe5c266c59748"
+      "bytes": 2150504,
+      "sha256": "1413050da05d91b606867012b59132ae1f4173bbfaa2c1333cb827bf3e472bd2"
     },
     {
       "file": "bedroom/night_ambient.webp",
@@ -553,13 +553,13 @@
     },
     {
       "file": "bedroom/outside_winter_day_rgba.webp",
-      "bytes": 632750,
-      "sha256": "a37f8f3ac6eae4a3ace58586128b9714deeed39a7852d6063e56ccc1b2323a71"
+      "bytes": 667424,
+      "sha256": "f86318017669f0e21ceb0bc208f44d50923c5808ab8020afbc6c9fa426100caa"
     },
     {
       "file": "bedroom/outside_winter_night_rgba.webp",
-      "bytes": 571838,
-      "sha256": "e8cda86b320b17cc7a37c9edb5843db2bc3ba61e1834f9f44c7aa060bb77c528"
+      "bytes": 601968,
+      "sha256": "01fb3ecc22e07ecc4e0e28a7ae6cd42270bed198e7a969cc4596a8acafdcf16d"
     },
     {
       "file": "bedroom/quilt_thick.webp",
@@ -628,13 +628,13 @@
     },
     {
       "file": "hearth_room/glass_mask.png",
-      "bytes": 7017,
-      "sha256": "8c5ff0bc57d4ba682195ed3658b89be47dec49c3fd98efe7c17c85356cf82398"
+      "bytes": 7071,
+      "sha256": "acaf9781ff717d4411537ca4946402f1155f11261d3ae9ef8c07d18b430ac46f"
     },
     {
       "file": "hearth_room/interior_rgba.webp",
-      "bytes": 2509598,
-      "sha256": "71c55f34fce91984d44248e676d89e5df1bfc0a3ccc95dbe7367ef6355c13ea1"
+      "bytes": 2506140,
+      "sha256": "a78a93f19c542d1843467f418de0802b0da408112f440ae802b6828772adbbe3"
     },
     {
       "file": "hearth_room/night_ambient.webp",
@@ -653,13 +653,13 @@
     },
     {
       "file": "hearth_room/outside_winter_day_rgba.webp",
-      "bytes": 595914,
-      "sha256": "8c3d683ae57e7ee4f44dcd04a27dea7fe3b070adeb8bd4cc60bbac1348879dc7"
+      "bytes": 599736,
+      "sha256": "eee250b6967a610f97bf8e812db7967f650a27ef93f6e5b2d2881cd4f82dee50"
     },
     {
       "file": "hearth_room/outside_winter_night_rgba.webp",
-      "bytes": 530986,
-      "sha256": "157035afd266a9aba906feb0556443aef06c56582fdb534630cc2cddd35077c3"
+      "bytes": 534046,
+      "sha256": "80a5ead64e692a4c26f3978b478ad4b1ec38c5e31c85125972a20fccc7fe8d88"
     },
     {
       "file": "hearth_room/snack_plate.webp",
