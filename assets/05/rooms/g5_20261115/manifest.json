@@ -1,7 +1,7 @@
 {
   "schema": "beyond-the-storm/g5-assets/provisional-v2",
   "date": "2026-11-15",
-  "status": "R1-R7_AND_LAYERS_IMPLEMENTED_PROVISIONAL_NOT_NATIVE_G5",
+  "status": "R1_R7_REVISED_GAMEPLAY_ASSETS_PENDING_G5_NATIVE_AND_G8_APPROVAL",
   "reviewDoc": "2026-11-15_四间底图复核与修改单_Claude.md",
   "defaultSelectedRoom": "observation_room",
   "coordinateSource": "room_locations.json",
@@ -24,7 +24,7 @@
     "unifiedSeed": 20261115,
     "windVector": [
       -0.48,
-      1.0
+      1
     ],
     "snowAndBlizzardImagesAreWindowClipped": true,
     "caveat": "original scenery still contains small painted snow specks; calm is reduced overlay rather than photo-clean sky"
@@ -476,8 +476,8 @@
     },
     {
       "file": "bedroom/bed_front_occlusion.webp",
-      "bytes": 42514,
-      "sha256": "ec4487b0b569568b5098245d31dde19820dd5bb32f58e16cc2ffb40ce5d0e4c5"
+      "bytes": 479738,
+      "sha256": "a4e43c1fed0570eb28a634a4c163aa4c83fe5dcece9612e92558686a685007de"
     },
     {
       "file": "bedroom/day_preview.webp",
@@ -888,11 +888,12 @@
       1440
     ],
     "publishedIsUpscaled": true,
-    "windowMatteGeneratedFrom": "author-edited polygons only; alpha outside windows audited, not HSV",
+    "windowMatteGeneratedFrom": "explicit frame-aligned pane polygons; all textiles and carpets outside panes remain opaque",
     "nightLighting": "2-D nonuniform night grade, separate 2-level fire spill and lantern glow",
     "weather": "one deterministic storm seed, uniform wind direction and weather state across scenes; source has baked flakes",
     "G5StrictNativeArtPassed": false,
     "G8CharacterFinalPassed": false,
-    "validation": "Pillow-based file/dimensions/alpha/geometry/coordinates/manifest SHA tests"
+    "validation": "Pillow-based file/dimensions/alpha/geometry/coordinates/manifest SHA tests",
+    "qaNote": "Layered effects are design previews; no real game Snapshot integration or automatic browser screenshot. The fixed scene images retain some painted snow."
   }
 }

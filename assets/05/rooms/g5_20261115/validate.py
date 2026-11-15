@@ -11,6 +11,18 @@ assert list(c['rooms'])==rooms, 'room order changed'
 assert c['canvas']==[2560,1440]
 assert c['architecture']['defaultSelectedRoom']=='observation_room'
 assert c['architecture']['kitchenBackDoorAndCoveredWalkwaySameOpening'] is True
+assert c['coordinateSystem'].startswith('all x/y in published 2560x1440')
+assert not any('anchors_' in key for key in m), 'manifest must not contain duplicate site anchors'
+for rid, room in c['rooms'].items():
+ for window in room['windows']:
+  assert window['coordinateSystem']=='2560x1440 canvas pixels'
+  for polygon in window['panesCanvasPolygons']:
+   assert len(polygon)>=3
+   for x,y in polygon:assert 0<=x<=2560 and 0<=y<=1440,(rid,x,y)
+for name, loc in c['locations'].items():
+ if loc['room'] is not None:
+  assert loc['standingHeightPx']==round(345+.28*loc['footAnchor'][1]),name
+  assert bool(loc.get('facing')) and isinstance(loc.get('occludedBy'),list),name
 assert len([x for rm in c['rooms'].values() for x in rm['displaySlots']])==6
 assert len([x for x in c['locations'].values() if x['room'] is not None])==16
 assert len(m['binary'])>=76,'missing binary layers'
@@ -38,5 +50,10 @@ for room in rooms:
 assert c['locations']['springhouse']['room'] is None
 assert c['locations']['cellar']['room'] is None
 assert (R/'bedroom/bed_front_occlusion.webp').exists()
+assert (R/'bedroom/bed_front_occlusion.webp').stat().st_size>100_000, 'use actual fabric instead of stripe mock'
+occlusion=Image.open(R/'bedroom/bed_front_occlusion.webp').convert('RGBA')
+actor=Image.open(R/'bedroom/actor_male_pose.webp').convert('RGBA')
+assert actor.getchannel('A').getpixel((730,790))>0
+assert occlusion.getchannel('A').getpixel((1050,1000))>100
 assert (R/'hearth_room/fire_flame_high.webp').exists()
 print('PASS: 4 scenes / 2560×1440 / SHA / alpha glass / local lights / unified weather / 6 displays / 16 interior locations / 4 poses')

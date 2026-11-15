@@ -1,7 +1,7 @@
 {
   "schema": "beyond-the-storm/room-locations/2",
   "date": "2026-11-15",
-  "status": "G5_REFERENCE_ANCHORS_NEED_CLAUDE_REVIEW",
+  "status": "G5_PROVISIONAL_ONE_ANCHOR_SOURCE_FOR_CURRENT_SCENES",
   "canvas": [
     2560,
     1440
@@ -43,106 +43,106 @@
       "windows": [
         {
           "id": "hearth_room_external",
-          "panesSourceImagePolygons": [
+          "glassMask": "glass_mask.png",
+          "panesCanvasPolygons": [
             [
               [
-                4,
-                54
+                6,
+                83
               ],
               [
-                47,
-                68
+                72,
+                104
               ],
               [
-                48,
-                548
+                73,
+                839
               ],
               [
-                3,
-                553
+                5,
+                847
               ]
             ],
             [
               [
-                107,
-                70
+                164,
+                107
               ],
               [
-                678,
-                192
+                1038,
+                294
               ],
               [
-                678,
-                497
+                1038,
+                761
               ],
               [
-                588,
-                501
+                900,
+                767
               ],
               [
-                588,
-                518
+                900,
+                794
               ],
               [
-                532,
-                518
+                815,
+                794
               ],
               [
-                532,
-                545
+                815,
+                835
               ],
               [
-                465,
-                547
+                712,
+                838
               ],
               [
-                465,
-                533
+                712,
+                817
               ],
               [
-                109,
-                535
+                167,
+                820
               ]
             ],
             [
               [
-                709,
-                199
+                1086,
+                305
               ],
               [
-                777,
-                211
+                1190,
+                323
               ],
               [
-                777,
-                519
+                1190,
+                795
               ],
               [
-                709,
-                518
+                1086,
+                794
               ]
             ],
             [
               [
-                469,
-                542
+                718,
+                830
               ],
               [
-                565,
-                540
+                865,
+                827
               ],
               [
-                565,
-                631
+                865,
+                967
               ],
               [
-                465,
-                629
+                712,
+                964
               ]
             ]
           ],
-          "coordinates": "1672x940 before upsample",
-          "glassMask": "glass_mask.png"
+          "coordinateSystem": "2560x1440 canvas pixels"
         }
       ],
       "doorways": [
@@ -200,7 +200,7 @@
         ],
         "image": "actor_male_pose.webp",
         "contact": "actor_contact.webp",
-        "quality": "preview, reanchor and replace before final G8 sprite"
+        "quality": "provisional single-frame preview; G8 separated animation not passed"
       },
       "lampAnchor": [
         1665,
@@ -228,82 +228,82 @@
       "windows": [
         {
           "id": "observation_room_external",
-          "panesSourceImagePolygons": [
+          "glassMask": "glass_mask.png",
+          "panesCanvasPolygons": [
             [
               [
-                469,
-                168
+                718,
+                257
               ],
               [
-                606,
-                147
+                928,
+                225
               ],
               [
-                606,
-                262
+                928,
+                401
               ],
               [
-                473,
-                268
+                724,
+                411
               ]
             ],
             [
               [
-                473,
-                282
+                724,
+                432
               ],
               [
-                606,
-                276
+                928,
+                423
               ],
               [
-                606,
-                516
+                928,
+                790
               ],
               [
-                472,
-                516
+                723,
+                790
               ]
             ],
             [
               [
-                637,
-                144
+                975,
+                221
               ],
               [
-                1457,
-                48
+                2231,
+                74
               ],
               [
-                1457,
-                519
+                2231,
+                795
               ],
               [
-                637,
-                519
+                975,
+                795
               ]
             ],
             [
               [
-                1494,
-                50
+                2287,
+                77
               ],
               [
-                1619,
-                33
+                2479,
+                51
               ],
               [
-                1619,
-                164
+                2479,
+                251
               ],
               [
-                1495,
-                166
+                2289,
+                254
               ]
             ]
           ],
-          "coordinates": "1672x940 before upsample",
-          "glassMask": "glass_mask.png"
+          "coordinateSystem": "2560x1440 canvas pixels"
         }
       ],
       "doorways": [
@@ -361,7 +361,7 @@
         ],
         "image": "actor_male_pose.webp",
         "contact": "actor_contact.webp",
-        "quality": "preview, reanchor and replace before final G8 sprite"
+        "quality": "provisional single-frame preview; G8 separated animation not passed"
       },
       "lampAnchor": [
         1875,
@@ -386,64 +386,64 @@
       "windows": [
         {
           "id": "kitchen_room_external",
-          "panesSourceImagePolygons": [
+          "glassMask": "glass_mask.png",
+          "panesCanvasPolygons": [
             [
               [
-                872,
-                172
+                1335,
+                263
               ],
               [
-                1053,
-                149
+                1612,
+                228
               ],
               [
-                1053,
-                426
+                1612,
+                653
               ],
               [
-                873,
-                426
+                1337,
+                653
               ]
             ],
             [
               [
-                1080,
-                143
+                1654,
+                219
               ],
               [
-                1497,
-                86
+                2292,
+                132
               ],
               [
-                1497,
-                429
+                2292,
+                657
               ],
               [
-                1080,
-                426
+                1654,
+                653
               ]
             ],
             [
               [
-                1523,
-                79
+                2332,
+                121
               ],
               [
-                1650,
-                57
+                2526,
+                87
               ],
               [
-                1650,
-                420
+                2526,
+                643
               ],
               [
-                1525,
-                421
+                2335,
+                645
               ]
             ]
           ],
-          "coordinates": "1672x940 before upsample",
-          "glassMask": "glass_mask.png"
+          "coordinateSystem": "2560x1440 canvas pixels"
         }
       ],
       "doorways": [
@@ -506,7 +506,7 @@
         ],
         "image": "actor_male_pose.webp",
         "contact": "actor_contact.webp",
-        "quality": "preview, reanchor and replace before final G8 sprite"
+        "quality": "provisional single-frame preview; G8 separated animation not passed"
       },
       "lampAnchor": [
         2110,
@@ -531,82 +531,82 @@
       "windows": [
         {
           "id": "bedroom_external",
-          "panesSourceImagePolygons": [
+          "glassMask": "glass_mask.png",
+          "panesCanvasPolygons": [
             [
               [
-                678,
-                243
+                1038,
+                372
               ],
               [
-                827,
-                221
+                1266,
+                339
               ],
               [
-                827,
-                626
+                1266,
+                959
               ],
               [
-                678,
-                628
+                1038,
+                962
               ]
             ],
             [
               [
-                858,
-                225
+                1314,
+                345
               ],
               [
-                1407,
-                179
+                2154,
+                274
               ],
               [
-                1407,
-                534
+                2154,
+                818
               ],
               [
-                1147,
-                534
+                1756,
+                818
               ],
               [
-                1147,
-                620
+                1756,
+                950
               ],
               [
-                858,
-                620
+                1314,
+                950
               ]
             ],
             [
               [
-                872,
-                193
+                1335,
+                296
               ],
               [
-                1114,
-                20
+                1706,
+                31
               ],
               [
-                1114,
-                185
+                1706,
+                283
               ]
             ],
             [
               [
-                1140,
-                18
+                1745,
+                28
               ],
               [
-                1389,
-                177
+                2127,
+                271
               ],
               [
-                1140,
-                186
+                1745,
+                285
               ]
             ]
           ],
-          "coordinates": "1672x940 before upsample",
-          "glassMask": "glass_mask.png"
+          "coordinateSystem": "2560x1440 canvas pixels"
         }
       ],
       "doorways": [
@@ -664,7 +664,7 @@
         ],
         "image": "actor_male_pose.webp",
         "contact": "actor_contact.webp",
-        "quality": "preview, reanchor and replace before final G8 sprite",
+        "quality": "provisional single-frame preview; G8 separated animation not passed",
         "occlusion": "bed_front_occlusion.webp",
         "sleepHeadDirection": "left_toward_pillow"
       },
@@ -689,7 +689,8 @@
       "facing": "toward_stove",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "woodpile": {
       "room": "hearth_room",
@@ -702,7 +703,8 @@
       "facing": "toward_basket",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "armchair": {
       "room": "hearth_room",
@@ -718,7 +720,8 @@
         "side_table"
       ],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "radio": {
       "room": "hearth_room",
@@ -731,7 +734,8 @@
       "facing": "toward_radio",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "gramophone": {
       "room": "hearth_room",
@@ -744,7 +748,8 @@
       "facing": "toward_gramophone",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "window": {
       "room": "observation_room",
@@ -759,7 +764,8 @@
         "windowsill_ledge"
       ],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "windowsill": {
       "room": "observation_room",
@@ -772,7 +778,8 @@
       "facing": "toward_window",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "desk": {
       "room": "observation_room",
@@ -787,7 +794,8 @@
         "desk_front_edge"
       ],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "bookshelf": {
       "room": "observation_room",
@@ -800,7 +808,8 @@
       "facing": "toward_books",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "instruments": {
       "room": "observation_room",
@@ -813,7 +822,8 @@
       "facing": "toward_barometer",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "stove": {
       "room": "kitchen_room",
@@ -828,7 +838,8 @@
         "counter_front"
       ],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "shelf": {
       "room": "kitchen_room",
@@ -841,7 +852,8 @@
       "facing": "toward_storage",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "workbench": {
       "room": "kitchen_room",
@@ -854,7 +866,8 @@
       "facing": "toward_tools",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "door": {
       "room": "kitchen_room",
@@ -867,7 +880,8 @@
       "facing": "toward_front_exit",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "backdoor": {
       "room": "kitchen_room",
@@ -880,7 +894,8 @@
       "facing": "toward_covered_walkway",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "bed": {
       "room": "bedroom",
@@ -895,7 +910,8 @@
         "bedding_front"
       ],
       "visibility": "in_selected_room_only",
-      "approved": false
+      "approved": false,
+      "visibleOnlyInSelectedRoom": true
     },
     "springhouse": {
       "room": null,
@@ -904,7 +920,8 @@
       "footAnchor": null,
       "standingHeightPx": null,
       "facing": "outdoor",
-      "occludedBy": []
+      "occludedBy": [],
+      "visibleOnlyInSelectedRoom": false
     },
     "cellar": {
       "room": null,
@@ -912,7 +929,9 @@
       "footAnchor": null,
       "standingHeightPx": null,
       "facing": "outdoor",
-      "occludedBy": []
+      "occludedBy": [],
+      "visibleOnlyInSelectedRoom": false
     }
-  }
+  },
+  "coordinateSystem": "all x/y in published 2560x1440 scene pixels; manually reviewed provisional placement"
 }
