@@ -1,0 +1,276 @@
+{
+  "schema": "beyond-the-storm/05/cabin-four-room-layered-working-assets/v1",
+  "date": "2026-11-15",
+  "version": "2026-11-15-g5-provisional",
+  "status": "PLAYABLE_LAYERED_BASELINES__NOT_FULLY_NATIVE_G5_APPROVED",
+  "canvas": [
+    2560,
+    1440
+  ],
+  "aspectRatio": "16:9",
+  "roomSelection": {
+    "playerManual": true,
+    "cameraDoesNotFollowActor": true,
+    "defaultProposed": "observation_room"
+  },
+  "sourceProvenance": "AI-generated 1672x941 still images; removed one bottom row and LANCZOS-resampled to 2560x1440",
+  "resampledNotNativeBrushwork": true,
+  "glassAlphaTechnique": "cool-color matte inside manually bounded exterior-window polygons; foreground wood remains opaque",
+  "allRoomsHaveLargeWindows": true,
+  "hearthAndBedroomLowSills": true,
+  "onlyRealStove": "hearth_room",
+  "kitchenIsPreparationCounter": true,
+  "cellarIsOutdoors": true,
+  "windowOutdoorsSameWorldWeatherNeeded": true,
+  "runtime": {
+    "stateSource": "06 Snapshot read-only",
+    "alphaLayers": "straight-alpha RGBA: exterior beneath interior; optional night ambience above both",
+    "previewSizes": [
+      [
+        320,
+        180
+      ],
+      [
+        480,
+        270
+      ],
+      [
+        1280,
+        720
+      ]
+    ],
+    "imageRendering": "auto"
+  },
+  "knownLimitations": [
+    "Not original native 2560x1440 brushwork: source generation was 1672x941",
+    "Transparent glass is a color matte from approved still paintings, not expert hand-masked panes; residual snow/lighting may persist on the indoor edges",
+    "Books, bed bedding, chair blanket, exterior snow in each original image and some opening-state props are still baked in structural artwork",
+    "Window exteriors correspond to separate generated views; matching wind direction/time/snow amount requires future artwork and runtime state binding",
+    "Night ambient is a reversible global approximation and not a physically local lamp/fire/doorway illumination pass",
+    "No actor sprites, separate repair/inventory layers, front occlusion hand masks, true weather animation, or tested in-game adapter",
+    "G5 strict gate remains blocked until native redraw and opening-state cleanup"
+  ],
+  "rooms": {
+    "hearth_room": {
+      "original_source": "雪山木屋壁炉室.png",
+      "original_px": [
+        1672,
+        941
+      ],
+      "published_px": [
+        2560,
+        1440
+      ],
+      "generated_native": false,
+      "upscaled": true,
+      "stage": "PROVISIONAL_G5_GAME_LAYER",
+      "window_pixels_alpha_cut": 637252,
+      "total_pixels": 3686400,
+      "glass_coverage_ratio": 0.1729,
+      "recomposition_rmse": 0.0,
+      "anchors_provisional": {
+        "hearth": [
+          1255,
+          685
+        ],
+        "woodpile": [
+          1450,
+          660
+        ],
+        "armchair": [
+          895,
+          825
+        ],
+        "radio": [
+          225,
+          615
+        ],
+        "gramophone": [
+          490,
+          605
+        ]
+      },
+      "display_slots": [
+        "photo_wall",
+        "hearth_shelf"
+      ],
+      "files": {
+        "interior": "interior_rgba.webp",
+        "outside_day": "outside_winter_day_rgba.webp",
+        "outside_night": "outside_winter_night_rgba.webp",
+        "glass_mask": "glass_mask.png",
+        "ambient_night": "night_ambient.webp",
+        "day_preview": "day_preview.webp"
+      },
+      "binary_sha256": {
+        "interior_rgba.webp": "d9c57b29b6d47797eb3aa5347e22c14b57dd497227f1dc4728f59cb9cf8ee686",
+        "outside_winter_day_rgba.webp": "564e4e224422e18ac4134b473bd9ccd861a74493260a4797291ee8b98bebaa7f",
+        "outside_winter_night_rgba.webp": "59ac37d160971dc582e8980020c04cdacd6f84203cf57258f29cf2fd3f0c809e",
+        "glass_mask.png": "0b90dc09d7cdb289356eaab1aa0b059d800dc5b69041419da3b8398ea323d62e",
+        "night_ambient.webp": "49decaf23773d1dca9c410e69a48e64f3c53ca24e0628d846e7b78ce00465ffa",
+        "day_preview.webp": "b5b2e67591252556f739e303872f64c8c592848575e71b9968108ac74778e8c6"
+      }
+    },
+    "bedroom": {
+      "original_source": "雪山木屋卧室与落雪窗景.png",
+      "original_px": [
+        1672,
+        941
+      ],
+      "published_px": [
+        2560,
+        1440
+      ],
+      "generated_native": false,
+      "upscaled": true,
+      "stage": "PROVISIONAL_G5_GAME_LAYER",
+      "window_pixels_alpha_cut": 789674,
+      "total_pixels": 3686400,
+      "glass_coverage_ratio": 0.2142,
+      "recomposition_rmse": 0.0,
+      "anchors_provisional": {
+        "bed": [
+          625,
+          740
+        ]
+      },
+      "display_slots": [
+        "bedside",
+        "wall_spare"
+      ],
+      "files": {
+        "interior": "interior_rgba.webp",
+        "outside_day": "outside_winter_day_rgba.webp",
+        "outside_night": "outside_winter_night_rgba.webp",
+        "glass_mask": "glass_mask.png",
+        "ambient_night": "night_ambient.webp",
+        "day_preview": "day_preview.webp"
+      },
+      "binary_sha256": {
+        "interior_rgba.webp": "81b258768e97808260da6591c23aa5d3526d881c8b06fb38a170e287086d2de4",
+        "outside_winter_day_rgba.webp": "87d8408c546f8ad2d4c4b1b77db134a1f324810739bc0e6aff67cc10bbe9fdd1",
+        "outside_winter_night_rgba.webp": "a9cb935fedadc4ceee82a8661c04701544b88d791b9c0589c35a171be630f9e7",
+        "glass_mask.png": "0e0f577a8f798624d2ae5cbfd6df2b528286161722fb471741f0dd697a40a245",
+        "night_ambient.webp": "49decaf23773d1dca9c410e69a48e64f3c53ca24e0628d846e7b78ce00465ffa",
+        "day_preview.webp": "64cd010c8bdb475f6b7c97addd2dd7de1e3ae0356c9852d5fed71f86a3a678e7"
+      }
+    },
+    "observation_room": {
+      "original_source": "雪山观测室与温馨木屋.png",
+      "original_px": [
+        1672,
+        941
+      ],
+      "published_px": [
+        2560,
+        1440
+      ],
+      "generated_native": false,
+      "upscaled": true,
+      "stage": "PROVISIONAL_G5_GAME_LAYER",
+      "window_pixels_alpha_cut": 1106832,
+      "total_pixels": 3686400,
+      "glass_coverage_ratio": 0.3002,
+      "recomposition_rmse": 0.0,
+      "anchors_provisional": {
+        "window": [
+          1020,
+          600
+        ],
+        "windowsill": [
+          950,
+          620
+        ],
+        "desk": [
+          975,
+          815
+        ],
+        "bookshelf": [
+          270,
+          675
+        ],
+        "instruments": [
+          1560,
+          640
+        ]
+      },
+      "display_slots": [
+        "windowsill",
+        "desk_corner"
+      ],
+      "files": {
+        "interior": "interior_rgba.webp",
+        "outside_day": "outside_winter_day_rgba.webp",
+        "outside_night": "outside_winter_night_rgba.webp",
+        "glass_mask": "glass_mask.png",
+        "ambient_night": "night_ambient.webp",
+        "day_preview": "day_preview.webp"
+      },
+      "binary_sha256": {
+        "interior_rgba.webp": "b836eafef2198998e300d69ca272a6ab6e47138840256cd5c2183bbde5c655cc",
+        "outside_winter_day_rgba.webp": "ac3e8a91ece653df3f8181468ed8235808ceecc7474613f477a604f5ae3f9350",
+        "outside_winter_night_rgba.webp": "4b416a6760cfc417fd487a7d1041cf1e0db54ca39319909ef6615b2e560d7bc5",
+        "glass_mask.png": "88c4fa7d1065c915036cf138c3f57f5c813dc5e7c034dcc55f61167a54641dc9",
+        "night_ambient.webp": "49decaf23773d1dca9c410e69a48e64f3c53ca24e0628d846e7b78ce00465ffa",
+        "day_preview.webp": "d98d97809bd6305a115a7ca2e920ba8389e2ec18637edd181a0c1480b7aa2a04"
+      }
+    },
+    "kitchen_room": {
+      "original_source": "温馨木屋冬日厨房.png",
+      "original_px": [
+        1672,
+        941
+      ],
+      "published_px": [
+        2560,
+        1440
+      ],
+      "generated_native": false,
+      "upscaled": true,
+      "stage": "PROVISIONAL_G5_GAME_LAYER",
+      "window_pixels_alpha_cut": 538109,
+      "total_pixels": 3686400,
+      "glass_coverage_ratio": 0.146,
+      "recomposition_rmse": 0.0,
+      "anchors_provisional": {
+        "stove": [
+          1080,
+          795
+        ],
+        "shelf": [
+          700,
+          740
+        ],
+        "workbench": [
+          300,
+          735
+        ],
+        "door": [
+          200,
+          715
+        ],
+        "backdoor": [
+          500,
+          700
+        ]
+      },
+      "display_slots": [],
+      "files": {
+        "interior": "interior_rgba.webp",
+        "outside_day": "outside_winter_day_rgba.webp",
+        "outside_night": "outside_winter_night_rgba.webp",
+        "glass_mask": "glass_mask.png",
+        "ambient_night": "night_ambient.webp",
+        "day_preview": "day_preview.webp"
+      },
+      "binary_sha256": {
+        "interior_rgba.webp": "1f9555d236d7c1b5cd7b97ffc27f0fd488116d23eb97a5535417966370efa007",
+        "outside_winter_day_rgba.webp": "e78278b35c33b8c3f63f7c83dfb2e6d0c0b7e9869fb253a877d196d3d80231d8",
+        "outside_winter_night_rgba.webp": "b8d5ae5794f01b34af777b9c07855bea2d55bb7fc32dc13121aeafedacde6308",
+        "glass_mask.png": "476932d725f9e68ff562d75465b6ce3ade5fd1ebdbdc3013ef451ff1c577f933",
+        "night_ambient.webp": "49decaf23773d1dca9c410e69a48e64f3c53ca24e0628d846e7b78ce00465ffa",
+        "day_preview.webp": "5f10c509341fc5d7e10698d3df88981333f77cea8dba5074e0effe6d222bd4ab"
+      }
+    }
+  }
+}
