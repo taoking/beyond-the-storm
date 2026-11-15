@@ -1,9 +1,8 @@
-# 公开的：根目录的入口文档（HANDOFF 等）、设计文档、游戏源码、美术源文件。参考资料、GPT 归档等不入库
+# 公开的：根目录的总入口 HANDOFF.md、设计文档、游戏源码、美术源文件、CI。参考资料、出图、CLAUDE.md 等本机文件不入库
 /*
 !/.gitignore
-!/*.md
-/CLAUDE.md
-/交接.md
+!/.github/
+!/HANDOFF.md
 !/设计/
 !/game/
 !/assets/
