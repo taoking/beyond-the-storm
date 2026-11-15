@@ -35,11 +35,11 @@ src/core/      内核：纯逻辑，不碰 DOM、不读系统时钟，种子固�
   game.ts        一局游戏：四种世界状态、白名单命令、把现实时间交给专注和世界
   view.ts        只读投影：界面要显示的一切从这里拿
   visual.ts      G2 只读姿态/道具与独立氛围投影：不改世界规则和 RNG
-  cameras.ts     镜头里看得见哪些地点（表现层的假设，05 定稿后改这张表）
+  rooms.ts       木屋的四间：地点归哪间、窗、门洞、展示位、站位，读 assets/05/rooms/g5_20261115/room_locations.json
   telemetry.ts   可见率、时间配比这些不给玩家看的指标
   save.ts        存档
   longrun.ts     长跑的统计口径，工具和测试共用
-src/app/       灰盒界面：runtime.ts（心跳、存档、多窗口）、scene.ts（色块场景）、main.ts（面板）
+src/app/       灰盒界面：runtime.ts（心跳、存档、多窗口）、scene.ts（一次画一间的色块场景）、main.ts（面板、选房间）
 tests/         自动化测试，标题里写着对应 02/04/06 的哪一条
 tools/         长跑、采样、指标报告
 ```
@@ -55,7 +55,7 @@ tools/         长跑、采样、指标报告
 - `snapshot.stage.activity`：真正的 Activity.kind；当世界没有行动、氛围是独立演出或者户外临时专注是空屋时为 `null`。
 - `snapshot.stage.pose`：九种可供精灵选择的姿态键（`sleep / sit / sitRead / sitWrite / sitHold / standWork / standLook / crouch / walk`），不通过解析中文活动说明生成。
 - `snapshot.stage.prop`：当前可绘制道具（书、日志、杯、碗、壶、工具等），没有就为 `null`。
-- `snapshot.stage.visible`：按 `stage.place` 算的各镜头可见与否；`actor.visible` 是他真实位置的事实。
+- `snapshot.stage.room`、`snapshot.stage.visible`：按 `stage.place` 算他在哪一间、各间看不看得见他（键是四间的 id）；`actor.room`、`actor.visible` 是他真实位置的事实。
 - `snapshot.look`：当前**实际应该绘制**的季节、天气、时段；`source` 区分 `world`（真实）和 `ambience`（冻结的选择）。`look.dayPart` 是光（按季节天黑），`look.dayPartKey` 是内核作息的七个时段键，和 `world.dayPart` 同口径。`snapshot.world` 依然报告真正的世界事实，两个投影不会互相覆盖。
 - `fire.look`、`jar.cones`、`jar.pending` 保持旧有语义，画面不能自行生火、摆球果或计份。
 

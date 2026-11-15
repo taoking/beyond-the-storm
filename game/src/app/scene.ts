@@ -1,52 +1,18 @@
 // 灰盒场景：色块和文字，只为看清「人在哪、在做什么、火怎么样」。
-// 坐标是灰盒自己随手排的，不是 05 的母场景；镜头框只是把 cameras.ts 里那几处地点框起来。
-import { CAMERAS, type CameraId } from "../core/cameras.ts";
+// 一次只画一间（03 第 3.1 节），坐标全是 room_locations.json 的 2560×1440，按画布大小平滑缩放。
 import { PLACES, type PlaceId } from "../core/content.ts";
+import { CANVAS, LOCATIONS, placesIn, ROOMS, roomOf, type RoomId } from "../core/rooms.ts";
 import type { Snapshot } from "../core/view.ts";
 import type { WeatherArtKey } from "../core/weather.ts";
 
-export const SCENE_W = 960;
-export const SCENE_H = 270;
+const [CW, CH] = CANVAS;
 
-/** 每个地点在灰盒画面里的位置（屋里 0–480，院子 490–740，远处 750–960） */
-export const SPOT: Record<PlaceId, [number, number]> = {
-  bed: [40, 60],
-  door: [28, 190],
-  woodpile: [60, 238],
-  window: [140, 66],
-  windowsill: [140, 104],
-  desk: [140, 132],
-  bookshelf: [262, 80],
-  radio: [240, 190],
-  workbench: [292, 190],
-  gramophone: [262, 132],
-  shelf: [322, 232],
-  cellar: [215, 238],
-  hearth: [392, 122],
-  armchair: [352, 166],
-  stove: [440, 166],
-  instruments: [452, 102],
-  backdoor: [462, 238],
-  choppingBlock: [530, 200],
-  garden: [600, 110],
-  greenhouse: [690, 110],
-  dryingRack: [690, 200],
-  vane: [530, 60],
-  solar: [610, 40],
-  gate: [610, 240],
-  springhouse: [800, 60],
-  windbreak: [900, 60],
-  forestEdge: [800, 200],
-  creekBend: [900, 200],
-  wild: [850, 130],
+const ROOM_COLOR: Record<RoomId, string> = {
+  hearth_room: "#241d19",
+  observation_room: "#1b242a",
+  kitchen_room: "#1f2320",
+  bedroom: "#1f1d26",
 };
-
-/** 小窗的裁切框（灰盒坐标，16:9） */
-export const CROP: Record<"window" | "hearth", [number, number, number, number]> = {
-  window: [44, 40, 192, 108],
-  hearth: [304, 84, 176, 99],
-};
-
 const FIRE_COLOR: Record<string, string> = { out: "#2a2f33", ember: "#7a3b2a", low: "#c9793f", mid: "#f0a04b", high: "#ffcf6b" };
 /** 灰盒按 G2 的稳定素材键绘色。以后只须替换成真实天气贴图，不解析天气中文字。 */
 const WEATHER_COLOR: Record<WeatherArtKey, string> = {
@@ -71,120 +37,130 @@ const TRACE_NAME: Record<string, string> = {
   openJournal: "记",
 };
 
-export interface DrawOptions {
-  /** 只画这一块（小窗）；不给就是全景 */
-  crop?: [number, number, number, number];
-  /** 在全景上标出镜头框 */
-  frames?: boolean;
+function poly(ctx: CanvasRenderingContext2D, pts: [number, number][]): void {
+  ctx.beginPath();
+  pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+  ctx.closePath();
 }
 
-export function drawScene(ctx: CanvasRenderingContext2D, snap: Snapshot, opt: DrawOptions = {}): void {
-  const cw = ctx.canvas.width;
-  const ch = ctx.canvas.height;
+const foot = (p: PlaceId): [number, number] => LOCATIONS[p]?.foot ?? [CW / 2, CH * 0.8];
+
+/** 竖着的一根柱子，高度跟着 0..1 的比例走（柴堆、储物架上的粮） */
+function bar(ctx: CanvasRenderingContext2D, at: [number, number], ratio: number, color: string): void {
+  const h = Math.round(Math.max(0, Math.min(1, ratio)) * 260);
+  ctx.fillStyle = "#2c3a43";
+  ctx.fillRect(at[0] - 40, at[1] - 300, 80, 260);
+  ctx.fillStyle = color;
+  ctx.fillRect(at[0] - 40, at[1] - 40 - h, 80, h);
+}
+
+export function drawRoom(ctx: CanvasRenderingContext2D, snap: Snapshot, room: RoomId): void {
+  const def = ROOMS[room];
   ctx.save();
-  ctx.fillStyle = "#0f1418";
-  ctx.fillRect(0, 0, cw, ch);
-  if (opt.crop) {
-    const [x, y, w, h] = opt.crop;
-    ctx.scale(cw / w, ch / h);
-    ctx.translate(-x, -y);
-  } else {
-    ctx.scale(cw / SCENE_W, ch / SCENE_H);
-  }
+  ctx.imageSmoothingEnabled = true;
+  ctx.scale(ctx.canvas.width / CW, ctx.canvas.height / CH);
+  ctx.fillStyle = ROOM_COLOR[room];
+  ctx.fillRect(0, 0, CW, CH);
+  ctx.fillStyle = "#151b20";
+  ctx.fillRect(0, CH * 0.68, CW, CH * 0.32);
 
-  // 三块地方
-  const blocks: [number, number, string, string][] = [
-    [0, 480, "#1b242a", "屋里"],
-    [490, 250, "#1a2420", "院子"],
-    [750, 210, "#161c22", "屋檐外和屋边"],
-  ];
-  for (const [x, w, color, name] of blocks) {
-    ctx.fillStyle = color;
-    ctx.fillRect(x, 0, w, SCENE_H);
-    ctx.fillStyle = "#3d4d57";
-    ctx.font = "10px sans-serif";
-    ctx.fillText(name, x + 4, 12);
-  }
-
-  // 雪窗是独立展示投影：正常显示真实天气，氛围只显示选中的演出天气。
-  // 户外临时专注同样可能处于冻结状态，但不代表一定选择了氛围天气。
+  // 窗外是独立的展示投影：正常显示真实天气，氛围只显示选中的演出天气。
   const look = snap.look;
-  ctx.fillStyle = WEATHER_COLOR[look.weatherKey ?? "cloudy"];
-  ctx.fillRect(70, 44, 140, 52);
-  if (look.time === "night" || look.time === "dusk") {
-    ctx.fillStyle = look.time === "night" ? "rgba(6,12,34,.64)" : "rgba(31,27,54,.24)";
-    ctx.fillRect(70, 44, 140, 52);
+  for (const pane of def.panes) {
+    poly(ctx, pane);
+    ctx.fillStyle = WEATHER_COLOR[look.weatherKey ?? "cloudy"];
+    ctx.fill();
+    if (look.time === "night" || look.time === "dusk") {
+      ctx.fillStyle = look.time === "night" ? "rgba(6,12,34,.64)" : "rgba(31,27,54,.24)";
+      ctx.fill();
+    }
   }
-  ctx.fillStyle = "#101820";
-  ctx.font = "10px sans-serif";
-  const weatherText = look.source === "ambience" ? `（氛围）${look.weatherLabel}` : look.weatherLabel;
-  ctx.fillText(weatherText, 76, 58);
+  if (def.panes[0]) {
+    // 字写在最宽的那块玻璃左上角
+    const width = (pane: [number, number][]): number => Math.max(...pane.map((p) => p[0])) - Math.min(...pane.map((p) => p[0]));
+    const widest = def.panes.reduce((a, b) => (width(b) > width(a) ? b : a));
+    const [x, y] = widest.reduce((m, p) => (p[0] + p[1] < m[0] + m[1] ? p : m));
+    ctx.fillStyle = "#101820";
+    ctx.font = "40px sans-serif";
+    ctx.fillText(look.source === "ambience" ? `（氛围）${look.weatherLabel}` : look.weatherLabel, x + 24, y + 60);
+  }
 
-  // 炉火
-  ctx.fillStyle = FIRE_COLOR[snap.fire.look] ?? "#333";
-  ctx.fillRect(372, 96, 40, 34);
+  // 门洞和展示位
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = "#3d4d57";
+  for (const d of def.doorways) {
+    if (!d.polygon) continue;
+    poly(ctx, d.polygon);
+    ctx.stroke();
+  }
+  ctx.setLineDash([16, 12]);
+  ctx.strokeStyle = "#5d717d";
+  for (const s of def.displaySlots) ctx.strokeRect(...s.rect);
+  ctx.setLineDash([]);
 
-  // 柴堆和粮：高度跟着库存走
-  const wood = Math.round((snap.stock.wood / snap.stock.woodCap) * 30);
-  ctx.fillStyle = "#876448";
-  ctx.fillRect(46, 250 - wood, 28, wood);
-  const food = Math.round((snap.stock.food / snap.stock.foodCap) * 30);
-  ctx.fillStyle = "#9aa36a";
-  ctx.fillRect(308, 250 - food, 28, food);
+  // 灯：起初是油灯，修好太阳能板后是电灯；灰盒只标个位置
+  ctx.fillStyle = "#e4b27666";
+  ctx.beginPath();
+  ctx.arc(def.lamp[0], def.lamp[1], 22, 0, Math.PI * 2);
+  ctx.fill();
 
-  // 玻璃罐
-  ctx.strokeStyle = "#c7d8de";
-  ctx.strokeRect(160, 96, 8, 12);
-  ctx.fillStyle = "#b28b63";
-  const fill = Math.round((snap.jar.cones / 30) * 12);
-  ctx.fillRect(160, 108 - fill, 8, fill);
+  // 跟着状态变的东西
+  if (room === "hearth_room") {
+    const [x, y] = foot("hearth");
+    ctx.fillStyle = FIRE_COLOR[snap.fire.look] ?? "#333";
+    ctx.fillRect(x - 110, y - 330, 220, 180);
+    bar(ctx, foot("woodpile"), snap.stock.wood / snap.stock.woodCap, "#876448");
+  }
+  if (room === "kitchen_room") bar(ctx, foot("shelf"), snap.stock.food / snap.stock.foodCap, "#9aa36a");
+  if (room === "observation_room") {
+    const [x, y] = foot("windowsill");
+    ctx.strokeStyle = "#c7d8de";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(x - 20, y - 120, 40, 60);
+    const fill = Math.round((snap.jar.cones / 30) * 60);
+    ctx.fillStyle = "#b28b63";
+    ctx.fillRect(x - 20, y - 60 - fill, 40, fill);
+  }
 
   // 地点
-  ctx.font = "11px sans-serif";
-  for (const id of Object.keys(SPOT) as PlaceId[]) {
-    const [x, y] = SPOT[id];
+  ctx.font = "44px sans-serif";
+  for (const id of placesIn(room)) {
+    const [x, y] = foot(id);
     ctx.fillStyle = "#2c3a43";
-    ctx.fillRect(x - 3, y - 3, 6, 6);
-    ctx.fillStyle = "#5d717d";
-    ctx.fillText(PLACES[id].name, x + 6, y + 3);
+    ctx.fillRect(x - 14, y - 14, 28, 28);
+    ctx.fillStyle = "#7d919d";
+    ctx.fillText(PLACES[id].name, x + 24, y + 14);
   }
 
   // 真实动作留下的小痕迹
   ctx.fillStyle = "#e4b276";
   for (const t of snap.traces) {
-    const [x, y] = SPOT[t.place];
-    ctx.fillText(TRACE_NAME[t.type] ?? "·", x - 12, y - 6);
+    if (roomOf(t.place) !== room) continue;
+    const [x, y] = foot(t.place);
+    ctx.fillText(TRACE_NAME[t.type] ?? "·", x - 70, y - 30);
   }
 
-  // 人
-  if (snap.stage.show && snap.stage.place) {
-    const [x, y] = SPOT[snap.stage.place];
+  // 人：站位读 JSON 的脚底和身高；睡着是横着的
+  if (snap.stage.room === room && snap.stage.place) {
+    const [x, y] = foot(snap.stage.place);
+    const h = LOCATIONS[snap.stage.place]?.heightPx ?? 600;
     ctx.fillStyle = snap.stage.illusion ? "#7193ac" : snap.stage.outfit === "outdoor" ? "#a65049" : "#e4b276";
-    ctx.beginPath();
-    ctx.arc(x, y - 10, 7, 0, Math.PI * 2);
-    ctx.fill();
+    const sitting = snap.stage.pose?.startsWith("sit") || snap.stage.pose === "crouch";
+    if (snap.stage.pose === "sleep") ctx.fillRect(x - h * 0.5, y - h * 0.18, h, h * 0.14);
+    else {
+      const bodyH = sitting ? h * 0.62 : h;
+      ctx.fillRect(x - h * 0.1, y - bodyH, h * 0.2, bodyH);
+    }
     if (snap.actor.asleep && !snap.stage.illusion) {
       ctx.fillStyle = "#c7d8de";
-      ctx.fillText("zz", x + 8, y - 14);
+      ctx.fillText("zz", x + h * 0.5, y - h * 0.2);
     }
-  }
-
-  if (opt.frames) {
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 3]);
-    for (const id of ["window", "hearth"] as const) {
-      const [x, y, w, h] = CROP[id];
-      ctx.strokeStyle = id === "window" ? "#c7d8de" : "#f7b05d";
-      ctx.strokeRect(x, y, w, h);
-    }
-    ctx.setLineDash([]);
   }
   ctx.restore();
 }
 
-export function cameraCaption(snap: Snapshot, cam: CameraId, size: string): string {
-  // 文案同样按演出位置判断，不能用真实 actor.visible 去判断冻结的幻影人物。
-  const seen = snap.stage.visible[cam];
-  const where = seen ? "看得见人" : `空景 · ${snap.stage.show ? snap.actor.whereabouts : snap.stage.label}`;
-  return `${size} · ${CAMERAS[cam].name} · ${where}`;
+export function roomCaption(snap: Snapshot, room: RoomId, size: string): string {
+  // 文案按演出位置判断，不能用真实 actor.room 去判断冻结的幻影人物。
+  const where = snap.stage.room === room ? "看得见人" : `空屋 · ${snap.stage.show ? snap.actor.whereabouts : snap.stage.label}`;
+  return `${size} · ${ROOMS[room].name} · ${where}`;
 }

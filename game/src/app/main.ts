@@ -1,14 +1,14 @@
 // 灰盒界面：把 view.ts 的投影画出来，把点击变成命令。没有游戏规则在这里。
-import { CAMERAS, CAMERA_IDS } from "../core/cameras.ts";
 import { clockText } from "../core/calendar.ts";
 import { CONFIG } from "../core/config.ts";
 import { CATEGORY_NAME, CROPS, DEFAULT_STYLE, PLACES, STYLES, type TaskCategory } from "../core/content.ts";
 import type { FocusPreset } from "../core/focus.ts";
 import { ownsStyle, type Game } from "../core/game.ts";
 import { checkOuting, REFUSAL_TEXT } from "../core/outing.ts";
+import { DEFAULT_ROOM, ROOM_IDS, ROOMS, type RoomId } from "../core/rooms.ts";
 import { present, type Snapshot } from "../core/view.ts";
 import { cal, startRuntime } from "./runtime.ts";
-import { cameraCaption, CROP, drawScene } from "./scene.ts";
+import { drawRoom, roomCaption } from "./scene.ts";
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 const esc = (s: string): string => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -19,6 +19,8 @@ const pct = (a: number, b: number): string => (b > 0 ? `${((a / b) * 100).toFixe
 const rt = startRuntime();
 let showToday = false;
 let journalTab: "world" | "real" = "world";
+/** 看哪一间是玩家选的，不跟着他走（03 第 3.1 节）；只是这个窗口的画面，不进存档 */
+let room: RoomId = DEFAULT_ROOM;
 
 function presetOf(value: string): FocusPreset {
   if (value === "up") return { kind: "countup" };
@@ -255,13 +257,13 @@ function renderDebug(s: Snapshot, g: Game): string {
     <div>到站第 ${s.world.stationDay} 天 ${s.world.clock} · 天气档 ${w.weather.today}→明天 ${w.weather.tomorrow}</div>
     <div>年份：${w.yearKind} · 炉膛 ${s.fire.burn}+${s.fire.ember} 分钟</div>
     <div>${esc(PLACES[w.actor.place].name)} · ${esc(w.actor.activity?.kind ?? "—")} · 还剩 ${w.actor.activity?.left ?? 0} 分</div>
-    <div>G2：${esc(s.stage.pose ?? "—")} / ${esc(s.stage.prop ?? "—")} · 镜头演出：${esc(s.stage.place ?? "空屋")} · 天气来源：${esc(s.look.source)}</div>
+    <div>G2：${esc(s.stage.pose ?? "—")} / ${esc(s.stage.prop ?? "—")} · 演出位置：${esc(s.stage.place ?? "空屋")}（${esc(s.stage.room ? ROOMS[s.stage.room].name : "四间都不在")}） · 天气来源：${esc(s.look.source)}</div>
     <div class="row">${btn("快进 1 小时", "debugSkip", [60])}${btn("快进 1 天", "debugSkip", [1440])}${btn("快进 12 天", "debugSkip", [1440 * 12])}</div>
     <div class="row">${btn("模拟休眠回来", "debugInterrupt", ["sleep", 0])}${btn("模拟 23 分钟断档", "debugInterrupt", ["gap", 23 * 60_000])}</div>
     <div class="row"><button data-ui="reset">删档重开</button></div>
     <div class="dim">快进只推世界、不推专注，只在正常陪伴时有效。</div>`);
-  h.push(`<h3>他醒着时镜头里看得见他</h3><div class="dim">分母：正常陪伴、醒着、没被带出门的 ${t.awakeMinutes} 个游戏分钟</div><table>`);
-  for (const c of CAMERA_IDS) h.push(`<tr><td>${esc(CAMERAS[c].name)}</td><td>${pct(t.visibleAwake[c], t.awakeMinutes)}</td></tr>`);
+  h.push(`<h3>他醒着时在各间</h3><div class="dim">分母：正常陪伴、醒着、没被带出门的 ${t.awakeMinutes} 个游戏分钟</div><table>`);
+  for (const r of ROOM_IDS) h.push(`<tr><td>${esc(ROOMS[r].name)}</td><td>${pct(t.visibleAwake[r], t.awakeMinutes)}</td></tr>`);
   h.push("</table><h3>醒着时在哪</h3><table>");
   const zoneName = { indoor: "屋里", eaves: "泉屋和防风林", yard: "院子", nearby: "屋边", away: "野外" } as const;
   for (const [z, n] of Object.entries(t.zoneAwake)) h.push(`<tr><td>${zoneName[z as keyof typeof zoneName]}</td><td>${pct(n, t.awakeMinutes)}</td></tr>`);
@@ -292,11 +294,15 @@ function render(): void {
   }
   const s = present(g, Date.now(), cal);
   $("topbar").innerHTML = renderTop(s);
-  drawScene(sceneCtx, s, { frames: true });
-  drawScene(c320, s, { crop: CROP.window });
-  drawScene(c480, s, { crop: CROP.hearth });
-  $("cap320").textContent = cameraCaption(s, "window", "320×180");
-  $("cap480").textContent = cameraCaption(s, "hearth", "480×270");
+  $("roomRow").innerHTML = ROOM_IDS.map(
+    (r) => `<button data-ui="room" data-room="${r}"${r === room ? ' class="on"' : ""}>${esc(ROOMS[r].name)}${s.stage.room === r ? " ·" : ""}</button>`,
+  ).join("");
+  drawRoom(sceneCtx, s, room);
+  drawRoom(c320, s, room);
+  drawRoom(c480, s, room);
+  $("capScene").textContent = roomCaption(s, room, "960×540");
+  $("cap320").textContent = roomCaption(s, room, "320×180");
+  $("cap480").textContent = roomCaption(s, room, "480×270");
   $("actionRow").innerHTML = renderAction(s);
   const card = $("todayCard");
   card.hidden = !showToday;
@@ -357,6 +363,9 @@ document.addEventListener("click", (ev) => {
       break;
     case "depart":
       rt.dispatch("depart", Number(val("packRations")), Number(val("packBundles")));
+      break;
+    case "room":
+      room = el.dataset.room as RoomId;
       break;
     case "tabWorld":
       journalTab = "world";
