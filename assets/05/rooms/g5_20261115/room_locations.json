@@ -48,32 +48,32 @@
             [
               [
                 6,
-                83
+                78
               ],
               [
                 72,
                 104
               ],
               [
-                73,
-                839
+                84,
+                867
               ],
               [
-                5,
-                847
+                1,
+                875
               ]
             ],
             [
               [
-                164,
-                107
+                160,
+                102
               ],
               [
-                1038,
+                1049,
                 294
               ],
               [
-                1038,
+                1049,
                 761
               ],
               [
@@ -90,37 +90,37 @@
               ],
               [
                 815,
-                835
+                863
               ],
               [
                 712,
-                838
+                866
               ],
               [
                 712,
-                817
+                845
               ],
               [
                 167,
-                820
+                848
               ]
             ],
             [
               [
-                1086,
-                305
+                1082,
+                300
               ],
               [
-                1190,
+                1201,
                 323
               ],
               [
-                1190,
-                795
+                1201,
+                823
               ],
               [
-                1086,
-                794
+                1082,
+                822
               ]
             ],
             [
@@ -129,20 +129,25 @@
                 830
               ],
               [
-                865,
-                827
+                876,
+                822
               ],
               [
-                865,
-                967
+                876,
+                995
               ],
               [
-                712,
-                964
+                708,
+                992
               ]
             ]
           ],
-          "coordinateSystem": "2560x1440 canvas pixels"
+          "coordinateSystem": "2560x1440 canvas pixels",
+          "frameLeakGuard": {
+            "method": "hand-limited narrow pane strips, roof-triangle geometry, retain warm frame",
+            "mask": "glass_mask.png",
+            "approvedGeometry": false
+          }
         }
       ],
       "doorways": [
@@ -203,8 +208,8 @@
         "quality": "provisional single-frame preview; G8 separated animation not passed"
       },
       "lampAnchor": [
-        1665,
-        565
+        1605,
+        980
       ],
       "stateLayers": {
         "woodpile_0": "woodpile_0.webp",
@@ -232,20 +237,20 @@
           "panesCanvasPolygons": [
             [
               [
-                718,
+                712,
                 257
               ],
               [
-                928,
-                225
+                951,
+                220
               ],
               [
-                928,
-                401
+                951,
+                431
               ],
               [
                 724,
-                411
+                441
               ]
             ],
             [
@@ -254,56 +259,61 @@
                 432
               ],
               [
-                928,
-                423
+                951,
+                418
               ],
               [
-                928,
-                790
+                951,
+                820
               ],
               [
-                723,
-                790
+                717,
+                820
               ]
             ],
             [
               [
-                975,
+                969,
                 221
               ],
               [
-                2231,
-                74
+                2254,
+                69
               ],
               [
-                2231,
-                795
+                2254,
+                825
               ],
               [
-                975,
-                795
+                969,
+                825
               ]
             ],
             [
               [
-                2287,
+                2281,
                 77
               ],
               [
-                2479,
-                51
+                2502,
+                46
               ],
               [
-                2479,
-                251
+                2502,
+                281
               ],
               [
                 2289,
-                254
+                284
               ]
             ]
           ],
-          "coordinateSystem": "2560x1440 canvas pixels"
+          "coordinateSystem": "2560x1440 canvas pixels",
+          "frameLeakGuard": {
+            "method": "hand-limited narrow pane strips, roof-triangle geometry, retain warm frame",
+            "mask": "glass_mask.png",
+            "approvedGeometry": false
+          }
         }
       ],
       "doorways": [
@@ -361,7 +371,8 @@
         ],
         "image": "actor_male_pose.webp",
         "contact": "actor_contact.webp",
-        "quality": "provisional single-frame preview; G8 separated animation not passed"
+        "quality": "provisional single-frame preview; G8 separated animation not passed",
+        "frontOcclusion": "chair_front_occlusion.webp"
       },
       "lampAnchor": [
         1875,
@@ -372,6 +383,11 @@
         "books_many": "books_many.webp",
         "cup": "cup.webp",
         "map": "map.webp"
+      },
+      "heater": {
+        "default": "unlit",
+        "litOverlay": "heater_flame_on.webp",
+        "note": "no fuel on game start"
       }
     },
     "kitchen_room": {
@@ -390,60 +406,65 @@
           "panesCanvasPolygons": [
             [
               [
-                1335,
+                1331,
                 263
               ],
               [
-                1612,
-                228
+                1625,
+                223
               ],
               [
-                1612,
-                653
+                1625,
+                676
               ],
               [
                 1337,
-                653
+                676
               ]
             ],
             [
               [
-                1654,
+                1650,
                 219
               ],
               [
-                2292,
-                132
+                2305,
+                127
               ],
               [
-                2292,
-                657
+                2305,
+                680
               ],
               [
-                1654,
-                653
+                1650,
+                676
               ]
             ],
             [
               [
-                2332,
+                2328,
                 121
               ],
               [
-                2526,
-                87
+                2539,
+                82
               ],
               [
-                2526,
-                643
+                2539,
+                666
               ],
               [
                 2335,
-                645
+                668
               ]
             ]
           ],
-          "coordinateSystem": "2560x1440 canvas pixels"
+          "coordinateSystem": "2560x1440 canvas pixels",
+          "frameLeakGuard": {
+            "method": "hand-limited narrow pane strips, roof-triangle geometry, retain warm frame",
+            "mask": "glass_mask.png",
+            "approvedGeometry": false
+          }
         }
       ],
       "doorways": [
@@ -517,7 +538,15 @@
         "stock_full": "stock_full.webp",
         "coat": "coat.webp",
         "herbs": "herbs.webp"
-      }
+      },
+      "coatAnchor": [
+        470,
+        655
+      ],
+      "storageAnchor": [
+        1360,
+        960
+      ]
     },
     "bedroom": {
       "name": "卧室",
@@ -535,33 +564,33 @@
           "panesCanvasPolygons": [
             [
               [
-                1038,
+                1032,
                 372
               ],
               [
-                1266,
-                339
+                1288,
+                334
               ],
               [
-                1266,
-                959
+                1288,
+                988
               ],
               [
-                1038,
-                962
+                1032,
+                991
               ]
             ],
             [
               [
-                1314,
+                1308,
                 345
               ],
               [
-                2154,
-                274
+                2176,
+                269
               ],
               [
-                2154,
+                2176,
                 818
               ],
               [
@@ -570,43 +599,48 @@
               ],
               [
                 1756,
-                950
+                979
               ],
               [
-                1314,
-                950
+                1308,
+                979
               ]
             ],
             [
               [
-                1335,
-                296
+                1315,
+                314
               ],
               [
-                1706,
-                31
+                1726,
+                13
               ],
               [
-                1706,
+                1726,
                 283
               ]
             ],
             [
               [
-                1745,
-                28
+                1725,
+                10
               ],
               [
-                2127,
+                2147,
                 271
               ],
               [
-                1745,
-                285
+                1725,
+                303
               ]
             ]
           ],
-          "coordinateSystem": "2560x1440 canvas pixels"
+          "coordinateSystem": "2560x1440 canvas pixels",
+          "frameLeakGuard": {
+            "method": "hand-limited narrow pane strips, roof-triangle geometry, retain warm frame",
+            "mask": "glass_mask.png",
+            "approvedGeometry": false
+          }
         }
       ],
       "doorways": [
@@ -791,7 +825,8 @@
       "standingHeightPx": 701,
       "facing": "three_quarter_back_at_desk",
       "occludedBy": [
-        "desk_front_edge"
+        "desk_front_edge",
+        "chair_front_occlusion"
       ],
       "visibility": "in_selected_room_only",
       "approved": false,
@@ -845,15 +880,16 @@
       "room": "kitchen_room",
       "label": "储物架",
       "footAnchor": [
-        925,
-        1060
+        1228,
+        1070
       ],
-      "standingHeightPx": 642,
-      "facing": "toward_storage",
+      "standingHeightPx": 645,
+      "facing": "toward_open_pantry_under_counter",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
       "approved": false,
-      "visibleOnlyInSelectedRoom": true
+      "visibleOnlyInSelectedRoom": true,
+      "notes": "Open food rack beneath the right-side long counter. Empty in the base; stocked by independent sparse/full layers."
     },
     "workbench": {
       "room": "kitchen_room",
@@ -873,15 +909,16 @@
       "room": "kitchen_room",
       "label": "正门/衣架",
       "footAnchor": [
-        185,
+        433,
         1090
       ],
       "standingHeightPx": 650,
-      "facing": "toward_front_exit",
+      "facing": "toward_front_exit_and_coat_hook",
       "occludedBy": [],
       "visibility": "in_selected_room_only",
       "approved": false,
-      "visibleOnlyInSelectedRoom": true
+      "visibleOnlyInSelectedRoom": true,
+      "notes": "Front entrance is far left; coat hook immediately at its right jamb. Rear corridor hooks are utility hooks only."
     },
     "backdoor": {
       "room": "kitchen_room",
@@ -895,7 +932,8 @@
       "occludedBy": [],
       "visibility": "in_selected_room_only",
       "approved": false,
-      "visibleOnlyInSelectedRoom": true
+      "visibleOnlyInSelectedRoom": true,
+      "notes": "Rear central doorway is the one covered walkway opening to the springhouse, not the front entrance."
     },
     "bed": {
       "room": "bedroom",
