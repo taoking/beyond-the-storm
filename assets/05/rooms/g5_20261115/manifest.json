@@ -1,8 +1,8 @@
 {
   "schema": "beyond-the-storm/g5-assets/provisional-v2",
   "date": "2026-11-15",
-  "status": "R1_R7_REVISED_GAMEPLAY_ASSETS_PENDING_G5_NATIVE_AND_G8_APPROVAL",
-  "reviewDoc": "2026-11-15_四间底图复核与修改单_Claude.md",
+  "status": "SECOND_ROUND_GAMEPLAY_READY_VISUAL_QA_PENDING_NATIVE_G5",
+  "reviewDoc": "2026-11-15_四间底图第二轮修改单_Claude.md",
   "defaultSelectedRoom": "observation_room",
   "coordinateSource": "room_locations.json",
   "canvas": [
@@ -14,7 +14,7 @@
     941
   ],
   "isNative2560x1440": false,
-  "windowMatte": "polygon only, excludes textiles and carpets, with mask QA",
+  "windowMatte": "redrawn enlarged inside-frame polygons with 2px safety overcut; magenta QA required",
   "weather": {
     "states": [
       "calm",
@@ -27,7 +27,8 @@
       1
     ],
     "snowAndBlizzardImagesAreWindowClipped": true,
-    "caveat": "original scenery still contains small painted snow specks; calm is reduced overlay rather than photo-clean sky"
+    "caveat": "Calm base median-cleaned; some larger baked streaks may remain; native redrawing needed for snow-free fine art.",
+    "calmRepaint": "median neighborhood 7/11 on original outside image with explicit 0-snow overlay"
   },
   "night": {
     "method": "spatially varying night ambient layer + independently toggled warm hearth and kerosene lantern spill",
@@ -60,32 +61,32 @@
         [
           [
             4,
-            54
+            51
           ],
           [
             47,
             68
           ],
           [
-            48,
-            548
+            55,
+            566
           ],
           [
-            3,
-            553
+            1,
+            571
           ]
         ],
         [
           [
-            107,
-            70
+            104,
+            67
           ],
           [
-            678,
+            685,
             192
           ],
           [
-            678,
+            685,
             497
           ],
           [
@@ -102,37 +103,37 @@
           ],
           [
             532,
-            545
+            563
           ],
           [
             465,
-            547
+            565
           ],
           [
             465,
-            533
+            552
           ],
           [
             109,
-            535
+            554
           ]
         ],
         [
           [
-            709,
-            199
+            707,
+            196
           ],
           [
-            777,
+            784,
             211
           ],
           [
-            777,
-            519
+            784,
+            537
           ],
           [
-            709,
-            518
+            707,
+            537
           ]
         ],
         [
@@ -141,34 +142,46 @@
             542
           ],
           [
-            565,
-            540
+            572,
+            537
           ],
           [
-            565,
-            631
+            572,
+            650
           ],
           [
-            465,
-            629
+            462,
+            648
           ]
         ]
       ],
-      "glassCoverage": 0.17664,
+      "glassCoverage": 0.19459,
       "files": [
-        "source_clean_1672x940.webp",
+        "actor_contact.webp",
+        "actor_male_pose.webp",
+        "armchair_blanket.webp",
+        "day_preview.webp",
+        "fire_flame_ember.webp",
+        "fire_flame_high.webp",
+        "fire_flame_low.webp",
+        "fire_spill_high.webp",
+        "fire_spill_low.webp",
         "glass_mask.png",
         "interior_rgba.webp",
+        "night_ambient.webp",
+        "oil_lamp_body.webp",
+        "oil_lamp_glow.webp",
         "outside_winter_day_rgba.webp",
         "outside_winter_night_rgba.webp",
-        "day_preview.webp",
-        "night_ambient.webp",
-        "fire_spill_low.webp",
-        "fire_spill_high.webp",
-        "weather_snow.webp",
+        "snack_plate.webp",
+        "source_clean_1672x940.webp",
         "weather_blizzard.webp",
-        "oil_lamp_body.webp",
-        "oil_lamp_glow.webp"
+        "weather_snow.webp",
+        "woodpile_0.webp",
+        "woodpile_1.webp",
+        "woodpile_2.webp",
+        "woodpile_3.webp",
+        "woodpile_4.webp"
       ]
     },
     "observation_room": {
@@ -186,20 +199,20 @@
       "glassPolygonsSourcePx": [
         [
           [
-            469,
+            465,
             168
           ],
           [
-            606,
-            147
+            621,
+            144
           ],
           [
-            606,
-            262
+            621,
+            281
           ],
           [
             473,
-            268
+            288
           ]
         ],
         [
@@ -208,70 +221,78 @@
             282
           ],
           [
-            606,
-            276
+            621,
+            273
           ],
           [
-            606,
-            516
+            621,
+            535
           ],
           [
-            472,
-            516
+            468,
+            535
           ]
         ],
         [
           [
-            637,
+            633,
             144
           ],
           [
-            1457,
-            48
+            1472,
+            45
           ],
           [
-            1457,
-            519
+            1472,
+            539
           ],
           [
-            637,
-            519
+            633,
+            539
           ]
         ],
         [
           [
-            1494,
+            1490,
             50
           ],
           [
-            1619,
-            33
+            1634,
+            30
           ],
           [
-            1619,
-            164
+            1634,
+            183
           ],
           [
             1495,
-            166
+            185
           ]
         ]
       ],
-      "glassCoverage": 0.25979,
+      "glassCoverage": 0.29089,
       "files": [
-        "source_clean_1672x940.webp",
+        "actor_contact.webp",
+        "actor_male_pose.webp",
+        "books_few.webp",
+        "books_many.webp",
+        "chair_front_occlusion.webp",
+        "cup.webp",
+        "day_preview.webp",
+        "fire_spill_high.webp",
+        "fire_spill_low.webp",
         "glass_mask.png",
+        "heater_flame_on.webp",
         "interior_rgba.webp",
+        "map.webp",
+        "night_ambient.webp",
+        "oil_lamp_body.webp",
+        "oil_lamp_glow.webp",
         "outside_winter_day_rgba.webp",
         "outside_winter_night_rgba.webp",
-        "day_preview.webp",
-        "night_ambient.webp",
-        "fire_spill_low.webp",
-        "fire_spill_high.webp",
-        "weather_snow.webp",
+        "source_clean_1672x940.webp",
         "weather_blizzard.webp",
-        "oil_lamp_body.webp",
-        "oil_lamp_glow.webp"
+        "weather_snow.webp"
       ]
     },
     "kitchen_room": {
@@ -289,74 +310,80 @@
       "glassPolygonsSourcePx": [
         [
           [
-            872,
+            869,
             172
           ],
           [
-            1053,
-            149
+            1061,
+            146
           ],
           [
-            1053,
-            426
+            1061,
+            441
           ],
           [
             873,
-            426
+            441
           ]
         ],
         [
           [
-            1080,
+            1078,
             143
           ],
           [
-            1497,
-            86
+            1505,
+            83
           ],
           [
-            1497,
-            429
+            1505,
+            444
           ],
           [
-            1080,
-            426
+            1078,
+            441
           ]
         ],
         [
           [
-            1523,
+            1520,
             79
           ],
           [
-            1650,
-            57
+            1658,
+            54
           ],
           [
-            1650,
-            420
+            1658,
+            435
           ],
           [
             1525,
-            421
+            436
           ]
         ]
       ],
-      "glassCoverage": 0.14173,
+      "glassCoverage": 0.15925,
       "files": [
-        "source_clean_1672x940.webp",
+        "actor_contact.webp",
+        "actor_male_pose.webp",
+        "coat.webp",
+        "day_preview.webp",
+        "fire_spill_high.webp",
+        "fire_spill_low.webp",
         "glass_mask.png",
+        "herbs.webp",
         "interior_rgba.webp",
+        "night_ambient.webp",
+        "oil_lamp_body.webp",
+        "oil_lamp_glow.webp",
         "outside_winter_day_rgba.webp",
         "outside_winter_night_rgba.webp",
-        "day_preview.webp",
-        "night_ambient.webp",
-        "fire_spill_low.webp",
-        "fire_spill_high.webp",
-        "weather_snow.webp",
+        "source_clean_1672x940.webp",
+        "stock_full.webp",
+        "stock_sparse.webp",
         "weather_blizzard.webp",
-        "oil_lamp_body.webp",
-        "oil_lamp_glow.webp"
+        "weather_snow.webp"
       ]
     },
     "bedroom": {
@@ -374,33 +401,33 @@
       "glassPolygonsSourcePx": [
         [
           [
-            678,
+            674,
             243
           ],
           [
-            827,
-            221
+            841,
+            218
           ],
           [
-            827,
-            626
+            841,
+            645
           ],
           [
-            678,
-            628
+            674,
+            647
           ]
         ],
         [
           [
-            858,
+            854,
             225
           ],
           [
-            1407,
-            179
+            1421,
+            176
           ],
           [
-            1407,
+            1421,
             534
           ],
           [
@@ -409,57 +436,61 @@
           ],
           [
             1147,
-            620
+            639
           ],
           [
-            858,
-            620
+            854,
+            639
           ]
         ],
         [
           [
-            872,
-            193
+            859,
+            205
           ],
           [
-            1114,
-            20
+            1127,
+            8
           ],
           [
-            1114,
+            1127,
             185
           ]
         ],
         [
           [
-            1140,
-            18
+            1127,
+            7
           ],
           [
-            1389,
+            1402,
             177
           ],
           [
-            1140,
-            186
+            1127,
+            198
           ]
         ]
       ],
-      "glassCoverage": 0.19507,
+      "glassCoverage": 0.22021,
       "files": [
-        "source_clean_1672x940.webp",
+        "actor_contact.webp",
+        "actor_male_pose.webp",
+        "bed_front_occlusion.webp",
+        "day_preview.webp",
+        "fire_spill_high.webp",
+        "fire_spill_low.webp",
         "glass_mask.png",
         "interior_rgba.webp",
+        "night_ambient.webp",
+        "oil_lamp_body.webp",
+        "oil_lamp_glow.webp",
         "outside_winter_day_rgba.webp",
         "outside_winter_night_rgba.webp",
-        "day_preview.webp",
-        "night_ambient.webp",
-        "fire_spill_low.webp",
-        "fire_spill_high.webp",
-        "weather_snow.webp",
+        "quilt_thick.webp",
+        "source_clean_1672x940.webp",
         "weather_blizzard.webp",
-        "oil_lamp_body.webp",
-        "oil_lamp_glow.webp"
+        "weather_snow.webp"
       ]
     }
   },
@@ -471,18 +502,18 @@
     },
     {
       "file": "bedroom/actor_male_pose.webp",
-      "bytes": 60444,
-      "sha256": "3f230d725b9a33f41dc8cd88faecac5378830d251156de6883c486523912860f"
+      "bytes": 113804,
+      "sha256": "a8e7ee9c7c3697ee79c0ea36b3a33d6805785a347e0feb35a0d2f9b0457220d0"
     },
     {
       "file": "bedroom/bed_front_occlusion.webp",
-      "bytes": 479738,
-      "sha256": "a4e43c1fed0570eb28a634a4c163aa4c83fe5dcece9612e92558686a685007de"
+      "bytes": 162106,
+      "sha256": "707a5dc6ff1aa43ddcc91cc62e418deea62481fab07095e5ebea7f976a5d4f94"
     },
     {
       "file": "bedroom/day_preview.webp",
-      "bytes": 470610,
-      "sha256": "269657bd4a58a8841a923bbb17e1529771ac5dcc2ceee0c0a23f1505cf9802cb"
+      "bytes": 496074,
+      "sha256": "897bbd98ff25b6077ce1c0bcd06c3dfe9fbacbff6660d04ecee9d3573fdef5f0"
     },
     {
       "file": "bedroom/fire_spill_high.webp",
@@ -496,13 +527,13 @@
     },
     {
       "file": "bedroom/glass_mask.png",
-      "bytes": 17862,
-      "sha256": "908d675225344b2ce4b6e0a63e5e69e17481834f675e64effb64c7661ea3f5f3"
+      "bytes": 7979,
+      "sha256": "9ac08d3797424267ab621be498763664e3e7648f8a1208842dd40d78127a10bc"
     },
     {
       "file": "bedroom/interior_rgba.webp",
-      "bytes": 429604,
-      "sha256": "e84d82a04d9c4d7b91ff13c96ffe494d0642cf98b9d484030db355b6cb17ef0e"
+      "bytes": 2396422,
+      "sha256": "83f090c3d0b0ef392c345da7bd0cf97cc24154dd446a6ca28a4bdbe21bd2562c"
     },
     {
       "file": "bedroom/night_ambient.webp",
@@ -521,13 +552,13 @@
     },
     {
       "file": "bedroom/outside_winter_day_rgba.webp",
-      "bytes": 481878,
-      "sha256": "c1d519d5a29757658264b0a15429f0ae9631f8f9f7b49c8e1760aa6732b112fa"
+      "bytes": 677338,
+      "sha256": "edfec25e347a220af30cecddbd2de8d55b4e9d315f672d1c7cf8f33c9bc1ccf2"
     },
     {
       "file": "bedroom/outside_winter_night_rgba.webp",
-      "bytes": 186442,
-      "sha256": "e090a92c49beebb5b614f1fb57c6a0e1fe14277c13530af9feda6f4554a4ce26"
+      "bytes": 495824,
+      "sha256": "410ad90fae4dcca24e8d4759973247e6e13fdd0e7798f13bafce3e3979e019e3"
     },
     {
       "file": "bedroom/quilt_thick.webp",
@@ -541,13 +572,13 @@
     },
     {
       "file": "bedroom/weather_blizzard.webp",
-      "bytes": 127116,
-      "sha256": "6455391837adac436732ebcefcb7666cb4a1883f7f917d33365990e0cae2b2a5"
+      "bytes": 111958,
+      "sha256": "571120e90dfadea1721b4d2e2c1db467a91b48fe591a23bb0f3149f18cfa097e"
     },
     {
       "file": "bedroom/weather_snow.webp",
-      "bytes": 18126,
-      "sha256": "90e8a757f832e08ecdd92c25062a20491e8a4888ba390f13df61657957db3ee3"
+      "bytes": 2890,
+      "sha256": "15a69f3e37c1e5049fada9686e0c1e2da9135a372fa3d3ea3b07fb614c8d3f57"
     },
     {
       "file": "hearth_room/actor_contact.webp",
@@ -566,23 +597,23 @@
     },
     {
       "file": "hearth_room/day_preview.webp",
-      "bytes": 541200,
-      "sha256": "6a32546c63be2f5cfb1e87431ba36111c2a22dc76e6536b8e40625c7f9872fd1"
+      "bytes": 577138,
+      "sha256": "4a84f0342165545dd77f236f303557d9261dd464545b7a6ec53d4033fb06915f"
     },
     {
       "file": "hearth_room/fire_flame_ember.webp",
-      "bytes": 10304,
-      "sha256": "8acdf23acf3033e1dae8d0cb512ea5242735ca70d7fe74733ddf60d7505053d7"
+      "bytes": 30876,
+      "sha256": "121df848a6b71593a54284df9559d99a467028cb6bf4bb8ef2678e00a5963053"
     },
     {
       "file": "hearth_room/fire_flame_high.webp",
-      "bytes": 17202,
-      "sha256": "3df2ea4789ad1ee2e26a4b03ce849edc28156d0d6f4097b82fd9ed8b50ad3a83"
+      "bytes": 43416,
+      "sha256": "41d39e24ca25a8763da7b4d9c1cca3cc7c08ecf8c922a1b677eaa393f0ab4a4f"
     },
     {
       "file": "hearth_room/fire_flame_low.webp",
-      "bytes": 13546,
-      "sha256": "b51b77b80e4aeada32197bde1f6571274df87d00e3b4caf8d1e85b9c3308ca77"
+      "bytes": 38236,
+      "sha256": "1dd9c4f336ef0b61bac735457bb819a1a5adae72edb6a6de34b23c45116c40f9"
     },
     {
       "file": "hearth_room/fire_spill_high.webp",
@@ -596,13 +627,13 @@
     },
     {
       "file": "hearth_room/glass_mask.png",
-      "bytes": 13903,
-      "sha256": "4a16ab206a5908bc2137b805c7885cbdd9c794e2d3a86d0603cb962b8de9e52f"
+      "bytes": 6861,
+      "sha256": "68fcc8383999fa6f8996af9a30efc65399620fdb836c16b3520ec5515e851592"
     },
     {
       "file": "hearth_room/interior_rgba.webp",
-      "bytes": 494240,
-      "sha256": "c18d5a3afcd805ac9890498921f9cb35dd47ea5b713b9924cae790a40fb00acb"
+      "bytes": 2646032,
+      "sha256": "3c11e92f195a024836e3fa4ffc4c04488629f39902e55e518567ee3f63eb0807"
     },
     {
       "file": "hearth_room/night_ambient.webp",
@@ -611,23 +642,23 @@
     },
     {
       "file": "hearth_room/oil_lamp_body.webp",
-      "bytes": 8766,
-      "sha256": "9ad2077282bd385720ecca7cb9776b28af643f33ae583ba3d3aa57f6d555a9a4"
+      "bytes": 7626,
+      "sha256": "d67aad0961b80bd57202d48f2130f73493196e6d959813f7f12e8d6806d3261d"
     },
     {
       "file": "hearth_room/oil_lamp_glow.webp",
-      "bytes": 9440,
-      "sha256": "82a8dc15163c7f05269e900359ef0f19d63637333a98a5ed2280d0149a0e7543"
+      "bytes": 2834,
+      "sha256": "81cbfb58d88cee2e6cdc12457763e0aaa57c49b1878fa18901397d8f35df643a"
     },
     {
       "file": "hearth_room/outside_winter_day_rgba.webp",
-      "bytes": 549428,
-      "sha256": "f7bed95fda6bafe0f6343d28c87a2ca6bdc8820d615412d6b5c6b1d51f77604d"
+      "bytes": 700462,
+      "sha256": "0634774fe75447582ff216762290a2d93cb181e443564da28e274ba30b9c66bd"
     },
     {
       "file": "hearth_room/outside_winter_night_rgba.webp",
-      "bytes": 214716,
-      "sha256": "622e749577ae5cfa60336e79b36f870b1fcae1d41df7e7daf77ea01e0038400e"
+      "bytes": 521692,
+      "sha256": "f3c8e29d13d566007ca0f56d9322b8ebaaab8d1aa0fdce8d578776c8a6e90854"
     },
     {
       "file": "hearth_room/snack_plate.webp",
@@ -641,38 +672,38 @@
     },
     {
       "file": "hearth_room/weather_blizzard.webp",
-      "bytes": 127274,
-      "sha256": "9efd42a6d38682e087468c05c3c9d5ea912d9b7b37e4c755e7e74673e9226639"
+      "bytes": 108352,
+      "sha256": "90d7582a0bdcd3565b734900e7dc0e5b3341f7f55da9e09d4d68171c635dfe21"
     },
     {
       "file": "hearth_room/weather_snow.webp",
-      "bytes": 17326,
-      "sha256": "8ea8e1d094a8fbb3a8c7c564cac0dad1e65db33f405c55ab69583f974080181c"
+      "bytes": 2974,
+      "sha256": "a1e14e8137f8eee21ffa26da3129975d1a48692c03c3e2001fc23f298113a60c"
     },
     {
       "file": "hearth_room/woodpile_0.webp",
-      "bytes": 6812,
-      "sha256": "8791cb0fd9352e7c576d9a337d119492eb68e86dce562f58d7f7197ce5c56045"
+      "bytes": 194,
+      "sha256": "359d11d01456070c612b71f73121d04014190bb74adff8946a71bffee06452ae"
     },
     {
       "file": "hearth_room/woodpile_1.webp",
-      "bytes": 8142,
-      "sha256": "6adaacd0f4e2b6ed4d97f7719112bb98db853f05229ad4a0caa5924c80fb51b2"
+      "bytes": 11140,
+      "sha256": "6243bb01dac479fc3b7bd3622e75dfa6a03d2f4c659075221cd292aebcfc44e8"
     },
     {
       "file": "hearth_room/woodpile_2.webp",
-      "bytes": 9400,
-      "sha256": "d25e22081415715c3a55da3b282665f9afff49ffd8fd46893aa97bc70281e93c"
+      "bytes": 19068,
+      "sha256": "42ba082d6e37b2abf954f4b15688847065c5815181704486f14ab11197116afa"
     },
     {
       "file": "hearth_room/woodpile_3.webp",
-      "bytes": 10466,
-      "sha256": "d0c9dc19cb6a25d2281bf2d14c2fc68bf1b67257adf344adb0142fa36c4ccaff"
+      "bytes": 27466,
+      "sha256": "762ba1a35396f5c979d6f4b5686212b1aeaabb021cb18e0ca86d337609194821"
     },
     {
       "file": "hearth_room/woodpile_4.webp",
-      "bytes": 11638,
-      "sha256": "dd13cdb2292c6d7f06e7a727e05c3aefbd82ff73c4fb5b4a16ab60d126251eb9"
+      "bytes": 31412,
+      "sha256": "638323c5c6762f7ef34746c8c4c6b68495df47a009dcd0bfbf8ed59473a5a285"
     },
     {
       "file": "kitchen_room/actor_contact.webp",
@@ -686,38 +717,38 @@
     },
     {
       "file": "kitchen_room/coat.webp",
-      "bytes": 8460,
-      "sha256": "cd4a8a11b8987e30123f9c9b4b11b8cbc30a2858a0dcf00f6e9304e4074bde6a"
+      "bytes": 34564,
+      "sha256": "59f469702d449f262d65318e1dca789397fc5474b0721e2c0711f67fe3917c71"
     },
     {
       "file": "kitchen_room/day_preview.webp",
-      "bytes": 493060,
-      "sha256": "9b0a99aa5ab02aff0386c0b710321c6645df1dc83d4a4d37fb9375d0bfb62d1d"
+      "bytes": 552064,
+      "sha256": "afeb1fcd9541fe9f102a409bb0a6c07abc1ac7818c309b8a9940525e6ebe9d0a"
     },
     {
       "file": "kitchen_room/fire_spill_high.webp",
-      "bytes": 50016,
-      "sha256": "65b67aeccdff37e577a69728acef03dda96d53aa185f4279558f5a8e56f902e2"
+      "bytes": 32320,
+      "sha256": "fcf11445698d081f84612bfcd5078081c1fc51bcd0b9a40f1f0a5f28caa487e7"
     },
     {
       "file": "kitchen_room/fire_spill_low.webp",
-      "bytes": 25082,
-      "sha256": "e3ccf22c8e16fc22e1d016d43cc3515e26f4019beb097a582943c15c73d735e4"
+      "bytes": 16722,
+      "sha256": "b16d20042fc0ca604c5d97e73cd8b96187ecc6c67bb00cce9473f2bee5b01031"
     },
     {
       "file": "kitchen_room/glass_mask.png",
-      "bytes": 10291,
-      "sha256": "15731890efc9f34a0c1f2a1876534a514bacf36ae7e0f31351c4da027da18dce"
+      "bytes": 5696,
+      "sha256": "2213c3f06a194134a0e7d20b51129d34720705c98b483c7b43899c5d1137bce8"
     },
     {
       "file": "kitchen_room/herbs.webp",
-      "bytes": 11004,
-      "sha256": "155fcdfccb0d97bc1342ccaf8f887bc9681349b2ae3e6a8f2b827ae2360f1a78"
+      "bytes": 18652,
+      "sha256": "5446463f225ba94de90968e8afd7ef5f3d34fc9e2936e7aa2bfe020bba3052e8"
     },
     {
       "file": "kitchen_room/interior_rgba.webp",
-      "bytes": 462738,
-      "sha256": "3e0334f88c7529ee7e91161ee358fcbf2522ab1a78a599ec07e1d4c03405710c"
+      "bytes": 2705750,
+      "sha256": "7e04c167ef47bd55c27da78004ee7171ea2b70b2b3e6cf5fede9ba7a994ef19d"
     },
     {
       "file": "kitchen_room/night_ambient.webp",
@@ -736,13 +767,13 @@
     },
     {
       "file": "kitchen_room/outside_winter_day_rgba.webp",
-      "bytes": 498714,
-      "sha256": "cfa773378ea33b981477da4d783aaafa18daf6a9441fe536e272c457190b2f98"
+      "bytes": 512138,
+      "sha256": "6378cf7eea2f29cdca486264aa20c8f2179bce5ffbe9df16ef802deeabc162ec"
     },
     {
       "file": "kitchen_room/outside_winter_night_rgba.webp",
-      "bytes": 185940,
-      "sha256": "d4433b398ce705a5c501a16b908dff2df9ea97e804aaf56bed92f1736f4d3b01"
+      "bytes": 377480,
+      "sha256": "b9a862b2da90b5ee42fa86c8dc6eec673b73d1a257e94c15e1efa3e519f344fe"
     },
     {
       "file": "kitchen_room/source_clean_1672x940.webp",
@@ -751,28 +782,23 @@
     },
     {
       "file": "kitchen_room/stock_full.webp",
-      "bytes": 11632,
-      "sha256": "dc79e3b018b5ba88ea881694844aa47105ce4a817da2c037412157fe9ca51a7d"
+      "bytes": 29148,
+      "sha256": "e2e7edb201fb3f5551e9d134d0cf9828dccdc73675c2777d083e38f09ac7771c"
     },
     {
       "file": "kitchen_room/stock_sparse.webp",
-      "bytes": 8630,
-      "sha256": "1ed6b4a550e03be39969b3a31b9b3c1d16e7430ac1cc2fcc7fab7621cb5130c3"
+      "bytes": 12832,
+      "sha256": "0815f50ad76b9aed8b7835bdd43b51c9f93ae9971479110b131a918aa180edb1"
     },
     {
       "file": "kitchen_room/weather_blizzard.webp",
-      "bytes": 126882,
-      "sha256": "b3dbe11af7cdf8baca7cab6cbd02091843f26e531c02b7a5f8d27fdb59a4ca58"
+      "bytes": 73746,
+      "sha256": "b93bd08b1a0fac9f3a5c8c945cb8c7a3a1b47f3d12c7d032bd4fe48122e76214"
     },
     {
       "file": "kitchen_room/weather_snow.webp",
-      "bytes": 17386,
-      "sha256": "aea2a0373d7e86d66789da4b12953613ec5be5d6f5c9c0d14d8749552ea87fb0"
-    },
-    {
-      "file": "male_four_pose_source.webp",
-      "bytes": 238766,
-      "sha256": "bbd2a4fbe1c3fd9bdcaabfd5ee456784bf1d701592e6605d677e1961f481a7a2"
+      "bytes": 2468,
+      "sha256": "cf6dde6a6fc88cd9dc9c71e50bd9a35265330d5d1b72d6fede92c3a6440f4895"
     },
     {
       "file": "observation_room/actor_contact.webp",
@@ -786,13 +812,18 @@
     },
     {
       "file": "observation_room/books_few.webp",
-      "bytes": 7532,
-      "sha256": "941c1859fc440ad7cb393ab8e7a0851c575637426d5c7599d7b46482a73ee132"
+      "bytes": 10614,
+      "sha256": "a60f7d93e6b8f4da2580612c2bd55b55f0f7ec3f15e7212208dc0383591e267c"
     },
     {
       "file": "observation_room/books_many.webp",
-      "bytes": 9654,
-      "sha256": "f9c9ddcbf4a31b3ea9e47c5cd7ef2756421f75a4bb70f2ffbe8b8070ca1fca81"
+      "bytes": 37172,
+      "sha256": "eecc82bd2deb72ca18571d9cd355cf222b6b0caeb89f0f5201912c116a85b266"
+    },
+    {
+      "file": "observation_room/chair_front_occlusion.webp",
+      "bytes": 22348,
+      "sha256": "0d57c409bbf05fc924bf90758f3fc168cbed134d3a6b59fbba083e4295489b2a"
     },
     {
       "file": "observation_room/cup.webp",
@@ -801,8 +832,8 @@
     },
     {
       "file": "observation_room/day_preview.webp",
-      "bytes": 594914,
-      "sha256": "f87ce7f1014aafad7e109d070602c0899665211deb03926ef806c93a2f00b5e6"
+      "bytes": 618792,
+      "sha256": "4dd97924b8a174789cfa25ba9d0316531f8e48bc2ea6f2502c1c31b29c67d995"
     },
     {
       "file": "observation_room/fire_spill_high.webp",
@@ -816,13 +847,18 @@
     },
     {
       "file": "observation_room/glass_mask.png",
-      "bytes": 12977,
-      "sha256": "8b4167504d84f15ce7528fca7864f786edb36fd33ebc030407ffc1c70de78478"
+      "bytes": 6206,
+      "sha256": "c40b57831f9e085abcdb33994d311af4552ab8e638236714184bd60783004328"
+    },
+    {
+      "file": "observation_room/heater_flame_on.webp",
+      "bytes": 9170,
+      "sha256": "1276aac4a110988a0569145d9f883d729922ab067856664aada98cc09d5f8227"
     },
     {
       "file": "observation_room/interior_rgba.webp",
-      "bytes": 546182,
-      "sha256": "afaac302b5f0b01021769b1fffbb3d24c806136e12d5ec3aed62a59a6cac05a9"
+      "bytes": 2475062,
+      "sha256": "b417d530bba1e830d7115a7bfe2c79d8913e0d8466be6a4f8a7a98654106df43"
     },
     {
       "file": "observation_room/map.webp",
@@ -846,13 +882,13 @@
     },
     {
       "file": "observation_room/outside_winter_day_rgba.webp",
-      "bytes": 602942,
-      "sha256": "8f4f9c39bdf33773caeeebdcbaba13bbf2fcf8412fb8c7981538f5ce20973c61"
+      "bytes": 894650,
+      "sha256": "b3ad4d1bb5e4f6f9553858116964be435025961b357c887d3b8a785f409e2a88"
     },
     {
       "file": "observation_room/outside_winter_night_rgba.webp",
-      "bytes": 238860,
-      "sha256": "6aad337e40bc84f13c26175d0d510d996f347e02a5ca6c95fb65f5f1af5b936c"
+      "bytes": 664638,
+      "sha256": "f7e51494656aa5a477dd86c47f57843268a2b0b7813109201dba5d6fd32ebcc6"
     },
     {
       "file": "observation_room/source_clean_1672x940.webp",
@@ -861,13 +897,13 @@
     },
     {
       "file": "observation_room/weather_blizzard.webp",
-      "bytes": 128954,
-      "sha256": "6d5f834cf095be75db3c42490a9d91b6c14a6d1bb7aa106cfa17a7f0acbbaae4"
+      "bytes": 135918,
+      "sha256": "f03d3e1c996e63911547934cf157be73137116572b484245bb53aec20b933c21"
     },
     {
       "file": "observation_room/weather_snow.webp",
-      "bytes": 17658,
-      "sha256": "5015b65c6837fa3a5026cfdac8ea9158f646a22ee293196f4a4800acb1aef1bd"
+      "bytes": 3438,
+      "sha256": "5b281e3c1bbd33414c5b60fe719feb96d120f37215f91c3ed72fa7558bcc154e"
     }
   ],
   "limitations": [
@@ -895,5 +931,17 @@
     "G8CharacterFinalPassed": false,
     "validation": "Pillow-based file/dimensions/alpha/geometry/coordinates/manifest SHA tests",
     "qaNote": "Layered effects are design previews; no real game Snapshot integration or automatic browser screenshot. The fixed scene images retain some painted snow."
+  },
+  "secondRound": {
+    "windows": "new polygon masks and 2px safety",
+    "sleep": "face-and-shoulder mask; existing handpainted duvet restores foreground",
+    "observationChair": "chair_front_occlusion.webp",
+    "keroseneHeater": "unlit base plus heater_flame_on.webp",
+    "storage": "open wooden shelf beneath long kitchen cabinet",
+    "lamp": "hearth side table",
+    "fire": "three distinct curved-glow states",
+    "stock": "woven baskets and folded fabric sacks",
+    "calm": "median-cleaned baked snow; manual cleanup still recommended",
+    "nativeG5": "not passed; sources retain 1672x941 provenance"
   }
 }
