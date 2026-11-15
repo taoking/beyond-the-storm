@@ -1,0 +1,664 @@
+{
+  "schema": "beyond-the-storm/05-four-rooms-large-windows/candidate-v1",
+  "status": "G2_STRUCTURAL_PREVIEW_NOT_G5",
+  "created": "2026-11-15",
+  "sources": [
+    "HANDOFF.md §4.1",
+    "木屋分四间任务单.md",
+    "设计/03_主要内容.md §3.1"
+  ],
+  "canvas": {
+    "width": 1600,
+    "height": 900,
+    "aspectRatio": "16:9",
+    "units": "SVG coordinate units",
+    "targetFinalOriginal": [
+      2560,
+      1440
+    ],
+    "mustRedrawAndReanchorForG5": true
+  },
+  "principles": {
+    "playerSelectsRoom": true,
+    "autofollow": false,
+    "onlyRoomSelectedShown": true,
+    "onlyMaleCharacter": true,
+    "onlyFire": "hearth_room/hearth",
+    "cookingWorkstation": "kitchen_room/stove",
+    "largeExteriorWindowEveryRoom": true,
+    "observationWindowLargest": true,
+    "windowGlassMustBeCutOutInFinal": true,
+    "noExtraLogicalWindowLocation": true,
+    "openingNeutralArt": true
+  },
+  "architecture": {
+    "centralRoom": "hearth_room",
+    "connections": [
+      [
+        "hearth_room",
+        "observation_room"
+      ],
+      [
+        "hearth_room",
+        "kitchen_room"
+      ],
+      [
+        "hearth_room",
+        "bedroom"
+      ]
+    ],
+    "sceneDoorsArePerspectiveIllustrations": true,
+    "backdoorSharesCoveredWalkway": "PROPOSAL_NEEDS_USER_REVIEW",
+    "frontDoor": "kitchen_room",
+    "springhouse": "outside_covered_walkway",
+    "cellar": "outside_yard",
+    "doorwayFirelight": "separate_mask_only_when_hearth_burning"
+  },
+  "rooms": {
+    "hearth_room": {
+      "label": "炉间",
+      "sceneEmpty": "炉间_空屋.svg",
+      "scenePosed": "炉间_读书.svg",
+      "sceneCrop": {
+        "x": 0,
+        "y": 0,
+        "width": 1600,
+        "height": 900
+      },
+      "windows": [
+        {
+          "name": "largeExterior",
+          "rect": {
+            "x": 339,
+            "y": 126,
+            "width": 638,
+            "height": 336
+          },
+          "status": "visual_candidate_not_true_transparent_cutout",
+          "productionExteriorLayerRequired": true
+        }
+      ],
+      "doorways": [
+        {
+          "to": "observation_room",
+          "rect": {
+            "x": 38,
+            "y": 314,
+            "width": 184,
+            "height": 340
+          },
+          "lightingInProduction": "mask_not_baked"
+        },
+        {
+          "to": "kitchen_room",
+          "rect": {
+            "x": 1380,
+            "y": 306,
+            "width": 153,
+            "height": 352
+          },
+          "lightingInProduction": "mask_not_baked"
+        }
+      ],
+      "displaySlots": [
+        {
+          "id": "photo_wall",
+          "rect": {
+            "x": 140,
+            "y": 135,
+            "width": 165,
+            "height": 115
+          },
+          "initialEmpty": true
+        },
+        {
+          "id": "hearth_shelf",
+          "rect": {
+            "x": 1117,
+            "y": 193,
+            "width": 239,
+            "height": 27
+          },
+          "initialEmpty": true
+        }
+      ],
+      "standingHeightFromFootY": {
+        "model": "linear",
+        "intercept": 113,
+        "slope": 0.37,
+        "equation": "round(113 + footY * 0.37)",
+        "caveat": "layout estimate only, verify visually in final art"
+      },
+      "firstRunOilLamp": "separate_per_room_unlit_layer",
+      "electricLamp": "only_after_solar_repair"
+    },
+    "observation_room": {
+      "label": "观测间",
+      "sceneEmpty": "观测间_空屋.svg",
+      "scenePosed": "观测间_写字.svg",
+      "sceneCrop": {
+        "x": 0,
+        "y": 0,
+        "width": 1600,
+        "height": 900
+      },
+      "windows": [
+        {
+          "name": "largeExterior",
+          "rect": {
+            "x": 336,
+            "y": 112,
+            "width": 818,
+            "height": 357
+          },
+          "status": "visual_candidate_not_true_transparent_cutout",
+          "productionExteriorLayerRequired": true
+        }
+      ],
+      "doorways": [
+        {
+          "to": "hearth_room",
+          "rect": {
+            "x": 1353,
+            "y": 295,
+            "width": 178,
+            "height": 378
+          },
+          "lightingInProduction": "mask_not_baked"
+        }
+      ],
+      "displaySlots": [
+        {
+          "id": "windowsill",
+          "rect": {
+            "x": 460,
+            "y": 462,
+            "width": 295,
+            "height": 30
+          },
+          "initialEmpty": true
+        },
+        {
+          "id": "desk_corner",
+          "rect": {
+            "x": 980,
+            "y": 598,
+            "width": 120,
+            "height": 45
+          },
+          "initialEmpty": true
+        }
+      ],
+      "standingHeightFromFootY": {
+        "model": "linear",
+        "intercept": 113,
+        "slope": 0.37,
+        "equation": "round(113 + footY * 0.37)",
+        "caveat": "layout estimate only, verify visually in final art"
+      },
+      "firstRunOilLamp": "separate_per_room_unlit_layer",
+      "electricLamp": "only_after_solar_repair"
+    },
+    "kitchen_room": {
+      "label": "灶间",
+      "sceneEmpty": "灶间_空屋.svg",
+      "scenePosed": "灶间_料理.svg",
+      "sceneCrop": {
+        "x": 0,
+        "y": 0,
+        "width": 1600,
+        "height": 900
+      },
+      "windows": [
+        {
+          "name": "largeExterior",
+          "rect": {
+            "x": 448,
+            "y": 117,
+            "width": 682,
+            "height": 341
+          },
+          "status": "visual_candidate_not_true_transparent_cutout",
+          "productionExteriorLayerRequired": true
+        }
+      ],
+      "doorways": [
+        {
+          "to": "hearth_room",
+          "rect": {
+            "x": 34,
+            "y": 306,
+            "width": 184,
+            "height": 362
+          },
+          "lightingInProduction": "mask_not_baked"
+        },
+        {
+          "to": "outdoors_front",
+          "rect": {
+            "x": 1383,
+            "y": 287,
+            "width": 159,
+            "height": 392
+          },
+          "lightingInProduction": "mask_not_baked"
+        },
+        {
+          "to": "covered_walkway",
+          "rect": {
+            "x": 237,
+            "y": 371,
+            "width": 140,
+            "height": 302
+          },
+          "lightingInProduction": "mask_not_baked"
+        }
+      ],
+      "displaySlots": [],
+      "standingHeightFromFootY": {
+        "model": "linear",
+        "intercept": 113,
+        "slope": 0.37,
+        "equation": "round(113 + footY * 0.37)",
+        "caveat": "layout estimate only, verify visually in final art"
+      },
+      "firstRunOilLamp": "separate_per_room_unlit_layer",
+      "electricLamp": "only_after_solar_repair"
+    },
+    "bedroom": {
+      "label": "卧室",
+      "sceneEmpty": "卧室_空屋.svg",
+      "scenePosed": "卧室_睡觉.svg",
+      "sceneCrop": {
+        "x": 0,
+        "y": 0,
+        "width": 1600,
+        "height": 900
+      },
+      "windows": [
+        {
+          "name": "largeExterior",
+          "rect": {
+            "x": 359,
+            "y": 109,
+            "width": 863,
+            "height": 359
+          },
+          "status": "visual_candidate_not_true_transparent_cutout",
+          "productionExteriorLayerRequired": true
+        }
+      ],
+      "doorways": [
+        {
+          "to": "hearth_room",
+          "rect": {
+            "x": 52,
+            "y": 307,
+            "width": 192,
+            "height": 363
+          },
+          "lightingInProduction": "mask_not_baked"
+        }
+      ],
+      "displaySlots": [
+        {
+          "id": "bedside",
+          "rect": {
+            "x": 1260,
+            "y": 622,
+            "width": 133,
+            "height": 75
+          },
+          "initialEmpty": true
+        },
+        {
+          "id": "wall_spare",
+          "rect": {
+            "x": 279,
+            "y": 165,
+            "width": 155,
+            "height": 118
+          },
+          "initialEmpty": true
+        }
+      ],
+      "standingHeightFromFootY": {
+        "model": "linear",
+        "intercept": 113,
+        "slope": 0.37,
+        "equation": "round(113 + footY * 0.37)",
+        "caveat": "layout estimate only, verify visually in final art"
+      },
+      "firstRunOilLamp": "separate_per_room_unlit_layer",
+      "electricLamp": "only_after_solar_repair"
+    }
+  },
+  "locations": {
+    "hearth": {
+      "room": "hearth_room",
+      "label": "柴炉",
+      "footAnchor": [
+        1160,
+        756
+      ],
+      "standingHeightPx": 393,
+      "facing": "朝炉门",
+      "occludedBy": "炉门前缘",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "woodpile": {
+      "room": "hearth_room",
+      "label": "柴堆",
+      "footAnchor": [
+        1360,
+        745
+      ],
+      "standingHeightPx": 389,
+      "facing": "朝右",
+      "occludedBy": "柴筐前缘",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "armchair": {
+      "room": "hearth_room",
+      "label": "扶手椅",
+      "footAnchor": [
+        665,
+        804
+      ],
+      "standingHeightPx": 410,
+      "facing": "面朝右上，坐姿",
+      "occludedBy": "扶手椅前缘、椅边小桌",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "radio": {
+      "room": "hearth_room",
+      "label": "收音机",
+      "footAnchor": [
+        342,
+        774
+      ],
+      "standingHeightPx": 399,
+      "facing": "向左看",
+      "occludedBy": "收音机所在矮柜",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "gramophone": {
+      "room": "hearth_room",
+      "label": "唱片机",
+      "footAnchor": [
+        210,
+        705
+      ],
+      "standingHeightPx": 374,
+      "facing": "朝左",
+      "occludedBy": "机器罩布",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "window": {
+      "room": "observation_room",
+      "label": "雪窗",
+      "footAnchor": [
+        805,
+        734
+      ],
+      "standingHeightPx": 385,
+      "facing": "面向窗",
+      "occludedBy": "窗台前沿",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "windowsill": {
+      "room": "observation_room",
+      "label": "窗台",
+      "footAnchor": [
+        670,
+        740
+      ],
+      "standingHeightPx": 387,
+      "facing": "面向窗",
+      "occludedBy": "窗框",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "desk": {
+      "room": "observation_room",
+      "label": "书桌",
+      "footAnchor": [
+        838,
+        812
+      ],
+      "standingHeightPx": 413,
+      "facing": "四分之三背影坐姿",
+      "occludedBy": "书桌前缘，手臂须露出",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "bookshelf": {
+      "room": "observation_room",
+      "label": "书架",
+      "footAnchor": [
+        258,
+        756
+      ],
+      "standingHeightPx": 393,
+      "facing": "面向书架",
+      "occludedBy": "书架侧面",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "instruments": {
+      "room": "observation_room",
+      "label": "仪器角",
+      "footAnchor": [
+        1234,
+        752
+      ],
+      "standingHeightPx": 391,
+      "facing": "面向气象记录",
+      "occludedBy": "仪器桌前沿",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "stove": {
+      "room": "kitchen_room",
+      "label": "料理台",
+      "footAnchor": [
+        774,
+        817
+      ],
+      "standingHeightPx": 415,
+      "facing": "向台面操作",
+      "occludedBy": "桌面近侧不可遮双臂",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "shelf": {
+      "room": "kitchen_room",
+      "label": "储物架",
+      "footAnchor": [
+        385,
+        742
+      ],
+      "standingHeightPx": 388,
+      "facing": "面向储架",
+      "occludedBy": "储物架前缘",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "workbench": {
+      "room": "kitchen_room",
+      "label": "工作台",
+      "footAnchor": [
+        1156,
+        807
+      ],
+      "standingHeightPx": 412,
+      "facing": "朝工作台",
+      "occludedBy": "台面近缘",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "door": {
+      "room": "kitchen_room",
+      "label": "正门与衣架",
+      "footAnchor": [
+        1458,
+        825
+      ],
+      "standingHeightPx": 418,
+      "facing": "朝正门",
+      "occludedBy": "门框",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "backdoor": {
+      "room": "kitchen_room",
+      "label": "后门和牵引绳",
+      "footAnchor": [
+        269,
+        755
+      ],
+      "standingHeightPx": 392,
+      "facing": "面向短廊",
+      "occludedBy": "门槛",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "springhouse": {
+      "room": "kitchen_room",
+      "label": "泉屋短廊口",
+      "footAnchor": [
+        281,
+        755
+      ],
+      "standingHeightPx": 392,
+      "facing": "朝短廊",
+      "occludedBy": "与后门共用入口（候选）；泉屋在外",
+      "visibleWhenSelectedRoom": "threshold_only",
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    },
+    "bed": {
+      "room": "bedroom",
+      "label": "床",
+      "footAnchor": [
+        863,
+        820
+      ],
+      "standingHeightPx": 416,
+      "facing": "侧卧，头向左",
+      "occludedBy": "被子前景层只露头肩",
+      "visibleWhenSelectedRoom": true,
+      "shadowLayer": "required_for_formal_art",
+      "approved": false
+    }
+  },
+  "exteriorLocations": {
+    "cellar": {
+      "room": null,
+      "note": "yard"
+    },
+    "yard": {
+      "room": null
+    },
+    "forest": {
+      "room": null
+    }
+  },
+  "characterPosePreviews": [
+    {
+      "room": "hearth_room",
+      "pose": "sitRead",
+      "locationId": "armchair"
+    },
+    {
+      "room": "observation_room",
+      "pose": "sitWrite",
+      "locationId": "desk"
+    },
+    {
+      "room": "kitchen_room",
+      "pose": "standWork",
+      "locationId": "stove"
+    },
+    {
+      "room": "bedroom",
+      "pose": "sleep",
+      "locationId": "bed"
+    }
+  ],
+  "productionLayers": [
+    "outside_snow_forest",
+    "neutral_structure",
+    "glass_cutout_mask",
+    "day_night",
+    "lamp_oil_per_room",
+    "electric_lamp_after_repair",
+    "hearth_flame_out_ember_low_mid_high",
+    "hearth_firelight_by_strength",
+    "doorway_spill_light",
+    "inventory_prop_states",
+    "display_slots",
+    "actor_male",
+    "contact_shadow",
+    "foreground_occlusion",
+    "weather_particles_outside"
+  ],
+  "screenValidationSizes": [
+    [
+      320,
+      180
+    ],
+    [
+      480,
+      270
+    ],
+    [
+      1280,
+      720
+    ]
+  ],
+  "visualPreviewLimitations": [
+    "SVG line art is a spatial proposal, not comparable to v1.2 high-fidelity illustrated concept",
+    "window exterior is temporarily painted into the SVG preview only, final artwork needs true alpha hole",
+    "actor poses are schematic silhouettes, not final separated transparent PNG",
+    "window/door coordinates need G5 visual reanchoring"
+  ],
+  "visibilityReference": {
+    "basis": "10 seeds x 60 game days, no outing or focus, location-level, NOT real sprite bbox",
+    "awakeRoomPercent": {
+      "hearth_room": 32.9,
+      "observation_room": 24.9,
+      "kitchen_room": 18.4,
+      "bedroom": 0.5
+    },
+    "allTimeRoomPercent": {
+      "hearth_room": 22.1,
+      "observation_room": 16.7,
+      "kitchen_room": 12.3,
+      "bedroom": 33.2
+    },
+    "defaultRoomProposal": "observation_room",
+    "defaultApproved": false
+  }
+}
