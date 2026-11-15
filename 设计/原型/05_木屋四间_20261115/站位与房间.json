@@ -279,9 +279,9 @@
         {
           "name": "largeExterior",
           "rect": {
-            "x": 359,
+            "x": 391,
             "y": 109,
-            "width": 863,
+            "width": 777,
             "height": 359
           },
           "status": "visual_candidate_not_true_transparent_cutout",

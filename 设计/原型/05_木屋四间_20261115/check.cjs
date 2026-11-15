@@ -38,7 +38,7 @@ for (const id of ids) {
   }
 }
 assert.equal(manifest.rooms.observation_room.windows[0].rect.width, 818);
-assert.equal(maxWindowWidth, 863, "bedroom window may be wider in pixels while observation remains narrative focus");
+assert.equal(maxWindowWidth, 818, "observation room must have the largest exterior window");
 assert.equal(displays, 6, "all six 03 display slots must stay empty");
 assert.deepEqual(manifest.characterPosePreviews.map(x=>x.pose), ["sitRead","sitWrite","standWork","sleep"]);
 assert(fs.existsSync(path.join(here, "房间平面示意.svg")));
