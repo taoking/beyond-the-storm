@@ -142,7 +142,13 @@
               ]
             ]
           ],
-          "coordinateSystem": "2560x1440 canvas pixels"
+          "coordinateSystem": "2560x1440 canvas pixels",
+          "frameLeakGuard": {
+            "method": "inside-frame polygon envelopes + blue-scene-only residual classification",
+            "mask": "glass_mask.png",
+            "maxExpansionPx": 100,
+            "purpose": "preserve warm wooden frames and foreground objects while clearing surviving exterior scenery"
+          }
         }
       ],
       "doorways": [
@@ -303,7 +309,13 @@
               ]
             ]
           ],
-          "coordinateSystem": "2560x1440 canvas pixels"
+          "coordinateSystem": "2560x1440 canvas pixels",
+          "frameLeakGuard": {
+            "method": "inside-frame polygon envelopes + blue-scene-only residual classification",
+            "mask": "glass_mask.png",
+            "maxExpansionPx": 100,
+            "purpose": "preserve warm wooden frames and foreground objects while clearing surviving exterior scenery"
+          }
         }
       ],
       "doorways": [
@@ -449,7 +461,13 @@
               ]
             ]
           ],
-          "coordinateSystem": "2560x1440 canvas pixels"
+          "coordinateSystem": "2560x1440 canvas pixels",
+          "frameLeakGuard": {
+            "method": "inside-frame polygon envelopes + blue-scene-only residual classification",
+            "mask": "glass_mask.png",
+            "maxExpansionPx": 100,
+            "purpose": "preserve warm wooden frames and foreground objects while clearing surviving exterior scenery"
+          }
         }
       ],
       "doorways": [
@@ -620,7 +638,13 @@
               ]
             ]
           ],
-          "coordinateSystem": "2560x1440 canvas pixels"
+          "coordinateSystem": "2560x1440 canvas pixels",
+          "frameLeakGuard": {
+            "method": "inside-frame polygon envelopes + blue-scene-only residual classification",
+            "mask": "glass_mask.png",
+            "maxExpansionPx": 100,
+            "purpose": "preserve warm wooden frames and foreground objects while clearing surviving exterior scenery"
+          }
         }
       ],
       "doorways": [

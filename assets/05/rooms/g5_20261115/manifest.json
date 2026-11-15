@@ -155,7 +155,7 @@
           ]
         ]
       ],
-      "glassCoverage": 0.19459,
+      "glassCoverage": 0.2033,
       "files": [
         "actor_contact.webp",
         "actor_male_pose.webp",
@@ -270,7 +270,7 @@
           ]
         ]
       ],
-      "glassCoverage": 0.29089,
+      "glassCoverage": 0.29828,
       "files": [
         "actor_contact.webp",
         "actor_male_pose.webp",
@@ -293,7 +293,8 @@
         "source_clean_1672x940.webp",
         "weather_blizzard.webp",
         "weather_snow.webp"
-      ]
+      ],
+      "note": "light-source appearance extinguished from baseline"
     },
     "kitchen_room": {
       "source": "a_highly_detailed_realistic_hand_painted_wood_cab_3_batch_3.png",
@@ -363,7 +364,7 @@
           ]
         ]
       ],
-      "glassCoverage": 0.15925,
+      "glassCoverage": 0.17161,
       "files": [
         "actor_contact.webp",
         "actor_male_pose.webp",
@@ -472,7 +473,7 @@
           ]
         ]
       ],
-      "glassCoverage": 0.22021,
+      "glassCoverage": 0.24879,
       "files": [
         "actor_contact.webp",
         "actor_male_pose.webp",
@@ -512,8 +513,8 @@
     },
     {
       "file": "bedroom/day_preview.webp",
-      "bytes": 496074,
-      "sha256": "897bbd98ff25b6077ce1c0bcd06c3dfe9fbacbff6660d04ecee9d3573fdef5f0"
+      "bytes": 486490,
+      "sha256": "2afec58fd0a77f0b77d00a7a578fd1edbd533ab0e5b1c4e7328de65e123ab727"
     },
     {
       "file": "bedroom/fire_spill_high.webp",
@@ -527,13 +528,13 @@
     },
     {
       "file": "bedroom/glass_mask.png",
-      "bytes": 7979,
-      "sha256": "9ac08d3797424267ab621be498763664e3e7648f8a1208842dd40d78127a10bc"
+      "bytes": 9189,
+      "sha256": "2d367c7e67722b1402a1460f2ee012bcaf09189c84e2cc0add4ce38493e85f45"
     },
     {
       "file": "bedroom/interior_rgba.webp",
-      "bytes": 2396422,
-      "sha256": "83f090c3d0b0ef392c345da7bd0cf97cc24154dd446a6ca28a4bdbe21bd2562c"
+      "bytes": 2148106,
+      "sha256": "b757688748c9028cd9795ee0a2f385ddf6032dd3aa7f52caaee888476790d90c"
     },
     {
       "file": "bedroom/night_ambient.webp",
@@ -552,13 +553,13 @@
     },
     {
       "file": "bedroom/outside_winter_day_rgba.webp",
-      "bytes": 677338,
-      "sha256": "edfec25e347a220af30cecddbd2de8d55b4e9d315f672d1c7cf8f33c9bc1ccf2"
+      "bytes": 667874,
+      "sha256": "2edfd505bf2f810db9e577094f42a2be0b3926fb9c2fe4957c32445ed4cc9ee6"
     },
     {
       "file": "bedroom/outside_winter_night_rgba.webp",
-      "bytes": 495824,
-      "sha256": "410ad90fae4dcca24e8d4759973247e6e13fdd0e7798f13bafce3e3979e019e3"
+      "bytes": 602040,
+      "sha256": "4d2a8f952c349207ba8e104e05d016929f00a6adced5bdb4eed20e82b0f2b13b"
     },
     {
       "file": "bedroom/quilt_thick.webp",
@@ -597,8 +598,8 @@
     },
     {
       "file": "hearth_room/day_preview.webp",
-      "bytes": 577138,
-      "sha256": "4a84f0342165545dd77f236f303557d9261dd464545b7a6ec53d4033fb06915f"
+      "bytes": 567014,
+      "sha256": "197903fece62a52eb0f389e9b7fedf85ed4595d90d00aa38474ff60909196ca0"
     },
     {
       "file": "hearth_room/fire_flame_ember.webp",
@@ -627,13 +628,13 @@
     },
     {
       "file": "hearth_room/glass_mask.png",
-      "bytes": 6861,
-      "sha256": "68fcc8383999fa6f8996af9a30efc65399620fdb836c16b3520ec5515e851592"
+      "bytes": 7735,
+      "sha256": "2056f92d24ed6629de1f3afffcad3b61f91a089170576d1ca076476d63fee1f5"
     },
     {
       "file": "hearth_room/interior_rgba.webp",
-      "bytes": 2646032,
-      "sha256": "3c11e92f195a024836e3fa4ffc4c04488629f39902e55e518567ee3f63eb0807"
+      "bytes": 2480224,
+      "sha256": "6f3f4820e3203b032fb0726183abf465d4f412f8bea6ec46b14d84549eb0471b"
     },
     {
       "file": "hearth_room/night_ambient.webp",
@@ -652,13 +653,13 @@
     },
     {
       "file": "hearth_room/outside_winter_day_rgba.webp",
-      "bytes": 700462,
-      "sha256": "0634774fe75447582ff216762290a2d93cb181e443564da28e274ba30b9c66bd"
+      "bytes": 625080,
+      "sha256": "97a79bc03b89204f9fa21cfbac7d034c8c242bcd223c7f808c29caae8442dfb8"
     },
     {
       "file": "hearth_room/outside_winter_night_rgba.webp",
-      "bytes": 521692,
-      "sha256": "f3c8e29d13d566007ca0f56d9322b8ebaaab8d1aa0fdce8d578776c8a6e90854"
+      "bytes": 555488,
+      "sha256": "4144f48d3aa844275db829f33790309b3f98e2c467bdb21fb007448031ece315"
     },
     {
       "file": "hearth_room/snack_plate.webp",
@@ -717,13 +718,13 @@
     },
     {
       "file": "kitchen_room/coat.webp",
-      "bytes": 34564,
-      "sha256": "59f469702d449f262d65318e1dca789397fc5474b0721e2c0711f67fe3917c71"
+      "bytes": 56266,
+      "sha256": "f86f79be0d0e3182b9826161fb580ccf2b96a9e07cc33abae396d220d750ce1c"
     },
     {
       "file": "kitchen_room/day_preview.webp",
-      "bytes": 552064,
-      "sha256": "afeb1fcd9541fe9f102a409bb0a6c07abc1ac7818c309b8a9940525e6ebe9d0a"
+      "bytes": 539328,
+      "sha256": "a64b1bacface128d65f18581c423f369e089af2a74a60d25a78b8529d5c3c910"
     },
     {
       "file": "kitchen_room/fire_spill_high.webp",
@@ -737,8 +738,8 @@
     },
     {
       "file": "kitchen_room/glass_mask.png",
-      "bytes": 5696,
-      "sha256": "2213c3f06a194134a0e7d20b51129d34720705c98b483c7b43899c5d1137bce8"
+      "bytes": 6189,
+      "sha256": "280cc342a304b6cbf2a242883c72fa4777e53601e17202fbd51cc35aa5047fea"
     },
     {
       "file": "kitchen_room/herbs.webp",
@@ -747,8 +748,8 @@
     },
     {
       "file": "kitchen_room/interior_rgba.webp",
-      "bytes": 2705750,
-      "sha256": "7e04c167ef47bd55c27da78004ee7171ea2b70b2b3e6cf5fede9ba7a994ef19d"
+      "bytes": 2577858,
+      "sha256": "ebdbb257a4a2bc95ceca7a61c7d607a0da8e32df51f327fbe3703f077c55ca8f"
     },
     {
       "file": "kitchen_room/night_ambient.webp",
@@ -767,13 +768,13 @@
     },
     {
       "file": "kitchen_room/outside_winter_day_rgba.webp",
-      "bytes": 512138,
-      "sha256": "6378cf7eea2f29cdca486264aa20c8f2179bce5ffbe9df16ef802deeabc162ec"
+      "bytes": 472108,
+      "sha256": "89258079859694aef685ebaa5e0b869a7db90c7aeea41157c56c72d2e92ef2fb"
     },
     {
       "file": "kitchen_room/outside_winter_night_rgba.webp",
-      "bytes": 377480,
-      "sha256": "b9a862b2da90b5ee42fa86c8dc6eec673b73d1a257e94c15e1efa3e519f344fe"
+      "bytes": 422474,
+      "sha256": "39ac2bb25d688d19fdda8cb5280ee9d6749e866971bf903aa6956a3f571e4174"
     },
     {
       "file": "kitchen_room/source_clean_1672x940.webp",
@@ -832,8 +833,8 @@
     },
     {
       "file": "observation_room/day_preview.webp",
-      "bytes": 618792,
-      "sha256": "4dd97924b8a174789cfa25ba9d0316531f8e48bc2ea6f2502c1c31b29c67d995"
+      "bytes": 602084,
+      "sha256": "267a2eae36ceddf1ac52d20176c02c92cf50c55d23b42c718cce617710a3c864"
     },
     {
       "file": "observation_room/fire_spill_high.webp",
@@ -847,8 +848,8 @@
     },
     {
       "file": "observation_room/glass_mask.png",
-      "bytes": 6206,
-      "sha256": "c40b57831f9e085abcdb33994d311af4552ab8e638236714184bd60783004328"
+      "bytes": 6519,
+      "sha256": "8909a70c1f760c733c45392b9db897d12b821da2e087622e6df62ad2ae428f0a"
     },
     {
       "file": "observation_room/heater_flame_on.webp",
@@ -857,8 +858,8 @@
     },
     {
       "file": "observation_room/interior_rgba.webp",
-      "bytes": 2475062,
-      "sha256": "b417d530bba1e830d7115a7bfe2c79d8913e0d8466be6a4f8a7a98654106df43"
+      "bytes": 2325140,
+      "sha256": "47ddf410ce4f09fbc23735fdef5541bffe5090f06a4bbb1f5f3481d598836d2d"
     },
     {
       "file": "observation_room/map.webp",
@@ -882,13 +883,13 @@
     },
     {
       "file": "observation_room/outside_winter_day_rgba.webp",
-      "bytes": 894650,
-      "sha256": "b3ad4d1bb5e4f6f9553858116964be435025961b357c887d3b8a785f409e2a88"
+      "bytes": 753982,
+      "sha256": "d8de3ca84d6e8a18fe546443d6d4d70f9d3b22394be722de3247b2f151ab5859"
     },
     {
       "file": "observation_room/outside_winter_night_rgba.webp",
-      "bytes": 664638,
-      "sha256": "f7e51494656aa5a477dd86c47f57843268a2b0b7813109201dba5d6fd32ebcc6"
+      "bytes": 693648,
+      "sha256": "37b665713ee26580a74050fcaa67d7e67f502febe466746f1f334a2d0fcf301a"
     },
     {
       "file": "observation_room/source_clean_1672x940.webp",
@@ -942,6 +943,9 @@
     "fire": "three distinct curved-glow states",
     "stock": "woven baskets and folded fabric sacks",
     "calm": "median-cleaned baked snow; manual cleanup still recommended",
-    "nativeG5": "not passed; sources retain 1672x941 provenance"
+    "nativeG5": "not passed; sources retain 1672x941 provenance",
+    "frameGuard": "extra hand-restricted cold-scene cleanup after photo QA",
+    "heater": "all luminous core pixels extinguished; independent on-state overlay",
+    "reviewStatus": "visual QA snapshots regenerated; native G5/manual painterly pass still pending"
   }
 }
