@@ -1,0 +1,117 @@
+{
+  "schema": "beyond-the-storm/05-four-room-lookdev-illustrations/v1",
+  "date": "2026-11-15",
+  "branch": "gpt/05-four-rooms-large-windows-20261115",
+  "status": "HIGH_DETAIL_ARTWORK_DELIVERED__G5_TECHNICAL_GATE_NOT_PASSED",
+  "authority": [
+    "HANDOFF.md §4.1",
+    "木屋分四间任务单.md",
+    "设计/03_主要内容.md §3.1",
+    "2026-11-15 user's explicit request: generate high-definition illustrations"
+  ],
+  "technical": {
+    "originalGenerationPixels": [
+      1672,
+      941
+    ],
+    "croppedOriginalRatio": [
+      1672,
+      940
+    ],
+    "publishedWebpPixels": [
+      2560,
+      1440
+    ],
+    "publishedIsResampled": true,
+    "publishedIsNativeG5": false,
+    "publishedCompression": "WebP quality 84",
+    "windowTransparency": false,
+    "actorSeparate": false,
+    "dayNightSeparate": false,
+    "inventorySeparate": false,
+    "fireSeparate": false,
+    "physicalRoomStageCount": 4,
+    "notes": "This artwork may be displayed for style approval, but must NOT be used as final neutral 06 Snapshot-driven G5 clean plates."
+  },
+  "rooms": [
+    {
+      "id": "hearth_room",
+      "name": "炉间",
+      "file": "炉间_高清展示_2560x1440.webp",
+      "gitBlobSha": "f355273dcb97ae078463d52b358012e4c1ecc3be",
+      "bytes": 468098,
+      "summary": "唯一起居柴炉（炉膛未燃）、大窗雪林、扶手椅、收音机与唱片机",
+      "actorBaked": false,
+      "g5BlockingIssues": [
+        "日光与天气烘焙",
+        "窗外不是独立透明层",
+        "毛毯等可变物体已出现在画面内"
+      ],
+      "acceptedByUser": false
+    },
+    {
+      "id": "observation_room",
+      "name": "观测间",
+      "file": "观测间_高清展示_2560x1440.webp",
+      "gitBlobSha": "c2d37a7fb4849199b02761d6ad6a6841ba299ec3",
+      "bytes": 425778,
+      "summary": "全屋最大的雪窗、气象仪器、望远镜与记录工作台",
+      "actorBaked": true,
+      "g5BlockingIssues": [
+        "人物烘焙",
+        "灯火已点亮",
+        "玻璃与天气未分离",
+        "书桌上有活动状态物品"
+      ],
+      "acceptedByUser": false
+    },
+    {
+      "id": "kitchen_room",
+      "name": "灶间",
+      "file": "灶间_高清展示_2560x1440.webp",
+      "gitBlobSha": "99c1cd4e530d7f104b04ee8dd75f31ab4016c5ba",
+      "bytes": 531358,
+      "summary": "宽雪景窗、料理台、食材储物架和站姿做饭角色",
+      "actorBaked": true,
+      "g5BlockingIssues": [
+        "人物烘焙",
+        "灯火与库存状态烘焙",
+        "画面中额外炉具需调整成仅料理台",
+        "正后门结构需复核",
+        "玻璃与天气未分离"
+      ],
+      "acceptedByUser": false
+    },
+    {
+      "id": "bedroom",
+      "name": "卧室",
+      "file": "卧室_高清展示_2560x1440.webp",
+      "gitBlobSha": "e385b26099538c0f995d66df646b07c03a5d6754",
+      "bytes": 347106,
+      "summary": "宽雪窗、完整床、床头柜、夜间雪光与人物休息姿态",
+      "actorBaked": true,
+      "g5BlockingIssues": [
+        "人物烘焙在坐姿而非被中睡姿",
+        "灯火与厚被已烘焙",
+        "窗外没有独立透明层"
+      ],
+      "acceptedByUser": false
+    }
+  ],
+  "review": {
+    "roomSelection": "manual only, no follow",
+    "fourLargeWindows": true,
+    "largestWindowIntended": "observation_room",
+    "fixedSixDisplaysNeedRepainting": true,
+    "onlyMaleCharacter": "technical requirement, visual references have inconsistent identity",
+    "singleHearth": "hearth is only allowed flame / kitchen stove is preparation counter",
+    "defaultRoomProposed": "observation_room"
+  },
+  "next": [
+    "user reviews artwork appearance and room proportions",
+    "G5 repaint each room as true original 2560×1440 empty neutral clean plate",
+    "separate actual transparent window holes and exterior forest/weather",
+    "remove baked actor/lamps/states and draw male actor sprites, occluders/shadows",
+    "Claude checks rooms, anchors and Snapshot rendering at 320/480/1280"
+  ]
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900"><defs><linearGradient id="bg" x2=".7" y2="1"><stop stop-color="#172a3e"/><stop offset="1" stop-color="#30475a"/></linearGradient></defs>
+<rect width="1600" height="900" fill="url(#bg)"/><text x="55" y="69" fill="#f3e5cf" font-size="40" font-family="sans-serif">风雪之外 · 四间木屋平面示意 / 大窗版</text>
+<g stroke="#e1c3a0" stroke-width="11"><rect x="505" y="88" width="520" height="238" fill="#826d58"/><rect x="80" y="326" width="425" height="510" fill="#856e59"/><rect x="505" y="326" width="520" height="510" fill="#aa8564"/><rect x="1025" y="326" width="490" height="510" fill="#84654d"/></g>
+<g fill="#e8d8bd" font-size="32" font-family="sans-serif"><text x="720" y="162">卧室</text><text x="183" y="402">观测间</text><text x="690" y="405">炉间</text><text x="1202" y="405">灶间</text></g>
+<g fill="#d2b999" font-size="23" font-family="sans-serif"><text x="592" y="225">完整大床 · 床头</text><text x="136" y="487">雪窗 / 书桌</text><text x="139" y="533">书架 / 仪器</text><text x="585" y="500">铸铁柴炉（唯一）</text><text x="586" y="553">扶手椅、柴堆</text><text x="582" y="600">收音机、唱片机</text><text x="1115" y="490">料理台 / 储架</text><text x="1112" y="532">工作台 / 门</text></g>
+<!-- Warm indoor door openings in the shared partition walls -->
+<g fill="#f7e9d5"><rect x="665" y="312" width="205" height="30"/><rect x="490" y="549" width="30" height="164"/><rect x="1011" y="549" width="27" height="164"/></g>
+<!-- Large exterior window proposals; not additional logic activity locations -->
+<g fill="#99d7e5" stroke="#5d90a4" stroke-width="4"><rect x="605" y="77" width="322" height="20"/><rect x="70" y="461" width="20" height="318"/><rect x="603" y="828" width="344" height="17"/><rect x="1510" y="558" width="15" height="218"/><rect x="1120" y="315" width="306" height="19"/></g>
+<!-- Kitchen front exit and shared rear/covered walkway -->
+<g stroke="#f9edda" stroke-width="11" stroke-linecap="round"><path d="M1517 425L1574 425"/><path d="M1230 840L1230 878"/></g>
+<g fill="#f4e3cd" font-size="22" font-family="sans-serif"><text x="1430" y="450">正门→院子</text><text x="1254" y="883">后门→短廊→泉屋 / 防风林</text><text x="75" y="876">地窖在室外院子，不在四间画面内</text></g>
+<g font-family="sans-serif" font-size="22" fill="#91d8e6"><text x="78" y="258">蓝色：尽量大的外窗（四间均有）</text></g>
+<g font-family="sans-serif" font-size="22" fill="#f7e2ce"><text x="83" y="294">浅色：门洞，观测 / 卧室 / 灶间都通炉间</text></g>
+</svg>
