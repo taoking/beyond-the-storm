@@ -16,6 +16,7 @@ assert.deepEqual([manifest.canvas.width, manifest.canvas.height], [1600, 900]);
 assert.deepEqual(manifest.screenValidationSizes, [[320,180],[480,270],[1280,720]]);
 assert.equal(Object.keys(manifest.locations).length, 17);
 assert.equal(manifest.architecture.centralRoom, "hearth_room");
+assert.equal(manifest.locations.springhouse.room, null, "springhouse is outdoors, not a kitchen actor location");
 let displays = 0;
 let maxWindowWidth = 0;
 for (const id of ids) {
