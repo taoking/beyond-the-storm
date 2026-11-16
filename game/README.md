@@ -17,7 +17,7 @@ npm run dev         # 灰盒界面，http://localhost:5173
 npm run build       # 类型检查 + 打包到 dist/
 npm run longrun     # 无人值守长跑，对照 02 第 5.7 节的验收目标。可加 --runs 300 --years 8 --case bare（outings 是带他出门的那一种）
 npm run sample      # 打印头几天的动作流水：npm run sample -- 3 2（种子 3，2 天）
-node tools/report.ts  # 人物可见率、活动密度、时间配比
+node tools/report.ts  # 人物可见率、活动密度、时间配比、地点 × 姿态 × 房间（约 10 秒）。可加 --runs 40 --days 60
 node tools/wild-smoke.mjs  # 真浏览器冒烟（无界面 Chrome）：野外走、采、回家。先 npm run dev
 ```
 

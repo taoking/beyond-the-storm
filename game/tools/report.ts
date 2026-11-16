@@ -1,11 +1,13 @@
-// 06 第 4 节的指标：人物可见率、活动密度、时间配比。给 04/05 做构图和回访设计用。
+// 06 第 4 节的指标：人物可见率、活动密度、时间配比，加上「地点 × 姿态 × 房间」。给 04/05 做构图、站位和出图用。
 // 用法：node tools/report.ts [--runs N] [--days D]
 // 采样条件：正常陪伴、不出门、不专注（没有任务类别的轻推），他照自己的习惯做项目；从入冬第一天起。
 import { seasonOf, SEASON_NAME } from "../src/core/calendar.ts";
 import { PLACES, type PlaceId } from "../src/core/content.ts";
+import { localCalendar } from "../src/core/focus.ts";
 import { advanceCompanionMinutes, newGame } from "../src/core/game.ts";
-import { placesIn, ROOM_IDS, ROOMS, roomOf } from "../src/core/rooms.ts";
+import { LOCATIONS, placesIn, ROOM_IDS, ROOMS, roomOf, type RoomId } from "../src/core/rooms.ts";
 import { createTelemetry, type Telemetry } from "../src/core/telemetry.ts";
+import { present } from "../src/core/view.ts";
 
 const args = process.argv.slice(2);
 const arg = (name: string, fallback: number): number => (args.includes(`--${name}`) ? Number(args[args.indexOf(`--${name}`) + 1]) : fallback);
@@ -30,6 +32,9 @@ const typeCount: Record<string, number> = {};
 /** 现实 2 小时 = 醒着的 480 个游戏分钟。每个这样的窗口里有几件「值得一提」以上的事、换了几次动作 */
 const notablePer2h: number[] = [];
 const switchesPer2h: number[] = [];
+/** 他醒着时画面上的样子：键是「地点|姿态|道具」，从 present() 的 stage 取，跟画面读的是同一份 */
+interface PoseCell { place: PlaceId; room: RoomId | null; pose: string; prop: string; minutes: number; acts: Record<string, number> }
+const poseCells = new Map<string, PoseCell>();
 
 for (let seed = 0; seed < runs; seed++) {
   const g = newGame(seed);
@@ -48,6 +53,23 @@ for (let seed = 0; seed < runs; seed++) {
       if (w.actor.activity !== lastAct) windowSwitches += 1;
     }
     lastAct = w.actor.activity;
+    // 跟 telemetry 的可见率同一个分母：醒着、没出门
+    if (!w.actor.asleep && !w.actor.away) {
+      const st = present(g, 0, localCalendar).stage;
+      if (st.place) {
+        const pose = st.pose ?? "（无）";
+        const prop = st.prop ?? "—";
+        const key = `${st.place}|${pose}|${prop}`;
+        const cell = poseCells.get(key) ?? { place: st.place, room: st.room, pose, prop, minutes: 0, acts: {} };
+        cell.minutes += 1;
+        // 闲暇、项目、请求再细到哪一种，方便查某个姿态是哪件事给的
+        const data = w.actor.activity?.data;
+        const sub = st.activity === "leisure" || st.activity === "project" ? data?.id : st.activity === "request" ? data?.kind : undefined;
+        const act = `${st.activity ?? "（无）"}${sub ? `:${sub}` : ""}`;
+        cell.acts[act] = (cell.acts[act] ?? 0) + 1;
+        poseCells.set(key, cell);
+      }
+    }
     for (; seen < w.events.length; seen++) {
       const e = w.events[seen];
       typeCount[e.type] = (typeCount[e.type] ?? 0) + 1;
@@ -111,6 +133,36 @@ for (const [p, n] of Object.entries(total.placeAwake).sort((a, b) => b[1] - a[1]
   const room = roomOf(p as PlaceId);
   console.log(`| ${PLACES[p as PlaceId].name} | ${room ? ROOMS[room].name : "—"} | ${pct(n, total.awakeMinutes)} |`);
 }
+
+console.log("\n## 地点 × 姿态 × 房间\n");
+console.log("姿态和道具取自 present() 快照的 stage（画面就照它画人），分母同上：他醒着、没出门的时间。站位读 room_locations.json 的 footAnchor。\n");
+const POSES = ["sit", "sitRead", "sitWrite", "sitHold", "standWork", "standLook", "crouch", "walk", "sleep", "（无）"];
+const cells = [...poseCells.values()];
+const poseCols = POSES.filter((p) => cells.some((c) => c.pose === p));
+const roomRows: { name: string; room: RoomId | null }[] = [...ROOM_IDS.map((r) => ({ name: ROOMS[r].name, room: r })), { name: "四间都不在", room: null }];
+console.log("各间的姿态（占醒着的时间；一行加起来就是上面「各间看得见他」那一列）：\n");
+console.log(`| 房间 | ${poseCols.join(" | ")} | 合计 |`);
+console.log(`|---|${poseCols.map(() => "---").join("|")}|---|`);
+for (const { name, room } of roomRows) {
+  const inRoom = cells.filter((c) => c.room === room);
+  const sum = (p: string): number => inRoom.filter((c) => c.pose === p).reduce((n, c) => n + c.minutes, 0);
+  const all = inRoom.reduce((n, c) => n + c.minutes, 0);
+  console.log(`| ${name} | ${poseCols.map((p) => (sum(p) ? pct(sum(p), total.awakeMinutes) : "")).join(" | ")} | ${pct(all, total.awakeMinutes)} |`);
+}
+const placeMinutes: Partial<Record<PlaceId, number>> = {};
+for (const c of cells) placeMinutes[c.place] = (placeMinutes[c.place] ?? 0) + c.minutes;
+const roomOrder = (r: RoomId | null): number => (r ? ROOM_IDS.indexOf(r) : ROOM_IDS.length);
+console.log("\n逐条（地点按房间排，同一地点里按时间多少排；占这个地点 = 他在这个地点时有多少是这个姿态）：\n");
+console.log("| 房间 | 地点 | 站位 | 姿态 | 道具 | 占醒着的时间 | 占这个地点 | 主要动作 |");
+console.log("|---|---|---|---|---|---|---|---|");
+cells.sort((a, b) => roomOrder(a.room) - roomOrder(b.room) || (placeMinutes[b.place] ?? 0) - (placeMinutes[a.place] ?? 0) || a.place.localeCompare(b.place) || b.minutes - a.minutes);
+for (const c of cells) {
+  const foot = LOCATIONS[c.place]?.foot;
+  const acts = Object.entries(c.acts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${k} ${pct(n, c.minutes)}`).join("，");
+  console.log(`| ${c.room ? ROOMS[c.room].name : "—"} | ${PLACES[c.place].name} | ${foot ? foot.join(",") : "—"} | ${c.pose} | ${c.prop} | ${pct(c.minutes, total.awakeMinutes)} | ${pct(c.minutes, placeMinutes[c.place] ?? 0)} | ${acts} |`);
+}
+const unused = (Object.keys(LOCATIONS) as PlaceId[]).filter((p) => roomOf(p) && !placeMinutes[p]);
+if (unused.length) console.log(`\n有站位、但这次采样里他醒着没去过的地点：${unused.map((p) => `${PLACES[p].name}（${ROOMS[roomOf(p)!].name}）`).join("、")}。`);
 console.log("\n## 他的时间花在哪（占全部世界时间）\n");
 const catName: Record<string, string> = { sleep: "睡觉", necessity: "必要生活", chore: "活计", observe: "观测", project: "项目", small: "小事", leisure: "闲暇" };
 console.log("| 类别 | 占比 |\n|---|---|");
