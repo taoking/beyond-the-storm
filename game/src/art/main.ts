@@ -91,7 +91,7 @@ const ui = {
   props: new Set<string>(),
 };
 
-const SAVED = ["seed", "day", "minute", "time", "weather", "fire", "wood", "food", "lamp", "heater", "actor", "outside", "ovFoot", "ovPane", "ovDoor", "ovSlot", "ovActor", "ovSmall"];
+const SAVED = ["seed", "day", "minute", "time", "weather", "fire", "wood", "food", "jar", "oilLamp", "lamp", "heater", "actor", "outside", "ovFoot", "ovPane", "ovDoor", "ovSlot", "ovActor", "ovSmall"];
 const STORE = "bts-art-viewer";
 function save(): void {
   const o: Record<string, unknown> = { set: ui.set, room: ui.room, source: ui.source, props: [...ui.props] };
@@ -342,6 +342,8 @@ async function render(): Promise<void> {
       fire: val("fire") as ArtState["fire"],
       wood: Number(val("wood")) as ArtState["wood"],
       food: val("food") as ArtState["food"],
+      jar: Number(val("jar")) as ArtState["jar"],
+      oilLamp: on("oilLamp"),
       props: [...ui.props].filter(have),
       lamp: on("lamp"),
       heater: on("heater"),
@@ -406,7 +408,7 @@ $<HTMLSelectElement>("set").onchange = () => {
   ui.set = val("set");
   refresh();
 };
-for (const id of ["time", "weather", "fire", "wood", "food", "lamp", "heater", "actor", "dummy", "outside", "ovFoot", "ovPane", "ovDoor", "ovSlot", "ovActor", "ovSmall", "seed", "day", "minute"]) {
+for (const id of ["time", "weather", "fire", "wood", "food", "jar", "oilLamp", "lamp", "heater", "actor", "dummy", "outside", "ovFoot", "ovPane", "ovDoor", "ovSlot", "ovActor", "ovSmall", "seed", "day", "minute"]) {
   $(id).addEventListener(id === "minute" ? "input" : "change", () => void render());
 }
 const step = (min: number): void => {
