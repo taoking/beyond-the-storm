@@ -1,4 +1,5 @@
 // 存档：整局游戏就是一份 JSON。世界停住时它不变；重开以后从这一刻接着走，不补离开的时间。
+import { seasonOf } from "./calendar.ts";
 import { AREA_BY_ID } from "./content.ts";
 import { SAVE_VERSION, type Game } from "./game.ts";
 import { fullBody } from "./outing.ts";
@@ -37,6 +38,11 @@ function repair(g: Game): void {
   if (!ROOM_IDS.every((r) => typeof g.telemetry.visibleAwake[r] === "number")) g.telemetry.visibleAwake = emptyRooms();
   const w = g.world;
   w.wild ??= { taken: {}, harvested: {} };
+  // 还没记世界年开始时间的老存档：到今天为止的每一年都不知道对应哪段现实时间，年册的现实一栏照实说
+  if (!g.yearWalls) {
+    g.yearWalls = {};
+    for (let y = 0; y <= seasonOf(w.day).year; y++) g.yearWalls[y] = null;
+  }
   // 野外还只有「离家门几分钟」的老存档：带出去的柴捆按根放进背包，身体是满的，人在区域的入口
   const o = w.outing as (OutingState & { bundles?: number }) | null;
   if (o && !o.body) {

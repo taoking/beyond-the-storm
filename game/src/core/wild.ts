@@ -167,6 +167,8 @@ export function runWild(w: World, action: WildAction): WildResult {
     if (!spendOutdoor(w, target.homeMinutes, "road", notes, () => (w.outing!.minutesFromDoor += 1))) return done();
     const live = w.outing!;
     live.area = target.id;
+    const visits = (w.yearStats.visits ??= {});
+    visits[target.id] = (visits[target.id] ?? 0) + 1;
     live.pos = { ...target.entry };
     live.minutesFromDoor = minutesToDoor(target, target.entry);
     return done();

@@ -82,6 +82,8 @@ export interface Task {
   category: TaskCategory;
   done: boolean;
   totalMs: number;
+  /** 勾完的那一刻（墙上钟）；年册按它把任务归到那一年的现实时间里。老存档没有 */
+  doneWall?: number;
 }
 
 export interface Spine {
@@ -514,6 +516,7 @@ export function completeTask(fs: FocusState, id: number, wall: number, cal: Cale
   const task = fs.tasks.find((t) => t.id === id);
   if (!task || task.done) return false;
   task.done = true;
+  task.doneWall = wall;
   if (fs.settings.taskId === id) fs.settings.taskId = null;
   addSpine(fs, task.category, cal.dateKey(wall), task.name, wall);
   return true;

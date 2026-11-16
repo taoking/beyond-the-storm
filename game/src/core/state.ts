@@ -164,6 +164,8 @@ export interface YearPage {
   repairsDone: string[];
   harvests: number;
   outings: number;
+  /** 这一年进了哪些野外区域、各几次（区域 id → 次数）。老存档没有 */
+  visits?: Record<string, number>;
 }
 
 /** 场景里的小痕迹：真实动作留下的，过一阵自己消失 */
@@ -304,7 +306,7 @@ export function emptyDay(): DayState {
 }
 
 export function emptyYearPage(year: number, kind: YearKind): YearPage {
-  return { year, kind, thriftDays: 0, richDays: 0, longestBlizzard: 0, repairsDone: [], harvests: 0, outings: 0 };
+  return { year, kind, thriftDays: 0, richDays: 0, longestBlizzard: 0, repairsDone: [], harvests: 0, outings: 0, visits: {} };
 }
 
 export interface NewWorldOptions {

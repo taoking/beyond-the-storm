@@ -1,4 +1,5 @@
 // 灰盒界面：把 view.ts 的投影画出来，把点击变成命令。没有游戏规则在这里。
+import { durationText, focusStats, yearbook } from "../core/annals.ts";
 import { clockText } from "../core/calendar.ts";
 import { CONFIG } from "../core/config.ts";
 import { CATEGORY_NAME, CROPS, DEFAULT_STYLE, PLACES, STYLES, type TaskCategory } from "../core/content.ts";
@@ -18,7 +19,7 @@ const pct = (a: number, b: number): string => (b > 0 ? `${((a / b) * 100).toFixe
 
 const rt = startRuntime();
 let showToday = false;
-let journalTab: "world" | "real" = "world";
+let journalTab: "world" | "real" | "year" = "world";
 /** 看哪一间是玩家选的，不跟着他走（03 第 3.1 节）；只是这个窗口的画面，不进存档 */
 let room: RoomId = DEFAULT_ROOM;
 
@@ -172,26 +173,112 @@ function renderInspect(s: Snapshot, g: Game): string {
       <div class="dim">${c.ok ? `最多带 ${c.maxRations} 份干粮、${c.maxBundles} 捆柴${c.wrapUp ? `；收尾 ${c.wrapUp} 个游戏分钟` : ""}` : esc(REFUSAL_TEXT[c.reason!])}</div>`);
   }
 
-  h.push(`<h3>手记</h3><div class="row"><button data-ui="tabWorld">日子</button><button data-ui="tabReal">专注</button></div>`);
+  h.push(renderJournal(g));
+  return h.join("");
+}
+
+/** 手记：日子、专注（含统计）、年册三栏。打开哪一栏才算哪一栏，只读（04 第 8 节） */
+function renderJournal(g: Game): string {
+  const tab = (id: string, label: string, on: boolean): string => `<button data-ui="${id}"${on ? ' class="on"' : ""}>${label}</button>`;
+  const h: string[] = [
+    `<h3>手记</h3><div class="row tabs">${tab("tabWorld", "日子", journalTab === "world")}${tab("tabReal", "专注", journalTab === "real")}${tab("tabYear", "年册", journalTab === "year")}</div>`,
+  ];
   if (journalTab === "world") {
-    const days = [...w.summaries].slice(-8).reverse();
+    const days = [...g.world.summaries].slice(-8).reverse();
     h.push(days.map((d) => `<div>${esc(d.text)}</div>`).join("") || '<div class="dim">第一天还没过完。</div>');
+  } else if (journalTab === "real") {
+    h.push(renderFocusStats(g));
   } else {
-    const f = g.focus;
-    h.push(`<div class="dim">累计 ${(f.stats.totalMs / 3_600_000).toFixed(1)} 小时 · ${f.stats.rounds} 次 · ${f.shares.total} 份 · 书脊 ${f.spines.length} 本</div>`);
+    h.push(renderYearbook(g));
+  }
+  return h.join("");
+}
+
+const WEEKDAY = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+/** 03 第 4.3 节：学习阅读蓝、编程工作灰绿、写作创作赭红、其他米白 */
+const SPINE_COLOR: Record<TaskCategory, string> = { study: "#5d7fa8", code: "#7f9a86", write: "#a8614a", other: "#d8ccb4" };
+
+/** 统计页：今天、本周、按类别、按任务，再加累计和留下的东西。只摆事实，不比较、不提下一档还差多少 */
+function renderFocusStats(g: Game): string {
+  const f = g.focus;
+  const st = focusStats(f, Date.now(), cal);
+  const line = (t: { ms: number; rounds: number; shares: number }): string =>
+    t.ms > 0 || t.shares > 0 ? `${durationText(t.ms)} · ${t.rounds} 次 · ${t.shares} 份` : '<span class="dim">还没有专注</span>';
+  const h: string[] = [];
+  h.push(`<div class="stat"><b>今天</b> ${line(st.today)}</div>`);
+  const days = st.week.days.map((d, i) => (d.ms > 0 ? `${WEEKDAY[i]} ${durationText(d.ms)}` : "")).filter(Boolean);
+  h.push(`<div class="stat"><b>本周</b> ${line(st.week)}${days.length ? `<div class="dim">${days.join("　")}</div>` : ""}</div>`);
+  const cats = st.byCategory.filter((c) => c.ms > 0);
+  if (cats.length) {
     h.push(
-      [...f.records]
-        .slice(-8)
-        .reverse()
-        .map((r) => {
-          const task = f.tasks.find((t) => t.id === r.taskId);
-          return `<div>${r.date} · ${Math.round(r.effectiveMs / 60_000)} 分钟 · ${esc(task ? task.name : CATEGORY_NAME[r.category])}${r.shares ? ` · ${r.shares} 份` : ""}${r.manualMs ? " · 含手动确认" : ""}${r.note ? ` · ${esc(r.note)}` : ""}</div>`;
-        })
-        .join("") || '<div class="dim">还没有专注记录。</div>',
+      `<table class="stats"><tr><th>类别</th><th>时长</th><th>次</th><th>份</th></tr>${cats
+        .map(
+          (c) =>
+            `<tr><td><i class="spine" style="background:${SPINE_COLOR[c.category]}"></i>${esc(c.name)}</td><td>${durationText(c.ms)}</td><td>${c.rounds}</td><td>${c.shares}</td></tr>`,
+        )
+        .join("")}</table>`,
     );
-    const open = f.tasks.filter((t) => !t.done);
-    if (open.length) h.push(`<div class="row">${open.map((t) => btn(`勾完：${t.name}`, "completeTask", [t.id])).join("")}</div>`);
-    h.push(f.journal.slice(-6).reverse().map((j) => `<div class="dim">${j.date} ${esc(j.text)}</div>`).join(""));
+  }
+  if (st.byTask.length) {
+    h.push(
+      `<table class="stats"><tr><th>任务</th><th>时长</th><th>次</th><th></th></tr>${st.byTask
+        .map(
+          (t) =>
+            `<tr><td>${esc(t.name)}</td><td>${t.ms ? durationText(t.ms) : "—"}</td><td>${t.rounds}</td><td>${t.done ? '<span class="dim">勾完了</span>' : btn("勾完", "completeTask", [t.id])}</td></tr>`,
+        )
+        .join("")}</table>`,
+    );
+  }
+  h.push(
+    `<div class="stat"><b>累计</b> ${durationText(st.total.ms)} · ${st.total.rounds} 次 · ${st.total.shares} 份 · 有过专注的日子 ${st.total.focusDays} 天</div>`,
+  );
+  const m = st.milestones;
+  const reached = [
+    m.hours.length ? `${m.hours.join("、")} 小时` : "",
+    m.rounds.length ? `${m.rounds.join("、")} 次` : "",
+    m.days.length ? `${m.days.join("、")} 天` : "",
+  ].filter(Boolean);
+  if (reached.length) h.push(`<div class="dim">到过的档：${reached.join("；")}</div>`);
+  const shelf = st.spines.shelf
+    .map((s) => `<i class="spine tall" style="background:${SPINE_COLOR[s.category]}" title="${esc(`${CATEGORY_NAME[s.category]} · ${s.date}`)}"></i>`)
+    .join("");
+  h.push(
+    `<div class="stat"><b>你的那一格</b> ${shelf ? `<span class="shelf">${shelf}</span>` : '<span class="dim">还空着</span>'}${
+      st.spines.archived ? `<span class="dim">　更早的 ${st.spines.archived} 本收进了纪念册</span>` : ""
+    }</div>`,
+  );
+  for (const k of st.keepsakes) h.push(`<div class="dim">${esc(k)}</div>`);
+
+  h.push("<h4>最近的专注</h4>");
+  h.push(
+    [...f.records]
+      .slice(-8)
+      .reverse()
+      .map((r) => {
+        const task = f.tasks.find((t) => t.id === r.taskId);
+        return `<div>${r.date} · ${Math.round(r.effectiveMs / 60_000)} 分钟 · ${esc(task ? task.name : CATEGORY_NAME[r.category])}${r.shares ? ` · ${r.shares} 份` : ""}${r.manualMs ? " · 含手动确认" : ""}${r.note ? ` · ${esc(r.note)}` : ""}</div>`;
+      })
+      .join("") || '<div class="dim">还没有专注记录。</div>',
+  );
+  h.push(
+    f.journal
+      .slice(-6)
+      .reverse()
+      .map((j) => `<div class="dim">${j.date} ${esc(j.text)}</div>`)
+      .join(""),
+  );
+  return h.join("");
+}
+
+/** 年册：过完的年一年一页，世界和现实两栏并排，不写成一个故事（02 第 11 节） */
+function renderYearbook(g: Game): string {
+  const book = yearbook(g, cal);
+  const h: string[] = [`<div class="dim">${esc(book.current.text)}</div>`];
+  for (const p of [...book.pages].reverse()) {
+    h.push(`<div class="yearpage"><h4>${esc(p.title)}</h4><div class="cols">
+      <div><div class="colhead">这一年</div>${p.world.map((l) => `<p>${esc(l)}</p>`).join("")}</div>
+      <div><div class="colhead">你这段时间的专注</div>${p.real.lines.map((l) => `<p>${esc(l)}</p>`).join("")}</div>
+    </div></div>`);
   }
   return h.join("");
 }
@@ -374,6 +461,9 @@ document.addEventListener("click", (ev) => {
       break;
     case "tabReal":
       journalTab = "real";
+      break;
+    case "tabYear":
+      journalTab = "year";
       break;
     case "reset":
       if (confirm("删掉这个存档，从入冬第一天重新开始？")) rt.reset();

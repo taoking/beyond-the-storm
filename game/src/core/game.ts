@@ -24,6 +24,7 @@ import {
 import { checkOuting, depart, REFUSAL_TEXT, REMINDER_TEXT, WARNING_TEXT, type OutdoorNote, type OutingCheck } from "./outing.ts";
 import { createWorld, hasEffect, stepMinute } from "./sim.ts";
 import { dayClock, type NewWorldOptions, type RequestKind, type World } from "./state.ts";
+import { noteWorldYear } from "./annals.ts";
 import { createTelemetry, sampleTelemetry, type Telemetry } from "./telemetry.ts";
 import { runWild, type WildAction } from "./wild.ts";
 
@@ -61,6 +62,8 @@ export interface Game {
   notices: Notice[];
   nextNoticeId: number;
   telemetry: Telemetry;
+  /** 每个世界年开始时的墙上钟（年 → 毫秒；null 是老存档里不知道）。年册的现实一栏按它分段，见 annals.ts */
+  yearWalls: Record<number, number | null>;
 }
 
 export interface Result {
@@ -83,6 +86,7 @@ export function newGame(seed: number, opt: NewWorldOptions = {}): Game {
     notices: [],
     nextNoticeId: 1,
     telemetry: createTelemetry(),
+    yearWalls: {},
   };
 }
 
@@ -165,6 +169,7 @@ export function advance(g: Game, hb: Heartbeat, cal: Calendar): FocusEvent[] {
     g.carry = worldRate(g) === rate ? over : 0;
     sampleTelemetry(g.telemetry, w);
   }
+  noteWorldYear(g, hb.wall);
   return events;
 }
 
@@ -335,6 +340,7 @@ export function cmdOutdoor(g: Game, wall: number, action: WildAction): Result {
     return no(r.reason!);
   }
   for (const n of r.notes) noteToNotice(g, wall, n);
+  noteWorldYear(g, wall);
   afterCollapseOrArrival(g);
   return OK;
 }

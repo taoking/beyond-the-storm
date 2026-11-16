@@ -38,6 +38,7 @@ src/core/      内核：纯逻辑，不碰 DOM、不读系统时钟，种子固�
   heartbeat.ts   「这段时间应用是不是一直在运行」的判定
   game.ts        一局游戏：四种世界状态、白名单命令、把现实时间交给专注和世界
   view.ts        只读投影：界面要显示的一切从这里拿
+  annals.ts      只读汇总：统计页（focusStats）和世界年册（yearbook），打开那一栏才算；另记每个世界年开始时的墙上钟
   visual.ts      G2 只读姿态/道具与独立氛围投影：不改世界规则和 RNG
   rooms.ts       木屋的四间：地点归哪间、窗、门洞、展示位、站位，读 assets/05/rooms/b1_20261116/room_locations.json
   telemetry.ts   可见率、时间配比这些不给玩家看的指标
@@ -47,13 +48,13 @@ src/art/       画面适配器，主界面和美术查看页共用（06 第 16.1
   layers.ts      纯逻辑：世界快照 → 画面状态 → 按顺序叠哪些图层、缺哪些、人形站在哪
   compose.ts     读图、按玻璃掩码裁窗外、画人形占位、逐级减半缩到画布（CSS 尺寸 × 屏幕倍率）
   main.ts        美术查看页（art.html，开发用，不进游戏）
-src/app/       灰盒界面：runtime.ts（心跳、存档、多窗口）、scene.ts（一次画一间，用 b1_20261116 的真图）、main.ts（面板、选房间）
+src/app/       灰盒界面：runtime.ts（心跳、存档、多窗口）、scene.ts（一次画一间，用 b1_20261116 的真图）、main.ts（面板、选房间、手记的日子/专注/年册三栏）
   probe/         真机验证日志（log.html，开发用）：recorder.ts 记、analyze.ts 判、page.ts 导出页；只记不改
 tests/         自动化测试，标题里写着对应 02/04/06 的哪一条
 tools/         长跑、采样、指标报告
 ```
 
-内核和界面之间只有两样东西：`game.ts` 里 `cmd` 开头的命令，和 `view.ts` 的 `present()`。换界面不用动内核。
+内核和界面之间只有两样东西：`game.ts` 里 `cmd` 开头的命令，和只读的投影（`view.ts` 的 `present()`，手记的统计和年册另从 `annals.ts` 拿）。换界面不用动内核。
 
 ## G2：画面与世界分离（06 v0.3、v0.3.1）
 
