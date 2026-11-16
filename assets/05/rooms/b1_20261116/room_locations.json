@@ -1349,7 +1349,17 @@
         "note": "no fuel on game start"
       },
       "status": "base_ready",
-      "source": "出图/批次1/观测间.png (Gemini, native 2560x1440, 2026-11-16)"
+      "source": "出图/批次1/观测间.png (Gemini, native 2560x1440, 2026-11-16)",
+      "stateLayers": {
+        "desk_work": "出图/批次2/观测间_书桌.png",
+        "cup": "出图/批次2/观测间_书桌.png",
+        "heater_flame_on": "出图/批次2/观测间_书桌.png",
+        "jar_1": "出图/批次2/观测间_罐子1.png",
+        "jar_2": "出图/批次2/观测间_罐子2.png",
+        "jar_3": "出图/批次2/观测间_罐子3.png",
+        "books_few": "出图/批次2/观测间_书架1.png",
+        "books_many": "出图/批次2/观测间_书架2.png"
+      }
     },
     "kitchen_room": {
       "name": "灶间",
