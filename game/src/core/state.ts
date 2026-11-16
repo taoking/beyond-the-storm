@@ -2,6 +2,8 @@
 import { CONFIG, type LifeTier, type WeatherTier, type YearKind } from "./config.ts";
 import {
   DEFAULT_STYLE,
+  emptyDisplay,
+  type DisplaySlotId,
   PROJECTS,
   type CropDef,
   type Goods,
@@ -32,6 +34,7 @@ export type ActivityKind =
   | "project"
   | "cones"
   | "swapStyle"
+  | "arrange"
   | "request"
   | "journal"
   | "leisure";
@@ -205,6 +208,8 @@ export interface OutingState {
   /** 最近一个动作；没动过是 null */
   last: WildAct | null;
   departedAt: number;
+  /** 这一趟拿到的藏品（KEEPSAKES 的 id）：不占背包格，到家（或昏倒醒来）才算拿到，不会丢 */
+  found: string[];
   /** 已经提过的返家提示，一趟里每种只提一次；cold、tired 回到警戒线以上会重新可提 */
   reminded: { dusk: boolean; night: boolean; late: boolean; cold: boolean; tired: boolean };
 }
@@ -215,6 +220,20 @@ export interface WildMemory {
   taken: Record<string, number>;
   /** 会恢复的点上次被采是哪一天 */
   harvested: Record<string, number>;
+}
+
+export interface KeepsakeItem {
+  /** 独一份的就是 id；能有好几件的（木雕）是 id#序号 */
+  uid: string;
+  id: string;
+  /** 拿到的那一天（到站以来第几天，从 0 起） */
+  day: number;
+}
+
+export interface ArrangeIntent {
+  slot: DisplaySlotId;
+  put: string | null;
+  take: string | null;
 }
 
 export interface World {
@@ -253,12 +272,18 @@ export interface World {
     keepCans: boolean;
     keepFuel: boolean;
     styleSwaps: { slot: StyleSlot; styleId: string }[];
+    /** 展示位上要摆上去 / 换下来的，他手头空了亲手去做；拿到新藏品时有空位也记在这里 */
+    arrange: ArrangeIntent[];
   };
   styles: Record<StyleSlot, string>;
   /** 得了份、还没放进罐里的小球果 */
   pendingCones: number;
   jar: { cones: number; fullJars: number };
   carvings: number;
+  /** 拿到的藏品，按拿到的先后（03 第 6.5 节）；带回的书也在这里，上书架 */
+  keepsakes: KeepsakeItem[];
+  /** 六处展示位上摆着的藏品（KeepsakeItem.uid），按摆上去的先后 */
+  display: Record<DisplaySlotId, string[]>;
   /** 现实这边传进来的轻推，只影响他闲暇时爱做什么 */
   nudge: { category: TaskCategory | null; onBreak: boolean };
   outing: OutingState | null;
@@ -377,11 +402,13 @@ export function createWorldShell(seed: number, opt: NewWorldOptions = {}): World
     plots: Array.from({ length: CONFIG.garden.plots }, plot),
     greenhouse: Array.from({ length: CONFIG.garden.greenhousePlots }, plot),
     projects,
-    intents: { pinned: [], request: null, keepCans: false, keepFuel: false, styleSwaps: [] },
+    intents: { pinned: [], request: null, keepCans: false, keepFuel: false, styleSwaps: [], arrange: [] },
     styles: { ...DEFAULT_STYLE },
     pendingCones: 0,
     jar: { cones: 0, fullJars: 0 },
     carvings: 0,
+    keepsakes: [],
+    display: emptyDisplay(),
     nudge: { category: null, onBreak: false },
     outing: null,
     wild: { taken: {}, harvested: {} },

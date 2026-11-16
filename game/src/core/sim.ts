@@ -5,6 +5,7 @@ import { dayPartOf, daysUntilWinter, seasonOf } from "./calendar.ts";
 import {
   CROP_BY_ID,
   CROPS,
+  DISPLAY_SLOTS,
   MATERIAL_NAME,
   PROJECT_BY_ID,
   PROJECTS,
@@ -16,6 +17,7 @@ import {
   type ProjectDef,
   type ProjectEffect,
 } from "./content.ts";
+import { acquireKeepsake, arrangeLabel, doArrange } from "./keepsakes.ts";
 import { chance, intBetween, pickWeighted } from "./rng.ts";
 import {
   bump,
@@ -674,7 +676,9 @@ function finishStage(w: World, def: ProjectDef): void {
   if (def.repeatable) {
     ps.stage = 0;
     w.carvings += 1;
-    logEvent(w, "projectDone", "木雕刻好了，摆在窗台上。", 3);
+    const where = acquireKeepsake(w, "carving");
+    const at = where && where !== "bookshelf" ? DISPLAY_SLOTS[where].name : null;
+    logEvent(w, "projectDone", at ? `木雕刻好了，要摆在${at}。` : "木雕刻好了。窗台和炉上搁板都摆满了，先收进手记的收藏页。", 3);
   } else {
     ps.done = true;
     logEvent(w, "projectDone", def.kind === "read" ? `${def.name.replace(/^读/, "读完了")}。` : `${def.name}：做完了。`, 4);
@@ -854,6 +858,10 @@ function smallThing(w: World, t: number): Activity | null {
       {},
       true,
     );
+  }
+  if (w.intents.arrange.length) {
+    const place = DISPLAY_SLOTS[w.intents.arrange[0].slot].place;
+    return activity("arrange", arrangeLabel(w), "small", [{ place, minutes: C.IMPL.arrangeMinutes }], {}, true);
   }
   const req = w.intents.request;
   if (req && req.kind !== "earlyRest" && t < bedtime(w) - 30) {
@@ -1171,6 +1179,11 @@ export function complete(w: World, act: Activity): void {
         const style = STYLES.find((x) => x.id === swap.styleId);
         logEvent(w, "style", `换上了${style ? style.name : "原来的样子"}。`, 2);
       }
+      break;
+    }
+    case "arrange": {
+      const a = w.intents.arrange.shift();
+      if (a) doArrange(w, a);
       break;
     }
     case "request": {

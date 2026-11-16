@@ -194,6 +194,18 @@ export const CONFIG = {
     /** 世界手记保留最近多少个游戏日的逐条事件；更早的只留每日小结 */
     eventKeepDays: 12,
     /**
+     * 六处展示位各放得下几件（04 第 7 节表第 13 条的试用初值）。窗台的玻璃罐、各处的样式位各占一格，
+     * 剩下的才给藏品。见 设计/讨论记录/2026-11-16_藏品和展示位实现_Claude.md
+     */
+    displayCapacity: { photo_wall: 6, hearth_shelf: 3, windowsill: 3, desk_corner: 2, bedside: 1, wall_spare: 1 },
+    /** 他把一件藏品摆上去、换下来要几分钟 */
+    arrangeMinutes: 5,
+    /**
+     * 书架两档（books_few / books_many）：前任留下的书一直在，开局就是「稀疏」；
+     * 带回的书和你那一格里的书脊（最多 milestones.spineSlots 本）合起来到这个数，就是「放满」
+     */
+    shelfManyAt: 6,
+    /**
      * 野外（02 第 9 节，用户 2026-11-14 定「按动作走」）：站着不动世界不走，每个动作花若干游戏分钟。
      * 身体三项都是 0..bodyMax 的整数，显示时换成百分数。下面的「每分钟」都是动作进行中的每个游戏分钟。
      */

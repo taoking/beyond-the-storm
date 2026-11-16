@@ -210,6 +210,8 @@ export function artFromSnapshot(snap: Snapshot, room: RoomId): WorldArt {
     if (done("gramophone")) props.push("gramophone_open");
   }
   if (room === "observation_room") {
+    // 底图的书架是空的；前任的书一直在，所以总有一张（两张互斥，整个书架取新图）
+    props.push(snap.stage.shelf === "many" ? "books_many" : "books_few");
     if (atDesk.includes("openBook") || atDesk.includes("openJournal")) props.push("desk_work");
     if (atDesk.includes("cup")) props.push("cup");
   }

@@ -2,7 +2,8 @@
 // 区域里怎么走、怎么采在 wild.ts；野外的时间只随动作走，所有动作的时间都从 outdoorMinute 过。
 import { CONFIG } from "./config.ts";
 import { seasonOf } from "./calendar.ts";
-import { MATERIAL_NAME, zoneOf, type Goods, type Material } from "./content.ts";
+import { DISPLAY_SLOTS, KEEPSAKE_BY_ID, MATERIAL_NAME, zoneOf, type Goods, type Material } from "./content.ts";
+import { acquireKeepsake } from "./keepsakes.ts";
 import {
   activity,
   bankFire,
@@ -111,6 +112,7 @@ export function depart(w: World, pack: { rations: number; bundles: number }): Ou
     campfire: null,
     last: null,
     departedAt: w.minute,
+    found: [],
     reminded: { dusk: false, night: false, late: false, cold: false, tired: false },
   };
   w.yearStats.outings += 1;
@@ -217,8 +219,8 @@ export function spendOutdoor(w: World, minutes: number, act: WildAct, notes: Out
   return true;
 }
 
-/** 回家和昏倒共用的收账。keep 是普通物资（柴、干粮、食材）留下的比例；燃油、罐头、素材全留 */
-function settle(w: World, keep: number): void {
+/** 回家和昏倒共用的收账。keep 是普通物资（柴、干粮、食材）留下的比例；燃油、罐头、素材全留。返回这一趟找到的藏品 */
+function settle(w: World, keep: number): string[] {
   const o = w.outing!;
   const bag = o.bag;
   const kept = (n: number | undefined): number => Math.floor((n ?? 0) * keep);
@@ -245,18 +247,38 @@ function settle(w: World, keep: number): void {
     w.stock.materials[m] += n;
     bump(w, `带回的素材:${m}`, n);
   }
+  const found = o.found ?? [];
   w.outing = null;
   w.actor.away = false;
   w.actor.outfit = "indoor";
+  return found;
+}
+
+/** 藏品不丢（02 第 9.7 节）：书上书架，别的有空位就等他摆上去，满了收进手记的收藏页 */
+function bringHome(w: World, found: string[]): void {
+  for (const id of found) {
+    const def = KEEPSAKE_BY_ID[id];
+    if (!def) continue;
+    const where = acquireKeepsake(w, id);
+    bump(w, `带回的藏品:${id}`);
+    const text =
+      where === "bookshelf"
+        ? `带回了${def.name}，放上了书架。`
+        : where
+          ? `带回了${def.name}，想摆在${DISPLAY_SLOTS[where].name}。`
+          : `带回了${def.name}。能摆的地方都满了，先收进手记的收藏页。`;
+    logEvent(w, "keepsake", text, 3);
+  }
 }
 
 /** 走回家门：背包入库，换回便服 */
 export function arriveHome(w: World): void {
   if (!w.outing) return;
-  settle(w, 1);
+  const found = settle(w, 1);
   w.actor.place = "door";
   if (w.fire.burn <= 0 && w.fire.ember <= 0) bump(w, "回家时火已经灭了");
   logEvent(w, "outing", "回到家了。", 3);
+  bringHome(w, found);
 }
 
 const COLLAPSE_TEXT: Record<CollapseCause, string> = {
@@ -268,11 +290,12 @@ const COLLAPSE_TEXT: Record<CollapseCause, string> = {
 /** 昏倒：在家里的床上醒来，已经是第二天早上；柴粮丢一部分，素材不丢（02 第 9.7 节） */
 export function collapse(w: World, cause: CollapseCause): void {
   if (!w.outing) return;
-  settle(w, 1 - CONFIG.IMPL.collapseLossRatio);
+  const found = settle(w, 1 - CONFIG.IMPL.collapseLossRatio);
   w.actor.place = "bed";
   bump(w, "昏倒");
   bump(w, `昏倒:${cause}`);
   logEvent(w, "collapse", COLLAPSE_TEXT[cause], 4);
+  bringHome(w, found);
   const until = Math.max(1, w.dayStart + 1440 - w.minute);
   // 这一夜炉子是凉的，记成冷启动：醒来他先生火，没有别的惩罚
   startActivity(w, activity("sleep", "睡着了", "sleep", [{ place: "bed", minutes: until }], { collapsed: true, cause }));

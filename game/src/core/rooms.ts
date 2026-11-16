@@ -99,3 +99,8 @@ export function placesIn(room: RoomId): PlaceId[] {
 export function visibleIn(room: RoomId, place: PlaceId): boolean {
   return roomOf(place) === room;
 }
+
+/** 展示位在哪一间：JSON 里每间的 displaySlots */
+export const DISPLAY_ROOM: Record<string, RoomId> = Object.fromEntries(
+  ROOM_IDS.flatMap((room) => ROOMS[room].displaySlots.map((s) => [s.id, room] as const)),
+);

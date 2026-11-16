@@ -1,6 +1,7 @@
 // 一局游戏：世界 + 专注 + 四种世界状态（02 第 1 节）。界面只能通过这里的白名单命令改东西。
 import { CONFIG, type Season, type WeatherTier } from "./config.ts";
-import { STYLES, zoneOf, type CropDef, type StyleSlot, type TaskCategory } from "./content.ts";
+import { STYLES, zoneOf, type CropDef, type DisplaySlotId, type StyleSlot, type TaskCategory } from "./content.ts";
+import { checkArrange, planArrange } from "./keepsakes.ts";
 import {
   advanceFocus,
   addTask,
@@ -455,5 +456,16 @@ export function cmdChooseStyle(g: Game, slot: StyleSlot, styleId: string): Resul
   }
   w.intents.styleSwaps = w.intents.styleSwaps.filter((s) => s.slot !== slot);
   if (w.styles[slot] !== styleId) w.intents.styleSwaps.push({ slot, styleId });
+  return OK;
+}
+
+/**
+ * 换展示位上的东西（03 第 3.1、6.5 节）：put 摆上去（收在手记里的，或者从别处挪过来），take 换下来收进手记。
+ * 满了要指明换下哪件，不自动顶替。记成「想换」，他手头空了亲手去摆；冻结时也能选，回到今天以后他再去。
+ */
+export function cmdArrange(g: Game, slot: DisplaySlotId, put: string | null, take: string | null = null): Result {
+  const why = checkArrange(g.world, slot, put, take);
+  if (why) return no(why);
+  planArrange(g.world, slot, put, take);
   return OK;
 }

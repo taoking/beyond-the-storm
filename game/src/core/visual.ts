@@ -72,6 +72,7 @@ export function actorPose(actor: ActorState): PoseProjection {
   if (kind === "fetchWater") return { activity: kind, pose: "walk", prop: null };
   if (kind === "cones") return { activity: kind, pose: "standWork", prop: "pinecone" };
   if (kind === "swapStyle") return { activity: kind, pose: "standWork", prop: "tools" };
+  if (kind === "arrange") return { activity: kind, pose: "standWork", prop: null };
   if (kind === "garden") return { activity: kind, pose: "crouch", prop: "tools" };
   if (kind === "bankFire" || kind === "tendFire" || kind === "lightFire")
     return { activity: kind, pose: "crouch", prop: "tools" };

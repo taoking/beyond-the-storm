@@ -3,7 +3,7 @@
 // 再把要花的游戏分钟交给 outing.ts 的 outdoorMinute，最后才生效：中途昏倒的，这个动作就没做成。
 import { seasonOf } from "./calendar.ts";
 import { CONFIG } from "./config.ts";
-import { AREA_BY_ID, GOODS_NAME, type AreaDef, type Goods, type NodeDef } from "./content.ts";
+import { AREA_BY_ID, GOODS_NAME, KEEPSAKE_BY_ID, type AreaDef, type Goods, type NodeDef } from "./content.ts";
 import { arriveHome, bagSlots, spendOutdoor, type OutdoorNote } from "./outing.ts";
 import { logEvent, woodCap } from "./sim.ts";
 import { bump, type OutingState, type World } from "./state.ts";
@@ -117,12 +117,15 @@ function gatherAmount(w: World, o: OutingState, node: NodeDef): { n: number; rea
     if (node.seasons && !node.seasons.includes(seasonOf(w.day).season)) return { n: 0, reason: "这个季节没有。" };
     return { n: 0, reason: W.gather[node.kind].regrowDays === null ? "已经拿完了。" : "前两天才采过，还没长回来。" };
   }
+  // 藏品小，不占背包格，家里也不设上限（放不下展示位的收进手记）
+  if (node.keepsake) return { n: 1 };
+  const gives = node.gives!;
   const unique = W.gather[node.kind].regrowDays === null;
   const want = unique ? Math.min(available, W.gather[node.kind].amount) : available;
-  const home = homeRoom(w, o, node.gives);
+  const home = homeRoom(w, o, gives);
   // 会恢复的东西一次采完一份，装不下整份就先不采；旧东西能拿几件拿几件，剩下的留着
-  const fit = Math.min(want, home, bagRoom(o, node.gives, want));
-  if (home <= 0 || (!unique && home < want)) return { n: 0, reason: `家里的${GOODS_NAME[node.gives]}放满了，先留在这里。` };
+  const fit = Math.min(want, home, bagRoom(o, gives, want));
+  if (home <= 0 || (!unique && home < want)) return { n: 0, reason: `家里的${GOODS_NAME[gives]}放满了，先留在这里。` };
   if (fit <= 0 || (!unique && fit < want)) return { n: 0, reason: "背包装不下了，东西先留在原地。" };
   return { n: fit };
 }
@@ -216,11 +219,18 @@ export function runWild(w: World, action: WildAction): WildResult {
     if (!walk(w, path, notes)) return done();
     if (!spendOutdoor(w, W.gather[node.kind].minutes, "gather", notes)) return done();
     const live = w.outing!;
-    live.bag[node.gives] = (live.bag[node.gives] ?? 0) + n;
+    if (node.keepsake) {
+      live.found.push(node.keepsake);
+      w.wild.taken[node.id] = (w.wild.taken[node.id] ?? 0) + 1;
+      logEvent(w, "gather", `在${area.name}找到了${KEEPSAKE_BY_ID[node.keepsake]?.name ?? node.name}。`, 2);
+      return done();
+    }
+    const gives = node.gives!;
+    live.bag[gives] = (live.bag[gives] ?? 0) + n;
     const unique = W.gather[node.kind].regrowDays === null;
     if (unique) w.wild.taken[node.id] = (w.wild.taken[node.id] ?? 0) + n;
     else w.wild.harvested[node.id] = w.day;
-    bump(w, `野外采到:${node.gives}`, n);
+    bump(w, `野外采到:${gives}`, n);
     logEvent(w, "gather", unique ? `在${area.name}拿了${node.name}（${n}）。` : `在${area.name}采了${node.name}。`, unique ? 2 : 1);
     return done();
   }

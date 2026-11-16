@@ -331,6 +331,69 @@ export const DEFAULT_STYLE: Record<StyleSlot, string> = {
   scarf: "scarfRed",
 };
 
+// ---------- 藏品和六处展示位（03 第 3.1、6.5 节） ----------
+
+/** 六处固定展示位，id 跟 room_locations.json 的 displaySlots 一致 */
+export type DisplaySlotId = "photo_wall" | "hearth_shelf" | "windowsill" | "desk_corner" | "bedside" | "wall_spare";
+export const DISPLAY_SLOT_IDS: DisplaySlotId[] = ["photo_wall", "hearth_shelf", "windowsill", "desk_corner", "bedside", "wall_spare"];
+
+export function emptyDisplay(): Record<DisplaySlotId, string[]> {
+  return Object.fromEntries(DISPLAY_SLOT_IDS.map((id) => [id, []])) as unknown as Record<DisplaySlotId, string[]>;
+}
+
+export interface DisplaySlotDef {
+  name: string;
+  /** 他去摆的时候站在哪 */
+  place: PlaceId;
+  /** 一直占着一格的东西（窗台的玻璃罐） */
+  fixed?: string;
+  /** 这一处的样式位：样式有固定的一格，不跟藏品抢（03 第 4.1 节） */
+  style?: StyleSlot;
+}
+
+export const DISPLAY_SLOTS: Record<DisplaySlotId, DisplaySlotDef> = {
+  photo_wall: { name: "照片墙", place: "hearth" },
+  hearth_shelf: { name: "炉上搁板", place: "hearth" },
+  windowsill: { name: "窗台", place: "windowsill", fixed: "玻璃罐", style: "windowsill" },
+  desk_corner: { name: "书桌一角", place: "desk", style: "deskCorner" },
+  bedside: { name: "床头", place: "bed" },
+  wall_spare: { name: "卧室的墙上", place: "bed" },
+};
+
+/**
+ * photo 照片（照片墙）、ornament 小摆件和标本（窗台、炉上搁板）、oldThing 旧物（书桌一角），03 第 6.5 节。
+ * book 是带回来的书，上书架，不占展示位。床头、卧室墙上 03 没说放什么，先按 IMPL 的做法：床头放小东西，墙上挂照片。
+ */
+export type KeepsakeKind = "photo" | "ornament" | "oldThing" | "book";
+
+/** 每类藏品能摆在哪几处，按这个顺序找空位 */
+export const KEEPSAKE_FITS: Record<KeepsakeKind, DisplaySlotId[]> = {
+  photo: ["photo_wall", "wall_spare"],
+  ornament: ["windowsill", "hearth_shelf", "bedside"],
+  oldThing: ["desk_corner", "bedside"],
+  book: [],
+};
+
+export interface KeepsakeDef {
+  id: string;
+  name: string;
+  kind: KeepsakeKind;
+  /** 能有好几件（木雕）；其余独一份 */
+  repeatable?: boolean;
+  /** 不写就按 KEEPSAKE_FITS 的类别 */
+  fits?: DisplaySlotId[];
+}
+
+/** 首个可玩版的几件（03 第 0 节：2–3 件）。以后的照片、鹿角、怀表……做到对应的区域和慢事时再加 */
+export const KEEPSAKES: KeepsakeDef[] = [
+  // 木雕：03 第 4.4 节「摆在窗台或炉上搁板」
+  { id: "carving", name: "小木雕", kind: "ornament", repeatable: true, fits: ["windowsill", "hearth_shelf"] },
+  { id: "jayFeather", name: "一根松鸦的羽毛", kind: "ornament" },
+  { id: "postcard", name: "工棚里的一张旧明信片", kind: "oldThing" },
+  { id: "northernPlants", name: "《北方草木》", kind: "book" },
+];
+export const KEEPSAKE_BY_ID: Record<string, KeepsakeDef> = Object.fromEntries(KEEPSAKES.map((k) => [k.id, k]));
+
 export type TaskCategory = "study" | "code" | "write" | "other";
 export const CATEGORY_NAME: Record<TaskCategory, string> = {
   study: "学习阅读",
@@ -354,11 +417,14 @@ export interface NodeDef {
   x: number;
   y: number;
   kind: "twigs" | "forage" | "salvage";
-  gives: Goods;
+  /** 给的东西；藏品点是 null，拿到的是 keepsake */
+  gives: Goods | null;
   /** salvage 一共放了几件（03 第 3.4 节的账） */
   total?: number;
   /** 只在这几个季节有；不写是四季都有 */
   seasons?: Season[];
+  /** 是一件藏品（KEEPSAKES 的 id）：不占背包格，带回家才算拿到；kind 是 salvage、total 是 1 */
+  keepsake?: string;
 }
 
 export interface AreaDef {
@@ -404,12 +470,16 @@ export const AREAS: AreaDef[] = [
       { id: "twigsB", name: "松树下的枯枝", x: 6, y: 7, kind: "twigs", gives: "wood" },
       { id: "pineNuts", name: "松子", x: 9, y: 1, kind: "forage", gives: "ingredients", seasons: ["autumn", "winter"] },
       { id: "berries", name: "浆果", x: 10, y: 7, kind: "forage", gives: "ingredients", seasons: ["winter", "summer", "autumn"] },
-      // 废弃的伐木工棚。种子、书、胶卷、旧工具内核里还没有，先不放
+      // 废弃的伐木工棚。种子、胶卷、旧工具内核里还没有，先不放
       { id: "shedLumber", name: "工棚的旧木料", x: 12, y: 3, kind: "salvage", gives: "lumber", total: 10 },
       { id: "shedRope", name: "工棚的旧绳索", x: 13, y: 4, kind: "salvage", gives: "rope", total: 3 },
       { id: "shedCanvas", name: "工棚的帆布", x: 12, y: 5, kind: "salvage", gives: "canvas", total: 5 },
       { id: "shedFuel", name: "工棚的一罐油", x: 13, y: 6, kind: "salvage", gives: "fuel", total: 1 },
       { id: "shedCan", name: "工棚的罐头", x: 11, y: 6, kind: "salvage", gives: "cans", total: 1 },
+      { id: "shedBook", name: "工棚里的一本书", x: 13, y: 2, kind: "salvage", gives: null, total: 1, keepsake: "northernPlants" },
+      { id: "shedPostcard", name: "工棚窗台上的明信片", x: 11, y: 3, kind: "salvage", gives: null, total: 1, keepsake: "postcard" },
+      // 藏品：林子里的一根羽毛（03 第 6.5 节的标本）
+      { id: "feather", name: "雪地上的一根羽毛", x: 3, y: 7, kind: "salvage", gives: null, total: 1, keepsake: "jayFeather" },
     ],
   },
 ];

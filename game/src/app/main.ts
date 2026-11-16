@@ -116,7 +116,9 @@ function renderInspect(s: Snapshot, g: Game): string {
       <label><input type="checkbox" data-ui="keepCans"${w.intents.keepCans ? " checked" : ""}/> 罐头留着</label>
       <label><input type="checkbox" data-ui="keepFuel"${w.intents.keepFuel ? " checked" : ""}/> 燃油留着</label>
     </div>
-    <div>窗台的罐：${s.jar.cones}/30 颗${s.jar.fullJars ? `，架上 ${Math.min(3, s.jar.fullJars)} 只满罐` : ""}${s.jar.pending ? `，还有 ${s.jar.pending} 颗没放` : ""}</div>`);
+    <div>窗台的罐：${s.jar.cones}/30 颗${s.jar.fullJars ? `，架上 ${Math.min(3, s.jar.fullJars)} 只满罐` : ""}${s.jar.pending ? `，还有 ${s.jar.pending} 颗没放` : ""}</div>
+    <div>书架：${s.collection.shelf.level === "many" ? "放满了" : "稀疏"} <span class="dim">带回的书 ${s.collection.shelf.books} · 你那一格 ${s.collection.shelf.spines} 本</span></div>
+    <div>藏品：${s.collection.items.length ? s.collection.items.map((k) => `${esc(k.name)}（${k.where === "bookshelf" ? "书架" : k.where ? esc(s.collection.displays.find((d) => d.id === k.where)!.name) : k.pending && k.pending !== "takeDown" ? "待摆放" : "收在手记里"}）`).join("、") : "还没有"}</div>`);
 
   h.push("<h3>手头的事</h3><table>");
   for (const p of s.projects) {

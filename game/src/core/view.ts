@@ -1,9 +1,26 @@
 // 只读的投影：把一局游戏的事实整理成界面要的样子。这里的函数都不改状态。
 // 灰盒界面、以后的正式界面、多窗口的从窗口，读的都是这一份。
-import { ROOM_IDS, roomOf, visibleIn, type RoomId } from "./rooms.ts";
+import { DISPLAY_ROOM, ROOM_IDS, roomOf, visibleIn, type RoomId } from "./rooms.ts";
 import { clockText, DAY_PART_NAME, dayPartOf, SEASON_NAME, seasonOf } from "./calendar.ts";
 import { CONFIG, type LifeTier } from "./config.ts";
-import { AREA_BY_ID, CROP_BY_ID, GOODS_NAME, PLACES, PROJECTS, STYLES, zoneOf, type Goods, type PlaceId, type Zone } from "./content.ts";
+import {
+  AREA_BY_ID,
+  CROP_BY_ID,
+  DISPLAY_SLOT_IDS,
+  DISPLAY_SLOTS,
+  GOODS_NAME,
+  KEEPSAKE_BY_ID,
+  PLACES,
+  PROJECTS,
+  STYLES,
+  zoneOf,
+  type DisplaySlotId,
+  type Goods,
+  type KeepsakeKind,
+  type PlaceId,
+  type Zone,
+} from "./content.ts";
+import { freeNow, keepsakeCapacity, shelfCount, shelfLevel, whereIs, type ShelfLevel } from "./keepsakes.ts";
 import { focusBarState, sharesToday, unlockedStyleCount, type Calendar, type FocusBarState, type RoundSummary } from "./focus.ts";
 import { frozen, type Game, type Mode, type Notice } from "./game.ts";
 import { actionLabel, fireLook, foodCap, foodDays, hasEffect, projectStatus, woodCap, woodDays, type ProjectStatus } from "./sim.ts";
@@ -76,6 +93,10 @@ export interface Snapshot {
     outfit: "indoor" | "outdoor" | null;
     room: RoomId | null;
     visible: Record<RoomId, boolean>;
+    /** 书架两档：books_few / books_many（前任的书一直在，最少是稀疏） */
+    shelf: ShelfLevel;
+    /** 六处展示位上摆着的藏品（KEEPSAKES 的 id，木雕可能有几件）；样式和玻璃罐不在这里，看 collection.displays */
+    displays: Record<DisplaySlotId, string[]>;
   } & PoseProjection;
   /** 当前实际可绘制的天气、季节和时间；独立氛围和真实世界严格分开。 */
   look: LookProjection;
@@ -86,6 +107,8 @@ export interface Snapshot {
   plots: { name: string; crop: string | null; daysLeft: number; ripe: boolean; preferred: string | null }[];
   greenhouse: { usable: boolean };
   jar: { cones: number; fullJars: number; pending: number };
+  /** 藏品、六处展示位、书架（03 第 3.1、4.3、6.5 节）。世界事实，氛围态里也照实给 */
+  collection: CollectionView;
   request: string | null;
   /** 近况卡：今天到现在真实发生过的事，要紧的在前 */
   today: { top: WorldEvent[]; more: WorldEvent[] };
@@ -120,6 +143,93 @@ export interface Snapshot {
     recordId: number | null;
   };
   notices: Notice[];
+}
+
+export interface KeepsakeView {
+  uid: string;
+  id: string;
+  name: string;
+  kind: KeepsakeKind;
+  /** 到站以来第几天拿到的，从 1 起 */
+  stationDay: number;
+  /** 摆在哪一处，书在书架上，收在手记的收藏页是 null */
+  where: DisplaySlotId | "bookshelf" | null;
+  /** 他还没去做的安排：想摆到哪一处（04 第 5.3 节「已带回，待摆放」），要换下来是 "takeDown" */
+  pending: DisplaySlotId | "takeDown" | null;
+}
+
+export interface DisplayView {
+  id: DisplaySlotId;
+  name: string;
+  room: RoomId | null;
+  /** 这一处一共几格（含玻璃罐、样式位） */
+  capacity: number;
+  /** 给藏品的格数，和现在还空几格 */
+  keepsakeSlots: number;
+  free: number;
+  /** 一直在的东西（窗台的玻璃罐） */
+  fixed: string | null;
+  /** 这一处样式位上现在的样式 id；没有样式位或没摆是 null */
+  style: string | null;
+  items: { uid: string; id: string; name: string }[];
+}
+
+export interface CollectionView {
+  items: KeepsakeView[];
+  displays: DisplayView[];
+  shelf: {
+    level: ShelfLevel;
+    /** 带回的书 */
+    books: number;
+    /** 你那一格里的书脊（最多 milestones.spineSlots 本） */
+    spines: number;
+    /** 合起来到这个数是「放满」 */
+    manyAt: number;
+  };
+}
+
+function collectionView(g: Game): CollectionView {
+  const w = g.world;
+  const spines = g.focus.spines.length;
+  const count = shelfCount(w, spines);
+  const pendingOf = (uid: string): KeepsakeView["pending"] => {
+    const a = w.intents.arrange.find((x) => x.put === uid || x.take === uid);
+    if (!a) return null;
+    return a.put === uid ? a.slot : "takeDown";
+  };
+  return {
+    items: w.keepsakes.map((k) => {
+      const def = KEEPSAKE_BY_ID[k.id];
+      return {
+        uid: k.uid,
+        id: k.id,
+        name: def?.name ?? k.id,
+        kind: def?.kind ?? "ornament",
+        stationDay: k.day + 1,
+        where: whereIs(w, k.uid),
+        pending: pendingOf(k.uid),
+      };
+    }),
+    displays: DISPLAY_SLOT_IDS.map((id) => {
+      const s = DISPLAY_SLOTS[id];
+      const style = s.style ? w.styles[s.style] : null;
+      return {
+        id,
+        name: s.name,
+        room: DISPLAY_ROOM[id] ?? null,
+        capacity: CONFIG.IMPL.displayCapacity[id],
+        keepsakeSlots: keepsakeCapacity(id),
+        free: freeNow(w, id),
+        fixed: s.fixed ?? null,
+        style: style && style !== "none" ? style : null,
+        items: w.display[id].map((uid) => {
+          const k = w.keepsakes.find((x) => x.uid === uid);
+          return { uid, id: k?.id ?? uid, name: (k && KEEPSAKE_BY_ID[k.id]?.name) ?? uid };
+        }),
+      };
+    }),
+    shelf: { level: shelfLevel(w, spines), books: count.books, spines: count.spines, manyAt: CONFIG.IMPL.shelfManyAt },
+  };
 }
 
 function mmss(ms: number): string {
@@ -180,7 +290,7 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
 
   // 表现姿态只读已有的结构化 Activity/phase/data，永远不解析中文 label。
   const pose = actorPose(a);
-  let stage: Omit<Snapshot["stage"], "room" | "visible">;
+  let stage: Omit<Snapshot["stage"], "room" | "visible" | "shelf" | "displays">;
   if (g.mode === "outdoorFocus") {
     stage = { show: false, place: null, label: "屋里没人，炉里留着余火", illusion: false, outfit: null, activity: null, pose: null, prop: null };
   } else if (g.mode === "ambience") {
@@ -242,6 +352,7 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
   const more = ranked.slice(4, 6).sort((x, y) => x.minute - y.minute);
 
   const d = w.today;
+  const collection = collectionView(g);
   return {
     mode: g.mode,
     frozen: fz,
@@ -268,7 +379,13 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
       room: realPlace && roomOf(realPlace),
       visible: roomsVisible(realPlace),
     },
-    stage: { ...stage, room: stage.show && stage.place ? roomOf(stage.place) : null, visible: roomsVisible(stage.show ? stage.place : null) },
+    stage: {
+      ...stage,
+      room: stage.show && stage.place ? roomOf(stage.place) : null,
+      visible: roomsVisible(stage.show ? stage.place : null),
+      shelf: collection.shelf.level,
+      displays: Object.fromEntries(collection.displays.map((d) => [d.id, d.items.map((x) => x.id)])) as Record<DisplaySlotId, string[]>,
+    },
     look: projectedLook(g, w, t),
     fire: { look: fireLook(w), burn: Math.round(w.fire.burn), ember: w.fire.ember },
     life: {
@@ -316,6 +433,7 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
     })),
     greenhouse: { usable: hasEffect(w, "greenhouse") },
     jar: { cones: w.jar.cones, fullJars: w.jar.fullJars, pending: w.pendingCones },
+    collection,
     request: w.intents.request?.kind ?? null,
     today: { top, more },
     traces: w.traces.filter((x) => x.until > w.minute).map((x) => ({ type: x.type, place: x.place })),
