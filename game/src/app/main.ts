@@ -8,7 +8,7 @@ import { checkOuting, REFUSAL_TEXT } from "../core/outing.ts";
 import { DEFAULT_ROOM, ROOM_IDS, ROOMS, type RoomId } from "../core/rooms.ts";
 import { present, type Snapshot } from "../core/view.ts";
 import { cal, startRuntime } from "./runtime.ts";
-import { drawRoom, roomCaption } from "./scene.ts";
+import { paintRoom, roomCaption } from "./scene.ts";
 
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 const esc = (s: string): string => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -280,9 +280,12 @@ function renderDebug(s: Snapshot, g: Game): string {
   return h.join("");
 }
 
-const sceneCtx = $<HTMLCanvasElement>("scene").getContext("2d")!;
-const c320 = $<HTMLCanvasElement>("small320").getContext("2d")!;
-const c480 = $<HTMLCanvasElement>("small480").getContext("2d")!;
+const sceneCanvas = $<HTMLCanvasElement>("scene");
+const SCENES = [
+  { canvas: sceneCanvas },
+  { canvas: $<HTMLCanvasElement>("small320"), css: [320, 180] as [number, number] },
+  { canvas: $<HTMLCanvasElement>("small480"), css: [480, 270] as [number, number] },
+];
 let lastTaskSig = "";
 let lastWildHtml = "";
 
@@ -297,10 +300,9 @@ function render(): void {
   $("roomRow").innerHTML = ROOM_IDS.map(
     (r) => `<button data-ui="room" data-room="${r}"${r === room ? ' class="on"' : ""}>${esc(ROOMS[r].name)}${s.stage.room === r ? " ·" : ""}</button>`,
   ).join("");
-  drawRoom(sceneCtx, s, room);
-  drawRoom(c320, s, room);
-  drawRoom(c480, s, room);
-  $("capScene").textContent = roomCaption(s, room, "960×540");
+  paintRoom(SCENES, s, room);
+  const sceneW = Math.round(sceneCanvas.getBoundingClientRect().width);
+  $("capScene").textContent = roomCaption(s, room, `${sceneW}×${Math.round((sceneW * 9) / 16)}`);
   $("cap320").textContent = roomCaption(s, room, "320×180");
   $("cap480").textContent = roomCaption(s, room, "480×270");
   $("actionRow").innerHTML = renderAction(s);

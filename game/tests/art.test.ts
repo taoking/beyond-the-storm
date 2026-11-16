@@ -1,10 +1,10 @@
 // 美术查看页的图层逻辑（src/art/layers.ts）：画面状态 → 叠哪些图层，世界快照 → 画面状态。
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { artFromSnapshot, EMPTY_STATE, layerStack } from "../src/art/layers.ts";
+import { artFromSnapshot, EMPTY_STATE, figureFromSnapshot, layerStack, STAND_IN } from "../src/art/layers.ts";
 import { localCalendar } from "../src/core/focus.ts";
 import { advanceCompanionMinutes, newGame } from "../src/core/game.ts";
-import { ROOM_IDS } from "../src/core/rooms.ts";
+import { LOCATIONS, ROOM_IDS } from "../src/core/rooms.ts";
 import { present } from "../src/core/view.ts";
 
 const ROOMS = new URL("../../assets/05/rooms/", import.meta.url);
@@ -19,15 +19,17 @@ const haveIn = (set: string, room: string): ((n: string) => boolean) => {
 };
 
 describe("图层顺序", () => {
-  it("窗外最下，再是室内层和天气；夜色、火光、灯在人物之上", () => {
+  it("窗外和天气一组在最下，再是室内层；夜色、火光、灯在人物之上", () => {
     const s = layerStack(haveIn("g5_20261115", "hearth_room"), "hearth_room", {
       ...EMPTY_STATE, time: "night", weather: "snow", fire: "high", wood: 3, props: ["armchair_blanket"], lamp: true, actor: true,
     });
     expect(s.missing).toEqual([]);
     expect(s.layers).toEqual([
-      "outside_winter_night_rgba", "interior_rgba", "weather_snow", "woodpile_3", "armchair_blanket",
+      "outside_winter_night_rgba", "weather_snow", "interior_rgba", "woodpile_3", "armchair_blanket",
       "actor_contact", "actor_male_pose", "night_ambient", "fire_spill_high", "fire_flame_high", "oil_lamp_body", "oil_lamp_glow",
     ]);
+    expect(s.outside).toBe(2);
+    expect(s.layers[s.figureAt]).toBe("actor_contact");
   });
 
   it("厚被子盖在人物上面", () => {
@@ -37,8 +39,21 @@ describe("图层顺序", () => {
 
   it("批次 1 的新底图用晴天窗外层，没有的图层报出来", () => {
     const s = layerStack(haveIn("b1_20261116", "hearth_room"), "hearth_room", { ...EMPTY_STATE, time: "night", fire: "low", oilLamp: false });
-    expect(s.layers).toEqual(["interior_rgba", "radio_broken", "gramophone_covered", "fire_flame_low"]);
+    // 夜里的窗外和夜色还没出：白天的窗外压暗、整间盖一层夜色顶着
+    expect(s.layers).toEqual([
+      "outside_winter_day_clear_rgba", STAND_IN.nightOutside, "interior_rgba", "radio_broken", "gramophone_covered", STAND_IN.nightRoom, "fire_flame_low",
+    ]);
+    expect(s.outside).toBe(2);
     expect(s.missing).toEqual(["outside_winter_night_rgba", "night_ambient", "fire_spill_low"]);
+    // 人形在家具之后、夜色之前
+    expect(s.layers[s.figureAt]).toBe(STAND_IN.nightRoom);
+    // 图到了就不再顶替
+    const real = layerStack((n) => n !== "outside_winter_day_clear_rgba", "hearth_room", { ...EMPTY_STATE, time: "night", oilLamp: false });
+    expect(real.layers.filter((n) => n.startsWith("~"))).toEqual([]);
+    // 一间什么都没有：空栈，不报错
+    const none = layerStack(() => false, "observation_room", { ...EMPTY_STATE, time: "night", weather: "blizzard", jar: 2, actor: true });
+    expect(none.layers).toEqual([]);
+    expect(none.figureAt).toBe(0);
   });
 
   it("批次 2：收音机、唱片机没修好画旧的，修好换新的", () => {
@@ -98,5 +113,33 @@ describe("世界快照 → 画面状态", () => {
         if (state.lamp) expect(state.time).toBe("night");
       }
     }
+  });
+});
+
+describe("主界面的场景", () => {
+  it("人形只画在他所在的那一间，站在 JSON 的站位上", () => {
+    const g = newGame(11);
+    const locate = (p: string) => LOCATIONS[p as keyof typeof LOCATIONS] && { foot: LOCATIONS[p as keyof typeof LOCATIONS]!.foot, height: LOCATIONS[p as keyof typeof LOCATIONS]!.heightPx };
+    let seen = 0;
+    for (let i = 0; i < 7 * 24; i++) {
+      advanceCompanionMinutes(g, 60);
+      const snap = present(g, 0, localCalendar);
+      for (const room of ROOM_IDS) {
+        const f = figureFromSnapshot(snap, room, locate);
+        if (!snap.stage.visible[room]) expect(f).toBeNull();
+        else {
+          expect(f?.foot).toEqual(LOCATIONS[snap.stage.place!]!.foot);
+          seen++;
+        }
+      }
+    }
+    expect(seen).toBeGreaterThan(0);
+  });
+
+  it("场景读的图和内核读的坐标是同一套", () => {
+    const set = (path: string, re: RegExp) => readFileSync(new URL(path, import.meta.url), "utf8").match(re)?.[1];
+    const core = set("../src/core/rooms.ts", /rooms\/([^/]+)\/room_locations\.json/);
+    expect(core).toBeTruthy();
+    expect(set("../src/app/scene.ts", /rooms\/([^/*]+)\/\*\//)).toBe(core);
   });
 });

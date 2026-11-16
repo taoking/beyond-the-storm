@@ -6,10 +6,9 @@ import { localCalendar } from "../core/focus.ts";
 import { clockText } from "../core/calendar.ts";
 import { ROOM_IDS, type RoomId } from "../core/rooms.ts";
 import { present, type Snapshot } from "../core/view.ts";
-import { artFromSnapshot, EMPTY_STATE, layerStack, MANAGED, type ArtState } from "./layers.ts";
+import { artFromSnapshot, EMPTY_STATE, figureFromSnapshot, layerStack, MANAGED, type ArtState, type Figure, type Stack } from "./layers.ts";
+import { blit, compose, fitCanvas, library, W, type OutsideMode } from "./compose.ts";
 
-const W = 2560;
-const H = 1440;
 const ROOM_NAME: Record<RoomId, string> = { hearth_room: "炉间", observation_room: "观测间", kitchen_room: "灶间", bedroom: "卧室" };
 const POSE_NAME: Record<string, string> = {
   sleep: "睡", sit: "坐", sitRead: "坐着读", sitWrite: "坐着写", sitHold: "坐着端", standWork: "站着干活", standLook: "站着看", crouch: "蹲", walk: "走",
@@ -32,14 +31,10 @@ interface RoomJson {
   locations: Record<string, { room?: string | null; label: string; footAnchor?: Pt | null; standingHeightPx?: number | null }>;
 }
 
-const FILE_URLS = import.meta.glob("../../../assets/05/rooms/*/*/*.{webp,png}", { query: "?url", import: "default", eager: true }) as Record<string, string>;
+// 查看页看所有套；主界面（src/app/scene.ts）只打包内核用的那一套。图层选择和叠法两边是同一份
+const LIB = library(import.meta.glob("../../../assets/05/rooms/*/*/*.{webp,png}", { query: "?url", import: "default", eager: true }) as Record<string, string>);
 const JSONS = import.meta.glob("../../../assets/05/rooms/*/room_locations.json", { import: "default", eager: true }) as Record<string, RoomJson>;
 
-const files = new Map<string, string>(); // "套/房间/名字" → url
-for (const [path, url] of Object.entries(FILE_URLS)) {
-  const m = path.match(/rooms\/([^/]+)\/([^/]+)\/([^/]+)\.(webp|png)$/);
-  if (m) files.set(`${m[1]}/${m[2]}/${m[3]}`, url);
-}
 const coords = new Map<string, RoomJson>();
 for (const [path, json] of Object.entries(JSONS)) {
   const m = path.match(/rooms\/([^/]+)\/room_locations\.json$/);
@@ -48,20 +43,6 @@ for (const [path, json] of Object.entries(JSONS)) {
 /** 新的在前：按目录名末尾的日期排 */
 const SETS = [...coords.keys()].sort((a, b) => (b.split("_").at(-1) ?? "").localeCompare(a.split("_").at(-1) ?? ""));
 
-const layerNames = (set: string, room: RoomId): string[] =>
-  [...files.keys()].filter((k) => k.startsWith(`${set}/${room}/`)).map((k) => k.split("/")[2]).sort();
-
-const images = new Map<string, Promise<HTMLImageElement>>();
-function load(url: string): Promise<HTMLImageElement> {
-  let p = images.get(url);
-  if (!p) {
-    const img = new Image();
-    img.src = url;
-    p = img.decode().then(() => img);
-    images.set(url, p);
-  }
-  return p;
-}
 
 // ---- 世界：从新开局按陪伴状态走到指定的那一刻 ----
 
@@ -141,7 +122,7 @@ function segment(box: HTMLElement, items: [string, string][], current: () => str
 
 /** 这一间里不归 MANAGED 管的物件图层，各给一个开关 */
 function buildProps(): void {
-  const names = layerNames(ui.set, ui.room).filter((n) => !MANAGED.has(n));
+  const names = LIB.names(ui.set, ui.room).filter((n) => !MANAGED.has(n));
   const box = $("props");
   box.replaceChildren(
     ...names.map((n) => {
@@ -182,69 +163,6 @@ function refresh(): void {
 }
 
 // ---- 画 ----
-
-interface Figure {
-  foot: Pt;
-  height: number;
-  pose: string;
-}
-
-function drawFigure(ctx: CanvasRenderingContext2D, f: Figure): void {
-  const [x, y] = f.foot;
-  const h = f.height;
-  ctx.save();
-  ctx.fillStyle = "rgba(228,178,118,.55)";
-  ctx.strokeStyle = "rgba(255,230,190,.9)";
-  ctx.lineWidth = 4;
-  if (f.pose === "sleep") {
-    ctx.fillRect(x - h * 0.5, y - h * 0.2, h, h * 0.14);
-    ctx.strokeRect(x - h * 0.5, y - h * 0.2, h, h * 0.14);
-  } else {
-    const body = f.pose.startsWith("sit") || f.pose === "crouch" ? h * 0.62 : h;
-    const head = h * 0.065;
-    ctx.beginPath();
-    ctx.arc(x, y - body + head, head, 0, Math.PI * 2);
-    ctx.rect(x - h * 0.09, y - body + head * 2.2, h * 0.18, body - head * 2.2);
-    ctx.fill();
-    ctx.stroke();
-  }
-  ctx.restore();
-}
-
-function compose(imgs: { name: string; img: HTMLImageElement }[], outside: string, figure: Figure | null): HTMLCanvasElement {
-  const c = document.createElement("canvas");
-  c.width = W;
-  c.height = H;
-  const ctx = c.getContext("2d")!;
-  if (outside !== "art") {
-    ctx.fillStyle = outside === "magenta" ? "#ff00ff" : "#141e46";
-    ctx.fillRect(0, 0, W, H);
-  }
-  for (const { name, img } of imgs) {
-    if (outside !== "art" && (name.startsWith("outside_") || name.startsWith("weather_"))) continue;
-    ctx.drawImage(img, 0, 0, W, H);
-    // 人形画在人物图层那一档：比家具靠前、比夜色和火光靠后
-    if (figure && name === "interior_rgba") drawFigure(ctx, figure);
-  }
-  return c;
-}
-
-/** 逐级减半，留着每一级，小画布从最近的一级缩 */
-function pyramid(src: HTMLCanvasElement, smallest: number): HTMLCanvasElement[] {
-  const out = [src];
-  let cur = src;
-  while (cur.width / 2 >= smallest) {
-    const c = document.createElement("canvas");
-    c.width = Math.round(cur.width / 2);
-    c.height = Math.round(cur.height / 2);
-    const ctx = c.getContext("2d")!;
-    ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(cur, 0, 0, c.width, c.height);
-    out.push(c);
-    cur = c;
-  }
-  return out;
-}
 
 function overlays(ctx: CanvasRenderingContext2D, json: RoomJson, room: RoomId, dpr: number, here: string | null): void {
   const r = json.rooms[room];
@@ -315,7 +233,7 @@ async function render(): Promise<void> {
   const set = ui.set;
   const room = ui.room;
   const json = coords.get(set);
-  const have = (n: string): boolean => files.has(`${set}/${room}/${n}`);
+  const have = (n: string): boolean => LIB.has(set, room, n);
 
   let state: ArtState;
   let notes: string[] = [];
@@ -328,12 +246,12 @@ async function render(): Promise<void> {
     await new Promise(requestAnimationFrame);
     snap = worldAt(Math.max(1, Number(val("seed")) || 1), Math.max(1, Number(val("day")) || 1), Number(val("minute")));
     ({ state, notes } = artFromSnapshot(snap, room));
-    if (snap.stage.visible[room] && snap.stage.place) {
-      here = snap.stage.place;
-      const l = json?.locations[here];
-      // 人物图层是固定的单帧试摆，跟他实际的地点、姿态对不上；站位用人形标出来
-      if (l?.footAnchor) figure = { foot: l.footAnchor, height: l.standingHeightPx ?? 600, pose: snap.stage.pose ?? "standLook" };
-    }
+    if (snap.stage.visible[room]) here = snap.stage.place;
+    // 人物图层是固定的单帧试摆，跟他实际的地点、姿态对不上；站位用人形标出来（跟主界面同一个人形）
+    figure = figureFromSnapshot(snap, room, (p) => {
+      const l = json?.locations[p];
+      return l && { foot: (l.footAnchor as [number, number] | null | undefined) ?? null, height: l.standingHeightPx ?? null };
+    });
   } else {
     state = {
       ...EMPTY_STATE,
@@ -353,40 +271,33 @@ async function render(): Promise<void> {
     const l = d ? json?.locations[d] : undefined;
     if (l?.footAnchor) {
       here = d;
-      figure = { foot: l.footAnchor, height: l.standingHeightPx ?? 600, pose: d === "bed" ? "sleep" : "standLook" };
+      figure = { foot: l.footAnchor as [number, number], height: l.standingHeightPx ?? 600, pose: d === "bed" ? "sleep" : "standLook", look: "indoor" };
     }
   }
 
   const stack = layerStack(have, room, state);
   $("status").textContent = have("interior_rgba") ? `读图中（${stack.layers.length} 层）……` : `${set} 里还没有${ROOM_NAME[room]}的底图`;
-  const imgs = await Promise.all(stack.layers.map(async (name) => ({ name, img: await load(files.get(`${set}/${room}/${name}`)!) })));
+  const dpr = window.devicePixelRatio || 1;
+  const composed = await compose(LIB, { set, room, stack, figure, outside: val("outside") as OutsideMode }, 320 * dpr);
   if (my !== token) return;
 
-  const full = compose(imgs, val("outside"), figure);
-  const dpr = window.devicePixelRatio || 1;
-  const levels = pyramid(full, 320 * dpr);
   for (const [id, w, h] of TARGETS) {
     const c = $<HTMLCanvasElement>(id);
     c.style.width = `${w}px`;
     c.style.height = `${h}px`;
-    c.width = Math.round(w * dpr);
-    c.height = Math.round(h * dpr);
-    const ctx = c.getContext("2d")!;
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-    const src = levels.filter((l) => l.width >= c.width).at(-1) ?? full;
-    ctx.drawImage(src, 0, 0, c.width, c.height);
+    fitCanvas(c, w, h);
+    const ctx = blit(composed, c);
     if (json && (id === "c1280" || on("ovSmall"))) overlays(ctx, json, room, dpr, here);
   }
   $("status").textContent = "";
   info(set, room, json, stack, notes, snap);
 }
 
-function info(set: string, room: RoomId, json: RoomJson | undefined, stack: { layers: string[]; missing: string[] }, notes: string[], snap: Snapshot | null): void {
+function info(set: string, room: RoomId, json: RoomJson | undefined, stack: Stack, notes: string[], snap: Snapshot | null): void {
   const r = json?.rooms[room];
   const lines: [string, string?][] = [
     [`<b>${set} · ${ROOM_NAME[room]}</b>${r?.status ? ` · ${r.status}` : ""}${r?.source ? ` · ${r.source}` : ""}`],
-    [`叠了 ${stack.layers.length} 层（下→上）：${stack.layers.join("、") || "无"}`],
+    [`叠了 ${stack.layers.length} 层（下→上，前 ${stack.outside} 层是窗外、按玻璃掩码裁；~ 开头是图还没出、代码先顶着的）：${stack.layers.join("、") || "无"}`],
   ];
   if (stack.missing.length) lines.push([`这套没有：${stack.missing.join("、")}`, "miss"]);
   if (snap) {

@@ -1,4 +1,4 @@
-/* 灰盒：色块和文字。这不是 04/05 的界面，以后整个换掉。 */
+/* 灰盒：文字面板，场景用 05 的真图（src/app/scene.ts）。这不是 04/05 的界面，以后整个换掉。 */
 :root { color-scheme: dark; --bg: #151a1e; --panel: #1e262c; --line: #33414a; --text: #d5dde2; --dim: #8a9aa5; --warm: #e4b276; --cold: #7193ac; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.5 -apple-system, "PingFang SC", sans-serif; }
@@ -9,6 +9,7 @@ body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.5 -app
 #topbar .mode.frozen { color: var(--cold); border: 1px solid var(--cold); padding: 0 6px; }
 #topbar .dots { margin-left: auto; letter-spacing: 3px; cursor: default; }
 canvas { display: block; max-width: 100%; background: #0f1418; }
+#scene { width: 100%; max-width: 960px; aspect-ratio: 16 / 9; height: auto; }
 #roomRow { margin-top: 6px; display: flex; gap: 6px; } #roomRow button.on { border-color: var(--warm); color: var(--warm); }
 #actionRow { margin-top: 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 #actionRow .action { font-size: 15px; }

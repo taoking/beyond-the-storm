@@ -1,5 +1,6 @@
-// 美术查看页的图层逻辑：画面状态 → 按顺序叠哪些图层文件，哪些这套还没有。
-// 只读 Snapshot，不碰世界。以后正式渲染的适配器从这里长出来（HANDOFF 4.1 第 6 条）。
+// 画面的图层逻辑：画面状态 → 按顺序叠哪些图层文件，哪些这套还没有；世界快照 → 画面状态和人形站位。
+// 灰盒主界面（src/app/scene.ts）和美术查看页（art.html）共用这一份，真正叠图在 compose.ts。
+// 只读 Snapshot，不碰世界；纯逻辑，不碰 DOM，测试直接跑。
 import type { RoomId } from "../core/rooms.ts";
 import { MOOD_NAME, type Snapshot } from "../core/view.ts";
 
@@ -50,9 +51,24 @@ const REPAIRED: Record<string, string> = { radio_fixed: "radio_broken", gramopho
 /** 盖在人物前面的物件 */
 const OVER_ACTOR = new Set(["quilt_thick"]);
 
+/**
+ * 素材还没出、先用代码顶一下的那几层，跟文件名混在 layers 里，以 ~ 开头。
+ * 图一到（have 说有），对应的顶替就不再出现。
+ */
+export const STAND_IN = {
+  /** 夜里的窗外还没出：用白天的窗外层压暗 */
+  nightOutside: "~night_outside",
+  /** 夜色层还没出：整间盖一层薄薄的夜色 */
+  nightRoom: "~night_room",
+} as const;
+
 export interface Stack {
-  /** 从下往上 */
+  /** 从下往上；~ 开头的是 STAND_IN */
   layers: string[];
+  /** layers 的前这么多层是窗外（窗外、天气），先叠在一起、按玻璃掩码裁，再垫在室内层下面 */
+  outside: number;
+  /** 人形画在 layers[figureAt] 之前（等于 layers.length 就画在最上面）：比家具靠前、比遮挡物、夜色和火光靠后 */
+  figureAt: number;
   /** 这个状态要、这套里没有的图层 */
   missing: string[];
 }
@@ -68,10 +84,18 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
     else missing.push(names[0]);
   };
 
-  if (s.time === "night") want("outside_winter_night_rgba");
-  else first("outside_winter_day_rgba", "outside_winter_day_clear_rgba");
-  want("interior_rgba");
+  const day = ["outside_winter_day_rgba", "outside_winter_day_clear_rgba"];
+  if (s.time === "day") first(...day);
+  else if (have("outside_winter_night_rgba")) layers.push("outside_winter_night_rgba");
+  else {
+    missing.push("outside_winter_night_rgba");
+    const hit = day.find(have);
+    if (hit) layers.push(hit, STAND_IN.nightOutside);
+  }
+  // 雪和暴风雪在玻璃外面：跟窗外一起裁，垫在窗框下面
   if (s.weather !== "calm") want(`weather_${s.weather}`);
+  const outside = layers.length;
+  want("interior_rgba");
 
   // 柴堆 0 档、粮空就是底图本身；旧套有单独的 woodpile_0
   if (room === "hearth_room" && (s.wood > 0 || have("woodpile_0"))) want(`woodpile_${s.wood}`);
@@ -81,6 +105,7 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
   for (const [fixed, old] of Object.entries(REPAIRED)) if (!s.props.includes(fixed) && have(old)) layers.push(old);
   for (const p of s.props) if (!OVER_ACTOR.has(p)) want(p);
 
+  const figureAt = layers.length;
   if (s.actor) {
     want("actor_contact");
     want("actor_male_pose");
@@ -89,7 +114,13 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
   }
   for (const p of s.props) if (OVER_ACTOR.has(p)) want(p);
 
-  if (s.time === "night") want("night_ambient");
+  if (s.time === "night") {
+    if (have("night_ambient")) layers.push("night_ambient");
+    else {
+      missing.push("night_ambient");
+      if (have("interior_rgba")) layers.push(STAND_IN.nightRoom);
+    }
+  }
   if (s.fire !== "out") {
     want(`fire_spill_${s.fire === "high" ? "high" : "low"}`);
     if (room === "hearth_room") {
@@ -102,7 +133,7 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
     if (s.lamp) want("oil_lamp_glow");
   }
   if (s.heater && room === "observation_room") want("heater_flame_on");
-  return { layers, missing };
+  return { layers, outside, figureAt, missing };
 }
 
 export interface WorldArt {
@@ -115,6 +146,33 @@ const WEATHER: Record<string, ArtWeather> = {
   clear: "calm", cloudy: "calm", fog: "calm", coldRain: "calm", freezingRain: "calm", thunderstorm: "calm",
   lightSnow: "snow", heavySnow: "snow", blizzard: "blizzard",
 };
+
+/** 人形占位：角色图出来以前，按站位的脚底和身高画一个人形 */
+export interface Figure {
+  /** 2560×1440 画布上的脚底 */
+  foot: [number, number];
+  height: number;
+  /** stage.pose 的九种姿态键 */
+  pose: string;
+  /** 室内衣着、出门的衣着、氛围态的演出（不是真在做事） */
+  look: "indoor" | "outdoor" | "illusion";
+}
+
+export type Locate = (place: string) => { foot: [number, number] | null; height: number | null } | null | undefined;
+
+/** 他在这一间（按 stage.visible）就给站位上的人形；站位没写脚底就不画 */
+export function figureFromSnapshot(snap: Snapshot, room: RoomId, locate: Locate): Figure | null {
+  const st = snap.stage;
+  if (!st.visible[room] || !st.place) return null;
+  const l = locate(st.place);
+  if (!l?.foot) return null;
+  return {
+    foot: l.foot,
+    height: l.height ?? 600,
+    pose: st.pose ?? "standLook",
+    look: st.illusion ? "illusion" : st.outfit === "outdoor" ? "outdoor" : "indoor",
+  };
+}
 
 /** 世界快照 → 选了 room 这一间时该画成什么样 */
 export function artFromSnapshot(snap: Snapshot, room: RoomId): WorldArt {
