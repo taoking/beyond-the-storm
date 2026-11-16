@@ -46,7 +46,9 @@ describe("06 G2 actor pose projection reads structured facts only", () => {
     expect(actorPose(a).pose).toBe("sitWrite");
   });
   it("radio listening, bookshelf tidying and cooking never give out repair tools", () => {
-    expect(actorPose(actor("leisure","radio",{id:"radio"}))).toMatchObject({pose:"standLook",prop:null});
+    expect(actorPose(actor("leisure","radio",{id:"radio"}))).toMatchObject({pose:"standWork",prop:null});
+    expect(actorPose(actor("leisure","armchair",{id:"radio"}))).toMatchObject({pose:"sit",prop:null});
+    expect(actorPose(actor("leisure","desk",{id:"weatherNotes"}))).toMatchObject({pose:"sitWrite",prop:"journal"});
     expect(actorPose(actor("leisure","bookshelf",{id:"tidyShelf"}))).toMatchObject({pose:"standWork",prop:"book"});
     expect(actorPose(actor("leisure","workbench",{id:"tidyTools"}))).toMatchObject({pose:"standWork",prop:"tools"});
     expect(actorPose(actor("meal","stove"))).toMatchObject({pose:"standWork",prop:"pot"});

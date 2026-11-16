@@ -54,7 +54,7 @@ export function actorPose(actor: ActorState): PoseProjection {
     if (leisureId === "tea") return { activity: kind, pose: isArmchair ? "sitHold" : "standWork", prop: "cup" };
     if (leisureId === "fireSit" || leisureId === "rest") return { activity: kind, pose: "sit", prop: null };
     if (leisureId === "tidyShelf") return { activity: kind, pose: "standWork", prop: "book" };
-    if (leisureId === "radio") return { activity: kind, pose: "standLook", prop: null };
+    if (leisureId === "radio") return { activity: kind, pose: isArmchair ? "sit" : "standWork", prop: null };
     if (leisureId === "tidyTools") return { activity: kind, pose: "standWork", prop: "tools" };
     if (leisureId === "waterPlant") return { activity: kind, pose: "standWork", prop: "cup" };
     // 夏天傍晚的「坐在门口」由内核在开始时标成 variant: "sit"；没有标记的（含老存档）按走走算

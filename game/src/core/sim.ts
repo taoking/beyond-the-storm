@@ -440,9 +440,13 @@ const LEISURE: LeisureDef[] = [
   {
     id: "weatherNotes",
     weight: () => 1,
+    // 记录摞在仪器角，拿到书桌上坐着看
     build: (w) => ({
       label: "在看气象记录",
-      phases: [{ place: "instruments", minutes: span(w, 15, 25) }],
+      phases: [
+        { place: "instruments", minutes: 2, label: "在取气象记录" },
+        { place: "desk", minutes: span(w, 15, 25) },
+      ],
       text: "翻了翻前任的气象记录。",
     }),
     nudge: ["study"],
@@ -458,8 +462,16 @@ const LEISURE: LeisureDef[] = [
     weight: (w, t) => (hasEffect(w, "radio") && isEvening(t) ? 3 : 1),
     build: (w) =>
       hasEffect(w, "radio")
-        ? { label: "在听收音机", phases: [{ place: "radio", minutes: span(w, 20, 30) }], text: "听了会儿收音机。" }
-        : { label: "在摆弄收音机", phases: [{ place: "radio", minutes: span(w, 20, 30) }], text: "摆弄了一阵收音机，还是只有沙沙声。" },
+        ? {
+            // 调好台，回扶手椅坐着听
+            label: "在听收音机",
+            phases: [
+              { place: "radio", minutes: 3, label: "在调收音机" },
+              { place: "armchair", minutes: span(w, 20, 30) },
+            ],
+            text: "听了会儿收音机。",
+          }
+        : { label: "在摆弄收音机", phases: [{ place: "radio", minutes: span(w, 10, 15) }], text: "摆弄了一阵收音机，还是只有沙沙声。" },
     nudge: ["code"],
   },
   {
@@ -641,7 +653,8 @@ function projectBlock(w: World, def: ProjectDef, minutes: number, evening: boole
     "project",
     label,
     "project",
-    [{ place, minutes: Math.min(minutes, stageLeft) }],
+    // 这一段做完只剩几分钟的尾巴，就顺手一起做完，免得之后单独做一两分钟
+    [{ place, minutes: stageLeft - minutes < 5 ? stageLeft : minutes }],
     { id: def.id, evening },
     true,
   );
