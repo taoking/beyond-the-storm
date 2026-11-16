@@ -260,7 +260,7 @@ function renderDebug(s: Snapshot, g: Game): string {
     <div>G2：${esc(s.stage.pose ?? "—")} / ${esc(s.stage.prop ?? "—")} · 演出位置：${esc(s.stage.place ?? "空屋")}（${esc(s.stage.room ? ROOMS[s.stage.room].name : "四间都不在")}） · 天气来源：${esc(s.look.source)}</div>
     <div class="row">${btn("快进 1 小时", "debugSkip", [60])}${btn("快进 1 天", "debugSkip", [1440])}${btn("快进 12 天", "debugSkip", [1440 * 12])}</div>
     <div class="row">${btn("模拟休眠回来", "debugInterrupt", ["sleep", 0])}${btn("模拟 23 分钟断档", "debugInterrupt", ["gap", 23 * 60_000])}</div>
-    <div class="row"><button data-ui="reset">删档重开</button></div>
+    <div class="row"><button data-ui="reset">删档重开</button> <a href="/log.html" target="_blank">真机验证日志</a></div>
     <div class="dim">快进只推世界、不推专注，只在正常陪伴时有效。</div>`);
   h.push(`<h3>他醒着时在各间</h3><div class="dim">分母：正常陪伴、醒着、没被带出门的 ${t.awakeMinutes} 个游戏分钟</div><table>`);
   for (const r of ROOM_IDS) h.push(`<tr><td>${esc(ROOMS[r].name)}</td><td>${pct(t.visibleAwake[r], t.awakeMinutes)}</td></tr>`);

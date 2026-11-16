@@ -10,6 +10,7 @@ import { deserialize, serialize } from "../core/save.ts";
 import type { TaskCategory } from "../core/content.ts";
 import type { FocusPreset } from "../core/focus.ts";
 import type { WildAction } from "../core/wild.ts";
+import { startProbe, type Probe } from "./probe/recorder.ts";
 
 const SAVE_KEY = "bts.save.v1";
 const LOCK = "bts.leader";
@@ -72,12 +73,15 @@ function nowBeat(): Beat {
   return { wall: Date.now(), mono: performance.now() };
 }
 
-function load(): G.Game | null {
+function load(probe: Probe): G.Game | null {
   try {
     const text = localStorage.getItem(SAVE_KEY);
-    return text ? deserialize(text).game : null;
+    const file = text ? deserialize(text) : null;
+    probe.loaded(!!file, file ? { chars: text!.length, savedWall: file.savedWall } : {});
+    return file ? file.game : null;
   } catch (err) {
     console.error("读存档失败，按新世界开始", err);
+    probe.loaded(true, { err });
     return null;
   }
 }
@@ -89,6 +93,8 @@ export function startRuntime(): Runtime {
   let lastSave = 0;
   /** 从窗口记着最近一次收到状态的时刻，接手时从这里接着算 */
   let lastHeard: Beat | null = null;
+  // 真机验证日志（06 第 12 节）：只记不改
+  const probe = startProbe({ lockName: LOCK, isLeader: () => rt.leader, game: () => rt.game });
 
   const rt: Runtime = {
     game: null,
@@ -106,6 +112,7 @@ export function startRuntime(): Runtime {
       if (!rt.leader) return;
       rt.game = G.newGame((Math.random() * 2 ** 31) | 0);
       prev = nowBeat();
+      probe.command(rt.game, "reset", null);
       save(true);
       broadcast();
       rt.onChange();
@@ -121,6 +128,7 @@ export function startRuntime(): Runtime {
     if (result && typeof result === "object" && "ok" in result && !(result as G.Result).ok) {
       console.info(`[${cmd.name}]`, (result as G.Result).reason);
     }
+    probe.command(g, cmd.name, result);
     save(true);
     broadcast();
     rt.onChange();
@@ -132,9 +140,13 @@ export function startRuntime(): Runtime {
     if (!force && now - lastSave < SAVE_EVERY_MS) return;
     lastSave = now;
     try {
-      localStorage.setItem(SAVE_KEY, serialize(rt.game, now));
+      const t0 = performance.now();
+      const text = serialize(rt.game, now);
+      localStorage.setItem(SAVE_KEY, text);
+      probe.saved(text.length, performance.now() - t0);
     } catch (err) {
       console.error("存档失败", err);
+      probe.saveFailed(err);
     }
   }
 
@@ -147,6 +159,7 @@ export function startRuntime(): Runtime {
     if (!rt.leader || !g) return;
     const now = nowBeat();
     const verdict = judgeGap(prev, now);
+    const before = prev;
     prev = now;
     rt.lastVerdict = `${verdict.kind}${verdict.gapMs ? ` ${Math.round(verdict.gapMs / 1000)} 秒` : ""}`;
     if (verdict.kind === "running") {
@@ -155,8 +168,10 @@ export function startRuntime(): Runtime {
       const whole = Math.floor(ms);
       remainder = ms - whole;
       if (whole > 0) G.advance(g, { wall: now.wall, verifiedMs: whole }, cal);
+      probe.beat(g, before, now, verdict, whole);
     } else {
       G.interrupt(g, verdict.kind === "sleep" ? "sleep" : "gap", verdict.gapMs);
+      probe.beat(g, before, now, verdict, 0);
       save(true);
     }
   }
@@ -173,6 +188,7 @@ export function startRuntime(): Runtime {
     if (msg.type === "state" && !rt.leader) {
       rt.game = JSON.parse(msg.text) as G.Game;
       lastHeard = nowBeat();
+      probe.heard();
       rt.onChange();
     } else if (msg.type === "cmd" && rt.leader) {
       run(msg.cmd);
@@ -183,13 +199,16 @@ export function startRuntime(): Runtime {
 
   function becomeLeader(): void {
     rt.leader = true;
+    let from: "save" | "new" | "handover" = "new";
     if (rt.game && lastHeard) {
       // 从前一个主窗口手里接过来：这个窗口一直开着，接着它最后广播的状态走
       prev = lastHeard;
+      from = "handover";
     } else {
-      const saved = load();
+      const saved = load(probe);
       if (saved) {
         // 重新打开：离开的时间不补，这一轮专注停在「已暂停」
+        from = "save";
         G.interrupt(saved, "exit");
         rt.game = saved;
       } else {
@@ -206,9 +225,11 @@ export function startRuntime(): Runtime {
       beat();
       save(true);
     });
+    probe.leader(rt.game!, from, from === "handover" ? lastHeard!.wall : null);
     tick();
   }
 
+  probe.lockRequested("locks" in navigator);
   if ("locks" in navigator) {
     // 抢到锁的那个窗口当主窗口，一直握着不放；其余的在这里排队
     void navigator.locks.request(LOCK, () => {

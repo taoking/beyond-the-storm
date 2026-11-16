@@ -19,6 +19,9 @@ npm run longrun     # 无人值守长跑，对照 02 第 5.7 节的验收目标�
 npm run sample      # 打印头几天的动作流水：npm run sample -- 3 2（种子 3，2 天）
 node tools/report.ts  # 人物可见率、活动密度、时间配比、地点 × 姿态 × 房间（约 10 秒）。可加 --runs 40 --days 60
 node tools/wild-smoke.mjs  # 真浏览器冒烟（无界面 Chrome）：野外走、采、回家。先 npm run dev
+                    # 真机验证日志（06 第 12.1 节）：http://localhost:5173/log.html 导出
+node tools/probe-check.ts 导出的.json  # 按 06 第 12 节逐项判「通过 / 可疑 / 没测到」
+node tools/probe-smoke.mjs  # 真浏览器冒烟：日志写得进、导得出、读得懂（约 5 分钟）。先 npm run dev
 ```
 
 ## 结构
@@ -45,6 +48,7 @@ src/art/       画面适配器，主界面和美术查看页共用（06 第 16.1
   compose.ts     读图、按玻璃掩码裁窗外、画人形占位、逐级减半缩到画布（CSS 尺寸 × 屏幕倍率）
   main.ts        美术查看页（art.html，开发用，不进游戏）
 src/app/       灰盒界面：runtime.ts（心跳、存档、多窗口）、scene.ts（一次画一间，用 b1_20261116 的真图）、main.ts（面板、选房间）
+  probe/         真机验证日志（log.html，开发用）：recorder.ts 记、analyze.ts 判、page.ts 导出页；只记不改
 tests/         自动化测试，标题里写着对应 02/04/06 的哪一条
 tools/         长跑、采样、指标报告
 ```

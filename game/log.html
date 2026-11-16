@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>风雪之外 · 真机验证日志</title>
+    <style>
+      :root { color-scheme: dark; --bg: #141b21; --panel: #1d262d; --line: #33424c; --text: #dfe6ea; --dim: #8fa1ac; --ok: #8fc49a; --bad: #e4a276; }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 16px; background: var(--bg); color: var(--text); font: 13px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+      h1 { font-size: 16px; margin: 0 0 4px; }
+      .hint { color: var(--dim); margin: 0 0 12px; max-width: 70em; }
+      .row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; align-items: center; }
+      button { background: #10171c; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 5px 12px; font: inherit; cursor: pointer; }
+      button.danger { border-color: #6b3b33; }
+      #status { color: var(--dim); }
+      .item { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; margin: 8px 0; max-width: 980px; }
+      .item h2 { font-size: 13px; margin: 0 0 4px; }
+      .item p { margin: 1px 0; white-space: pre-wrap; }
+      .pass h2 span { color: var(--ok); }
+      .suspect h2 span { color: var(--bad); }
+      .untested h2 span { color: var(--dim); }
+      .bad { color: var(--bad); }
+      pre { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px; max-height: 40vh; overflow: auto; font-size: 11px; max-width: 980px; }
+    </style>
+  </head>
+  <body>
+    <h1>真机验证日志</h1>
+    <p class="hint">开发用，不是游戏界面（06 第 12 节）。灰盒开着时会把可见性、休眠、两个钟的差、世界推进、有效专注、得份、Web Lock 和存档读写记在这台电脑的这个浏览器里。在同一个浏览器里打开这一页，点「导出 JSON」，再用 <code>node tools/probe-check.ts 文件</code> 看判断；这一页下面显示的是同一份判断。</p>
+    <div class="row">
+      <button id="refresh">刷新</button>
+      <button id="exportJson">导出 JSON</button>
+      <button id="exportText">导出判断（文本）</button>
+      <button id="clear" class="danger">清空日志</button>
+      <span id="status"></span>
+    </div>
+    <div id="report"></div>
+    <h2 style="font-size: 13px">最近 200 条</h2>
+    <pre id="tail"></pre>
+    <script type="module" src="/src/app/probe/page.ts"></script>
+  </body>
+</html>
