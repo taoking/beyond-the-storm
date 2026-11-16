@@ -41,7 +41,11 @@ export const MANAGED = new Set([
   "actor_contact", "actor_male_pose", "bed_front_occlusion", "chair_front_occlusion",
   "fire_spill_low", "fire_spill_high", "fire_flame_ember", "fire_flame_low", "fire_flame_mid", "fire_flame_high",
   "oil_lamp_body", "oil_lamp_glow", "heater_flame_on",
+  "radio_broken", "gramophone_covered",
 ]);
+
+/** 修好以后换图的物件：新的那张没开就画旧的（旧的罩布让出来的那块在室内层里是透明的，不画就成了窗洞） */
+const REPAIRED: Record<string, string> = { radio_fixed: "radio_broken", gramophone_open: "gramophone_covered" };
 
 /** 盖在人物前面的物件 */
 const OVER_ACTOR = new Set(["quilt_thick"]);
@@ -74,6 +78,7 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
   if (room === "kitchen_room" && s.food === "half") first("stock_half", "stock_sparse");
   else if (room === "kitchen_room" && s.food !== "none") want(`stock_${s.food}`);
   if (room === "observation_room" && s.jar > 0) want(`jar_${s.jar}`);
+  for (const [fixed, old] of Object.entries(REPAIRED)) if (!s.props.includes(fixed) && have(old)) layers.push(old);
   for (const p of s.props) if (!OVER_ACTOR.has(p)) want(p);
 
   if (s.actor) {

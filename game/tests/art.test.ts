@@ -36,12 +36,22 @@ describe("图层顺序", () => {
   });
 
   it("批次 1 的新底图用晴天窗外层，没有的图层报出来", () => {
-    const s = layerStack(haveIn("b1_20261116", "hearth_room"), "hearth_room", { ...EMPTY_STATE, time: "night", fire: "low" });
-    expect(s.layers).toEqual(["interior_rgba"]);
-    expect(s.missing).toContain("outside_winter_night_rgba");
-    expect(s.missing).toContain("fire_flame_low");
-    const day = layerStack(haveIn("b1_20261116", "observation_room"), "observation_room", EMPTY_STATE);
-    expect(day.layers).toEqual(["outside_winter_day_clear_rgba", "interior_rgba"]);
+    const s = layerStack(haveIn("b1_20261116", "hearth_room"), "hearth_room", { ...EMPTY_STATE, time: "night", fire: "low", oilLamp: false });
+    expect(s.layers).toEqual(["interior_rgba", "radio_broken", "gramophone_covered", "fire_flame_low"]);
+    expect(s.missing).toEqual(["outside_winter_night_rgba", "night_ambient", "fire_spill_low"]);
+  });
+
+  it("批次 2：收音机、唱片机没修好画旧的，修好换新的", () => {
+    const have = haveIn("b1_20261116", "hearth_room");
+    const day = { ...EMPTY_STATE, wood: 4 as const, fire: "mid" as const, props: ["kettle", "armchair_blanket"] };
+    expect(layerStack(have, "hearth_room", day).layers).toEqual([
+      "outside_winter_day_clear_rgba", "interior_rgba", "woodpile_4", "radio_broken", "gramophone_covered", "kettle", "armchair_blanket",
+      "fire_flame_mid", "oil_lamp_body",
+    ]);
+    const fixed = layerStack(have, "hearth_room", { ...day, props: ["radio_fixed", "gramophone_open"] }).layers;
+    expect(fixed).toContain("radio_fixed");
+    expect(fixed).not.toContain("radio_broken");
+    expect(fixed).not.toContain("gramophone_covered");
   });
 });
 
