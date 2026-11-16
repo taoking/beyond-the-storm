@@ -54,7 +54,7 @@ D-1 四间的构图、D-3 默认显示哪间、D-2 野外的数值（按 `IMPL.w
 
 ### 4.2 Claude 开发（`game/`、06）
 
-直接在 `main` 上做。开工先 `git fetch`、`git pull --ff-only`；提交前跑 `npm test` 和 `npm run typecheck`，改了内核再跑 `npm run longrun`。
+直接在 `main` 上做，只在本地 commit，除非用户明说才 push。开工先看本地 `git log`、`git status`；提交前跑 `npm test` 和 `npm run typecheck`，改了内核再跑 `npm run longrun`。
 
 1. 美术查看页 2026-11-16 做好了：`npm run dev` 后开 `/art.html`，见第 5 节。下一步把 `src/art/layers.ts` 长成正式渲染的适配器（4.1 第 6 条）。
 2. 姿态统计并进 `game/tools/report.ts`：读 `room_locations.json`，出「地点 × 姿态 × 房间」的表。
@@ -98,7 +98,7 @@ D-1 四间的构图、D-3 默认显示哪间、D-2 野外的数值（按 `IMPL.w
 | Claude | 全部设计文档、`设计/原型/`、`assets/05/`、`game/`、00、这份文件。01–03 是定稿，改之前先问用户 |
 | 用户 | 最终取舍；按 `设计/出图要求/` 里的要求用 Gemini 出图，放进根目录的 `出图/` |
 
-- **`main` 是开发分支**，Claude 直接提交推送。开发、统筹可能分两个窗口跑，子代理也会提交，开工和提交前都先 `git fetch`、`git pull --ff-only`。
+- **`main` 是开发分支**，Claude 直接在本地提交，**不 push**（用户 2026-11-16 定：除非用户明说推送到 GitHub；网络卡，用户自己挑网络好的时候推）。开发、统筹可能分两个窗口跑，子代理也会提交，都在本机同一个仓库里，开工和提交前看本地 `git log`、`git status`，不用 fetch、pull。
 - `gpt/` 开头的分支、PR #3 停用，不再合并；GPT 留下的 04、05、原型和资产照旧用。旧的 `claude/06-greybox`、`claude/06-outdoor-actions` 也停用。
 - 文档里写成「已确认」的事，要用户本人说过才算。替用户做的判断写成「建议」。
 - `.gitignore` 是白名单：收 `设计/`、`game/`、`assets/`、`.github/` 和根目录的 `HANDOFF.md`。`CLAUDE.md`、`参考资料/`、`出图/` 不入库。
@@ -137,7 +137,7 @@ D-1 四间的构图、D-3 默认显示哪间、D-2 野外的数值（按 `IMPL.w
 
 ## 8. 要留意的
 
-- 开工前先 `git fetch`，以 `git log` 为准，不凭记忆。
+- 开工前先看本地 `git log`，以它为准，不凭记忆。
 - 02、03 是定稿。要改先把改法给用户看，用户点头再改，改完登记 00。
 - 02、03 没写死的地方：先选一种做法实现，数值放进 `config.ts` 的 `IMPL`，差异写进 `设计/讨论记录/` 等用户定。
 - 改了 02 第 5 节的数值：同步 `设计/验算/`、02 第 5.7 节、`config.ts`，重跑 `npm run longrun`，更新 06 第 11 节。
