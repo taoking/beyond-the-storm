@@ -7,7 +7,7 @@ import { clockText } from "../core/calendar.ts";
 import { ROOM_IDS, type RoomId } from "../core/rooms.ts";
 import { present, type Snapshot } from "../core/view.ts";
 import { artFromSnapshot, EMPTY_STATE, figureFromSnapshot, layerStack, MANAGED, type ArtState, type Figure, type Stack } from "./layers.ts";
-import { blit, compose, fitCanvas, library, W, type OutsideMode } from "./compose.ts";
+import { blit, compose, fitCanvas, library, SnowLoop, W, type OutsideMode } from "./compose.ts";
 
 const ROOM_NAME: Record<RoomId, string> = { hearth_room: "炉间", observation_room: "观测间", kitchen_room: "灶间", bedroom: "卧室" };
 const POSE_NAME: Record<string, string> = {
@@ -102,6 +102,8 @@ function restore(): void {
     if (!(id in o)) continue;
     if (el.type === "checkbox") el.checked = Boolean(o[id]);
     else el.value = String(o[id]);
+    // 存的值这一版没有了（比如旧的「下雪」），退回第一项
+    if (el instanceof HTMLSelectElement && el.selectedIndex < 0) el.selectedIndex = 0;
   }
 }
 
@@ -226,6 +228,8 @@ function overlays(ctx: CanvasRenderingContext2D, json: RoomJson, room: RoomId, d
 
 const TARGETS: [string, number, number][] = [["c1280", 1280, 720], ["c480", 480, 270], ["c320", 320, 180]];
 let token = 0;
+/** 雪跟主界面一样逐帧画（15 帧，只重画玻璃那一块） */
+const snow = new SnowLoop(15);
 
 async function render(): Promise<void> {
   const my = ++token;
@@ -281,14 +285,19 @@ async function render(): Promise<void> {
   const composed = await compose(LIB, { set, room, stack, figure, outside: val("outside") as OutsideMode }, 320 * dpr);
   if (my !== token) return;
 
+  const marked = (id: string): boolean => !!json && (id === "c1280" || on("ovSmall"));
   for (const [id, w, h] of TARGETS) {
     const c = $<HTMLCanvasElement>(id);
     c.style.width = `${w}px`;
     c.style.height = `${h}px`;
     fitCanvas(c, w, h);
     const ctx = blit(composed, c);
-    if (json && (id === "c1280" || on("ovSmall"))) overlays(ctx, json, room, dpr, here);
+    if (marked(id)) overlays(ctx, json!, room, dpr, here);
   }
+  // 标注在雪那一块每帧重画，免得被雪盖掉
+  snow.play(composed, TARGETS.map(([id]) => $<HTMLCanvasElement>(id)), (ctx, c) => {
+    if (marked(c.id)) overlays(ctx, json!, room, dpr, here);
+  });
   $("status").textContent = "";
   info(set, room, json, stack, notes, snap);
 }

@@ -6,7 +6,7 @@ import { LOCATIONS, ROOMS, type RoomId } from "../core/rooms.ts";
 import type { PlaceId } from "../core/content.ts";
 import type { Snapshot } from "../core/view.ts";
 import { artFromSnapshot, figureFromSnapshot, layerStack, type Locate } from "../art/layers.ts";
-import { blit, compose, fitCanvas, library, sceneKey, type Composed, type SceneSpec } from "../art/compose.ts";
+import { blit, compose, fitCanvas, library, sceneKey, SnowLoop, type Composed, type SceneSpec } from "../art/compose.ts";
 
 // 只打包内核坐标那一套（rooms.ts 读的 room_locations.json 在同一个目录）；tests/art.test.ts 查两边一致
 const LIB = library(
@@ -34,6 +34,8 @@ export interface Target {
 let shown: Composed | null = null;
 let pending: string | null = null;
 const painted = new WeakMap<HTMLCanvasElement, string>();
+/** 下雪时只在玻璃那一块逐帧补雪，15 帧；后台、减弱动态效果时不动 */
+const snow = new SnowLoop(15);
 
 function cssSize(t: Target): [number, number] {
   if (t.css) return t.css;
@@ -42,6 +44,7 @@ function cssSize(t: Target): [number, number] {
 }
 
 function paintAll(c: Composed, targets: Target[]): void {
+  let changed = false;
   for (const t of targets) {
     const [w, h] = cssSize(t);
     const resized = fitCanvas(t.canvas, w, h);
@@ -49,7 +52,9 @@ function paintAll(c: Composed, targets: Target[]): void {
     if (!resized && painted.get(t.canvas) === sig) continue;
     blit(c, t.canvas);
     painted.set(t.canvas, sig);
+    changed = true;
   }
+  if (changed) snow.play(c, targets.map((t) => t.canvas));
 }
 
 /**

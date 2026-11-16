@@ -5,7 +5,9 @@ import type { RoomId } from "../core/rooms.ts";
 import { MOOD_NAME, type Snapshot } from "../core/view.ts";
 
 export type ArtTime = "day" | "night";
-export type ArtWeather = "calm" | "snow" | "blizzard";
+export type ArtWeather = "calm" | "lightSnow" | "heavySnow" | "blizzard";
+/** 下雪的三档，雪由 compose.ts 画（批次 3 选 A，不出雪的图） */
+export const SNOWY: readonly ArtWeather[] = ["lightSnow", "heavySnow", "blizzard"];
 export type ArtFire = "out" | "ember" | "low" | "mid" | "high";
 export type ArtFood = "none" | "sparse" | "half" | "full";
 
@@ -40,8 +42,8 @@ export const MANAGED = new Set([
   "woodpile_0", "woodpile_1", "woodpile_2", "woodpile_3", "woodpile_4", "stock_sparse", "stock_half", "stock_full",
   "jar_1", "jar_2", "jar_3",
   "actor_contact", "actor_male_pose", "bed_front_occlusion", "chair_front_occlusion",
-  "fire_spill_low", "fire_spill_high", "fire_flame_ember", "fire_flame_low", "fire_flame_mid", "fire_flame_high",
-  "oil_lamp_body", "oil_lamp_glow", "heater_flame_on",
+  "fire_spill_ember", "fire_spill_low", "fire_spill_high", "fire_flame_ember", "fire_flame_low", "fire_flame_mid", "fire_flame_high",
+  "oil_lamp_body", "oil_lamp_lit", "oil_lamp_glow", "heater_flame_on", "heater_flame_night",
   "radio_broken", "gramophone_covered",
 ]);
 
@@ -62,6 +64,20 @@ export const STAND_IN = {
   nightRoom: "~night_room",
 } as const;
 
+/**
+ * 程序画的几层，也以 ~ 开头混在 layers 里，名字后面跟天气档位：
+ * 风雪雾是静的，跟窗外一起叠；雪是动的，永远是窗外一组的最后一层，compose.ts 逐帧画。
+ */
+export const PROCEDURAL = {
+  fog: "~fog_",
+  snow: "~snow_",
+} as const;
+
+/** 光层：用加亮叠法（canvas lighter）叠在夜色上面，几样光重叠时相加 */
+const ADDITIVE = new Set(["fire_spill_ember", "fire_spill_low", "fire_spill_high", "oil_lamp_glow", "heater_flame_night"]);
+export type Blend = "source-over" | "lighter";
+export const blendOf = (name: string): Blend => (ADDITIVE.has(name) ? "lighter" : "source-over");
+
 export interface Stack {
   /** 从下往上；~ 开头的是 STAND_IN */
   layers: string[];
@@ -71,6 +87,8 @@ export interface Stack {
   figureAt: number;
   /** 这个状态要、这套里没有的图层 */
   missing: string[];
+  /** 夜里：程序画的雪和雾换成夜里的颜色 */
+  night: boolean;
 }
 
 /** have(名字) 说这一套、这一间有没有这个图层 */
@@ -92,8 +110,12 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
     const hit = day.find(have);
     if (hit) layers.push(hit, STAND_IN.nightOutside);
   }
-  // 雪和暴风雪在玻璃外面：跟窗外一起裁，垫在窗框下面
-  if (s.weather !== "calm") want(`weather_${s.weather}`);
+  // 雪和风雪雾在玻璃外面：跟窗外一起裁，垫在窗框下面。程序画，不找 weather_* 文件；
+  // 有窗外才画（没有窗外就没有玻璃可透）
+  if (SNOWY.includes(s.weather) && layers.length > 0) {
+    if (s.weather !== "lightSnow") layers.push(PROCEDURAL.fog + s.weather);
+    layers.push(PROCEDURAL.snow + s.weather);
+  }
   const outside = layers.length;
   want("interior_rgba");
 
@@ -104,6 +126,10 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
   if (room === "observation_room" && s.jar > 0) want(`jar_${s.jar}`);
   for (const [fixed, old] of Object.entries(REPAIRED)) if (!s.props.includes(fixed) && have(old)) layers.push(old);
   for (const p of s.props) if (!OVER_ACTOR.has(p)) want(p);
+  // 油灯没点时是普通物件，夜里跟着夜色变暗；夜里点着换成 oil_lamp_lit（在夜色上面），没有那张就还画灯体
+  const night = s.time === "night";
+  const lit = s.oilLamp && s.lamp && night && have("oil_lamp_lit");
+  if (s.oilLamp && !lit) want("oil_lamp_body");
 
   const figureAt = layers.length;
   if (s.actor) {
@@ -114,26 +140,45 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
   }
   for (const p of s.props) if (OVER_ACTOR.has(p)) want(p);
 
-  if (s.time === "night") {
+  if (night) {
     if (have("night_ambient")) layers.push("night_ambient");
     else {
       missing.push("night_ambient");
       if (have("interior_rgba")) layers.push(STAND_IN.nightRoom);
     }
   }
+  // 炉火：白天只画炉间的火苗。夜里画火光层（炉门里的火苗在光层里，不再画 fire_flame_*）；
+  // 中火夜里用小火那层；余烬只有炉间有光。灶间的火光层可有可无，没有不算缺。
+  // 火光层还没出就照旧画火苗，夜里也看得见火。
   if (s.fire !== "out") {
-    want(`fire_spill_${s.fire === "high" ? "high" : "low"}`);
-    if (room === "hearth_room") {
+    const flame = (): void => {
+      if (room !== "hearth_room") return;
       if (s.fire === "mid") first("fire_flame_mid", "fire_flame_low");
       else want(`fire_flame_${s.fire}`);
+    };
+    const spill = !night ? null : s.fire === "high" ? "fire_spill_high" : s.fire !== "ember" ? "fire_spill_low" : room === "hearth_room" ? "fire_spill_ember" : null;
+    if (spill && have(spill)) layers.push(spill);
+    else {
+      if (spill && room !== "kitchen_room") missing.push(spill);
+      flame();
     }
   }
-  if (s.oilLamp) {
-    want("oil_lamp_body");
-    if (s.lamp) want("oil_lamp_glow");
+  if (lit) {
+    layers.push("oil_lamp_lit");
+    want("oil_lamp_glow");
+  } else if (s.oilLamp && s.lamp) {
+    if (night) missing.push("oil_lamp_lit");
+    want("oil_lamp_glow");
   }
-  if (s.heater && room === "observation_room") want("heater_flame_on");
-  return { layers, outside, figureAt, missing };
+  // 暖炉：夜里用加亮的 heater_flame_night，没有就还画白天那张
+  if (s.heater && room === "observation_room") {
+    if (night && have("heater_flame_night")) layers.push("heater_flame_night");
+    else {
+      if (night) missing.push("heater_flame_night");
+      want("heater_flame_on");
+    }
+  }
+  return { layers, outside, figureAt, missing, night };
 }
 
 export interface WorldArt {
@@ -144,7 +189,7 @@ export interface WorldArt {
 
 const WEATHER: Record<string, ArtWeather> = {
   clear: "calm", cloudy: "calm", fog: "calm", coldRain: "calm", freezingRain: "calm", thunderstorm: "calm",
-  lightSnow: "snow", heavySnow: "snow", blizzard: "blizzard",
+  lightSnow: "lightSnow", heavySnow: "heavySnow", blizzard: "blizzard",
 };
 
 /** 人形占位：角色图出来以前，按站位的脚底和身高画一个人形 */
