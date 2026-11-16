@@ -9,6 +9,7 @@ import { ROOM_IDS } from "./rooms.ts";
 import { emptyRooms } from "./telemetry.ts";
 import { emptyPantry, type OutingState } from "./state.ts";
 import { minutesToDoor } from "./wild.ts";
+import { emptyWindowEvents } from "./windowEvents.ts";
 
 export interface SaveFile {
   version: number;
@@ -69,6 +70,8 @@ function repair(g: Game): void {
   w.tea ??= 0;
   w.curing ??= [];
   w.dishes ??= [];
+  // 还没有窗外小事的老存档：从读档这一刻起排今天的，以前没有「第一次看见」
+  w.windowEvents ??= emptyWindowEvents();
   // 野外还只有「离家门几分钟」的老存档：带出去的柴捆按根放进背包，身体是满的，人在区域的入口
   const o = w.outing as (OutingState & { bundles?: number }) | null;
   if (o) o.found ??= [];

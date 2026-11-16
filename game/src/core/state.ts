@@ -173,6 +173,30 @@ export interface YearPage {
   outings: number;
   /** 这一年进了哪些野外区域、各几次（区域 id → 次数）。老存档没有 */
   visits?: Record<string, number>;
+  /** 这一年他第一次看见的窗外小事，按看见的先后（03 第 10.4 节）。老存档没有 */
+  firstSights?: WindowKind[];
+}
+
+/** 窗外的小事（03 第 10.4 节，windowEvents.ts） */
+export type WindowKind = "bird" | "deer" | "geese" | "aurora";
+
+export interface WindowEvent {
+  kind: WindowKind;
+  /** 开始、结束的绝对游戏分钟 */
+  start: number;
+  end: number;
+  /** 他看见了（手记里记了一笔） */
+  seen: boolean;
+  /** 看见的时候他手头是闲暇或观测，看了一会儿 */
+  watched: boolean;
+}
+
+export interface WindowEventsState {
+  /** plan 是哪一天排的；换了一天就重排 */
+  day: number;
+  plan: WindowEvent[];
+  /** 每一种第一次被他看见是哪一天 */
+  firsts: Partial<Record<WindowKind, number>>;
 }
 
 /** 场景里的小痕迹：真实动作留下的，过一阵自己消失 */
@@ -321,6 +345,8 @@ export interface World {
   yearbook: YearPage[];
   yearStats: YearPage;
   traces: Trace[];
+  /** 窗外的小事：今天排了哪几件、每种第一次看见是哪天。老存档没有，读档时补 */
+  windowEvents: WindowEventsState;
   /** 累计数：烧了几根、吃了几餐、各来源入库多少…… */
   tally: Record<string, number>;
 }
@@ -358,7 +384,7 @@ export function emptyDay(): DayState {
 }
 
 export function emptyYearPage(year: number, kind: YearKind): YearPage {
-  return { year, kind, thriftDays: 0, richDays: 0, longestBlizzard: 0, repairsDone: [], harvests: 0, outings: 0, visits: {} };
+  return { year, kind, thriftDays: 0, richDays: 0, longestBlizzard: 0, repairsDone: [], harvests: 0, outings: 0, visits: {}, firstSights: [] };
 }
 
 export interface NewWorldOptions {
@@ -450,6 +476,7 @@ export function createWorldShell(seed: number, opt: NewWorldOptions = {}): World
     yearbook: [],
     yearStats: emptyYearPage(0, yearKind),
     traces: [],
+    windowEvents: { day: -1, plan: [], firsts: {} },
     tally: {},
   };
 }

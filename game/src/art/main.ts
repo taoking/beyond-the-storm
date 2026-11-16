@@ -7,7 +7,8 @@ import { clockText } from "../core/calendar.ts";
 import { ROOM_IDS, type RoomId } from "../core/rooms.ts";
 import { present, type Snapshot } from "../core/view.ts";
 import { artFromSnapshot, EMPTY_STATE, figureFromSnapshot, layerStack, MANAGED, type ArtState, type Figure, type Stack } from "./layers.ts";
-import { blit, compose, fitCanvas, library, SnowLoop, W, type OutsideMode } from "./compose.ts";
+import { blit, compose, fitCanvas, GlassLoop, library, W, type OutsideMode } from "./compose.ts";
+import type { WindowKind } from "./sights.ts";
 
 const ROOM_NAME: Record<RoomId, string> = { hearth_room: "炉间", observation_room: "观测间", kitchen_room: "灶间", bedroom: "卧室" };
 const POSE_NAME: Record<string, string> = {
@@ -72,7 +73,7 @@ const ui = {
   props: new Set<string>(),
 };
 
-const SAVED = ["seed", "day", "minute", "time", "weather", "fire", "wood", "food", "jar", "oilLamp", "lamp", "heater", "actor", "outside", "ovFoot", "ovPane", "ovDoor", "ovSlot", "ovActor", "ovSmall"];
+const SAVED = ["seed", "day", "minute", "time", "weather", "sight", "fire", "wood", "food", "jar", "oilLamp", "lamp", "heater", "actor", "outside", "ovFoot", "ovPane", "ovDoor", "ovSlot", "ovActor", "ovSmall"];
 const STORE = "bts-art-viewer";
 function save(): void {
   const o: Record<string, unknown> = { set: ui.set, room: ui.room, source: ui.source, props: [...ui.props] };
@@ -228,8 +229,8 @@ function overlays(ctx: CanvasRenderingContext2D, json: RoomJson, room: RoomId, d
 
 const TARGETS: [string, number, number][] = [["c1280", 1280, 720], ["c480", 480, 270], ["c320", 320, 180]];
 let token = 0;
-/** 雪跟主界面一样逐帧画（15 帧，只重画玻璃那一块） */
-const snow = new SnowLoop(15);
+/** 雪和窗外的小事跟主界面一样逐帧画（15 帧，只重画玻璃那一块） */
+const glassLoop = new GlassLoop(15);
 
 async function render(): Promise<void> {
   const my = ++token;
@@ -270,6 +271,8 @@ async function render(): Promise<void> {
       lamp: on("lamp"),
       heater: on("heater"),
       actor: on("actor"),
+      // 手拨的小事固定一个编号：位置、队形不随拨动变
+      sight: val("sight") ? { kind: val("sight") as WindowKind, seed: 1 } : null,
     };
     const d = val("dummy");
     const l = d ? json?.locations[d] : undefined;
@@ -294,8 +297,8 @@ async function render(): Promise<void> {
     const ctx = blit(composed, c);
     if (marked(id)) overlays(ctx, json!, room, dpr, here);
   }
-  // 标注在雪那一块每帧重画，免得被雪盖掉
-  snow.play(composed, TARGETS.map(([id]) => $<HTMLCanvasElement>(id)), (ctx, c) => {
+  // 标注在玻璃那一块每帧重画，免得被雪和小事盖掉
+  glassLoop.play(composed, TARGETS.map(([id]) => $<HTMLCanvasElement>(id)), (ctx, c) => {
     if (marked(c.id)) overlays(ctx, json!, room, dpr, here);
   });
   $("status").textContent = "";
@@ -328,7 +331,7 @@ $<HTMLSelectElement>("set").onchange = () => {
   ui.set = val("set");
   refresh();
 };
-for (const id of ["time", "weather", "fire", "wood", "food", "jar", "oilLamp", "lamp", "heater", "actor", "dummy", "outside", "ovFoot", "ovPane", "ovDoor", "ovSlot", "ovActor", "ovSmall", "seed", "day", "minute"]) {
+for (const id of ["time", "weather", "sight", "fire", "wood", "food", "jar", "oilLamp", "lamp", "heater", "actor", "dummy", "outside", "ovFoot", "ovPane", "ovDoor", "ovSlot", "ovActor", "ovSmall", "seed", "day", "minute"]) {
   $(id).addEventListener(id === "minute" ? "input" : "change", () => void render());
 }
 const step = (min: number): void => {

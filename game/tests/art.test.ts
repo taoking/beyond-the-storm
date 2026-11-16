@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { artFromSnapshot, blendOf, EMPTY_STATE, figureFromSnapshot, layerStack, PROCEDURAL, STAND_IN, type ArtState } from "../src/art/layers.ts";
 import { eachFlake, flakeCount, SNOW, type Box } from "../src/art/snow.ts";
+import { auroraStrip, birdAt, deerAt, GEESE_PASS, geeseAt, mainPane } from "../src/art/sights.ts";
 import { localCalendar } from "../src/core/focus.ts";
 import { advanceCompanionMinutes, newGame } from "../src/core/game.ts";
 import { LOCATIONS, ROOM_IDS } from "../src/core/rooms.ts";
@@ -256,5 +257,70 @@ describe("主界面的场景", () => {
     const core = set("../src/core/rooms.ts", /rooms\/([^/]+)\/room_locations\.json/);
     expect(core).toBeTruthy();
     expect(set("../src/app/scene.ts", /rooms\/([^/*]+)\/\*\//)).toBe(core);
+  });
+});
+
+describe("窗外的小事（03 第 10.4 节）：程序画的占位", () => {
+  const bird = { kind: "bird" as const, seed: 1 };
+  const deer = { kind: "deer" as const, seed: 1 };
+
+  it("在窗外一组、雾和雪之间；没有图先用程序层顶着、报缺图；有图就用图", () => {
+    const s = layerStack(b3, "hearth_room", { ...EMPTY_STATE, weather: "heavySnow", sight: deer });
+    expect(s.layers.slice(0, s.outside)).toEqual(["outside_winter_day_clear_rgba", "~fog_heavySnow", PROCEDURAL.sight + "deer", "~snow_heavySnow"]);
+    expect(s.missing).toEqual(["window_deer"]);
+    expect(s.sight).toEqual(deer);
+    const art = layerStack((n) => b3(n) || n === "window_deer", "hearth_room", { ...EMPTY_STATE, sight: deer });
+    expect(art.layers.slice(0, art.outside)).toEqual(["outside_winter_day_clear_rgba", "window_deer"]);
+    expect(art.sight).toBeNull();
+    expect(art.missing).toEqual([]);
+  });
+
+  it("窗沿的鸟只在观测间；没有窗外就不画", () => {
+    expect(layerStack(b3, "observation_room", { ...EMPTY_STATE, sight: bird }).layers).toContain("~window_bird");
+    expect(layerStack(b3, "kitchen_room", { ...EMPTY_STATE, sight: bird }).layers).not.toContain("~window_bird");
+    expect(layerStack((n) => n === "interior_rgba", "observation_room", { ...EMPTY_STATE, sight: deer }).sight).toBeNull();
+  });
+
+  it("快照里的小事进画面状态；进度不进（整张不会每拍重叠）", () => {
+    const g = newGame(5);
+    advanceCompanionMinutes(g, 1);
+    const w = g.world;
+    w.windowEvents.plan = [{ kind: "geese", start: w.minute, end: w.minute + 4, seen: false, watched: false }];
+    const a = artFromSnapshot(present(g, 0, localCalendar), "kitchen_room").state.sight;
+    advanceCompanionMinutes(g, 1);
+    const b = artFromSnapshot(present(g, 0, localCalendar), "kitchen_room").state.sight;
+    expect(a).toEqual({ kind: "geese", seed: w.minute - 1 });
+    expect(b).toEqual(a);
+  });
+
+  it("位置只是时间的函数：鸟在最大那块玻璃的下沿，鹿在玻璃里，大雁从右往左飞过，静止帧在中间", () => {
+    const pane = mainPane("observation_room");
+    expect(pane[2] * pane[3]).toBeGreaterThan(0);
+    const b = birdAt(pane, 3, 7);
+    expect(b).toEqual(birdAt(pane, 3, 7));
+    expect(b.y).toBeGreaterThan(pane[1] + pane[3] * 0.9);
+    expect(b.x).toBeGreaterThan(pane[0]);
+    expect(b.x).toBeLessThan(pane[0] + pane[2]);
+    const d = deerAt(pane, 0, 7);
+    expect(d.y).toBeGreaterThan(pane[1]);
+    expect(d.y).toBeLessThan(pane[1] + pane[3]);
+    expect(d.graze).toBeGreaterThanOrEqual(0);
+    expect(d.graze).toBeLessThanOrEqual(1);
+
+    const still = geeseAt(pane, 0, 7);
+    expect(still.length).toBeGreaterThanOrEqual(5);
+    expect(Math.abs(still[0].x - (pane[0] + pane[2] / 2))).toBeLessThan(pane[2] * 0.1);
+    expect(geeseAt(pane, 5, 7)[0].x).toBeLessThan(geeseAt(pane, 1, 7)[0].x);
+    // 一趟飞完歇一阵
+    expect(geeseAt(pane, GEESE_PASS / 2 + 1, 7)).toEqual([]);
+
+    const box: Box = [0, 0, 1000, 500];
+    for (let x = 0; x <= 1000; x += 50) {
+      const s = auroraStrip(box, 0, x, 12);
+      expect(s.alpha).toBeGreaterThanOrEqual(0);
+      expect(s.alpha).toBeLessThanOrEqual(1);
+      expect(s.top).toBeGreaterThanOrEqual(0);
+      expect(s.top + s.height).toBeLessThan(500);
+    }
   });
 });

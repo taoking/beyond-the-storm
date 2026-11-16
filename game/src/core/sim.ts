@@ -43,6 +43,7 @@ import {
   type World,
 } from "./state.ts";
 import { drawWeather, pickLook, pickYearKind, weatherSeason } from "./weather.ts";
+import { windowTick } from "./windowEvents.ts";
 
 const C = CONFIG;
 const TIER_ORDER: LifeTier[] = ["thrift", "normal", "rich"];
@@ -1466,6 +1467,8 @@ export function stepMinute(w: World): void {
   if (finished) complete(w, finished);
   // 做完一件马上定下一件，界面上不会出现「什么也没在做」的空档
   if (!a.away && !a.activity && !a.leaving) startActivity(w, decide(w));
+  // 窗外的小事：只看、只记，不抽世界的随机数、不改他在做的事
+  windowTick(w);
 }
 
 export function advanceMinutes(w: World, minutes: number): void {

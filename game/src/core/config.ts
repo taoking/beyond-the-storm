@@ -217,6 +217,73 @@ export const CONFIG = {
      */
     shelfManyAt: 6,
     /**
+     * 窗外的小事（03 第 10.4 节，首版 3–4 种）。见 设计/讨论记录/2026-11-17_窗外小事实现_Claude.md
+     * 每个世界日起床后按「种子 + 第几天」各掷一次（独立的随机，不碰世界的三条随机流）：
+     * chance 是这一季、这一档天气（tiers）、这几种样子（looks）的日子里发生的机会；
+     * from、to 是这一天的钟点范围（开始的时刻落在里面），minutes 是持续几个游戏分钟；
+     * autumnDays 只在这一季的头几天（大雁过境）。一天最多 maxPerDay 件，彼此不重叠，先掷到的先占。
+     * seenAt：bird 只有他在观测间（雪窗、窗台、书桌、书架、仪器角）才看得见；其余在屋里或院子、屋檐下醒着就看得见
+     */
+    window: {
+      maxPerDay: 2,
+      observationPlaces: ["window", "windowsill", "desk", "bookshelf", "instruments"],
+      kinds: {
+        bird: {
+          chance: { winter: 0.12, spring: 0.3, summer: 0.25, autumn: 0.2 },
+          tiers: ["A", "B"],
+          looks: ["晴", "多云", "小雪", "雾"],
+          from: 6 * 60 + 20,
+          to: 10 * 60,
+          minutes: [4, 10],
+          seenAt: "observation",
+        },
+        deer: {
+          chance: { winter: 0.06, spring: 0.1, summer: 0.1, autumn: 0.1 },
+          tiers: ["A", "B"],
+          looks: ["晴", "多云", "小雪"],
+          from: 7 * 60 + 30,
+          to: 16 * 60,
+          minutes: [10, 25],
+          seenAt: "home",
+        },
+        geese: {
+          chance: { winter: 0, spring: 0, summer: 0, autumn: 0.3 },
+          tiers: ["A", "B"],
+          looks: ["晴", "多云"],
+          from: 8 * 60,
+          to: 16 * 60,
+          minutes: [3, 5],
+          autumnDays: 8,
+          seenAt: "home",
+        },
+        aurora: {
+          chance: { winter: 0.3, spring: 0, summer: 0, autumn: 0 },
+          tiers: ["A"],
+          looks: ["晴"],
+          from: 19 * 60 + 30,
+          to: 21 * 60 + 30,
+          minutes: [40, 90],
+          seenAt: "home",
+        },
+      },
+    } as {
+      maxPerDay: number;
+      observationPlaces: string[];
+      kinds: Record<
+        "bird" | "deer" | "geese" | "aurora",
+        {
+          chance: Record<Season, number>;
+          tiers: WeatherTier[];
+          looks: string[];
+          from: number;
+          to: number;
+          minutes: [number, number];
+          autumnDays?: number;
+          seenAt: "observation" | "home";
+        }
+      >;
+    },
+    /**
      * 野外（02 第 9 节，用户 2026-11-14 定「按动作走」）：站着不动世界不走，每个动作花若干游戏分钟。
      * 身体三项都是 0..bodyMax 的整数，显示时换成百分数。下面的「每分钟」都是动作进行中的每个游戏分钟。
      */

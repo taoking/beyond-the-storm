@@ -17,7 +17,7 @@ npm run dev         # 灰盒界面，http://localhost:5173
 npm run build       # 类型检查 + 打包到 dist/
 npm run longrun     # 无人值守长跑，对照 02 第 5.7 节的验收目标。可加 --runs 300 --years 8 --case bare（outings 是带他出门的那一种）
 npm run sample      # 打印头几天的动作流水：npm run sample -- 3 2（种子 3，2 天）
-node tools/report.ts  # 人物可见率、活动密度、时间配比、地点 × 姿态 × 房间（约 10 秒）。可加 --runs 40 --days 60
+node tools/report.ts  # 人物可见率、活动密度、时间配比、地点 × 姿态 × 房间、窗外小事的频率（约 10 秒）。可加 --runs 40 --days 60
 node tools/wild-smoke.mjs  # 真浏览器冒烟（无界面 Chrome）：野外走、采、回家。先 npm run dev
 node tools/notify-smoke.mjs  # 真浏览器冒烟：系统通知的开关、权限、多窗口只发一次（约 2–3 分钟）。先 npm run dev -- --port 5199
                     # 真机验证日志（06 第 12.1 节）：http://localhost:5173/log.html 导出
@@ -41,6 +41,7 @@ src/core/      内核：纯逻辑，不碰 DOM、不读系统时钟，种子固�
   game.ts        一局游戏：四种世界状态、白名单命令、把现实时间交给专注和世界
   view.ts        只读投影：界面要显示的一切从这里拿
   annals.ts      只读汇总：统计页（focusStats）和世界年册（yearbook），打开那一栏才算；另记每个世界年开始时的墙上钟
+  windowEvents.ts 窗外的小事（03 第 10.4 节）：按种子和第几天排、他看见了记手记、第一次进年册；独立的随机，不扰动世界
   visual.ts      G2 只读姿态/道具与独立氛围投影：不改世界规则和 RNG
   rooms.ts       木屋的四间：地点归哪间、窗、门洞、展示位、站位，读 assets/05/rooms/b1_20261116/room_locations.json
   telemetry.ts   可见率、时间配比这些不给玩家看的指标
@@ -49,8 +50,9 @@ src/core/      内核：纯逻辑，不碰 DOM、不读系统时钟，种子固�
 src/art/       画面适配器，主界面和美术查看页共用（06 第 16.1 节）
   layers.ts      纯逻辑：世界快照 → 画面状态 → 按顺序叠哪些图层、缺哪些、人形站在哪
   compose.ts     读图、按玻璃掩码裁窗外、按图层的叠法叠（光层加亮）、画人形占位、逐级减半缩到画布（CSS 尺寸 × 屏幕倍率）；
-                 下雪时 SnowLoop 每秒 15 帧只重画玻璃那一块
+                 下雪、窗外有小事时 GlassLoop 每秒 15 帧只重画玻璃那一块
   snow.ts        窗外飘雪的粒子：固定种子，位置只是时间的函数（纯算术，有测试）
+  sights.ts      窗外小事的占位（鸟、鹿、大雁、极光）：位置和形状只是时间的函数，没有 window_<种类> 的图时用
   main.ts        美术查看页（art.html，开发用，不进游戏）
 src/app/       灰盒界面：runtime.ts（心跳、存档、多窗口）、scene.ts（一次画一间，用 b1_20261116 的真图）、main.ts（面板、选房间、手记的日子/专注/年册三栏）、
                notify.ts（专注/休息结束时的系统通知：本机设置，只有主窗口发）

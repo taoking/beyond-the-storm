@@ -27,6 +27,7 @@ import {
   type Zone,
 } from "./content.ts";
 import { freeNow, keepsakeCapacity, shelfCount, shelfLevel, whereIs, type ShelfLevel } from "./keepsakes.ts";
+import { windowEventView, type WindowEventView } from "./windowEvents.ts";
 import { focusBarState, sharesToday, unlockedStyleCount, type Calendar, type FocusBarState, type RoundSummary } from "./focus.ts";
 import { frozen, type Game, type Mode, type Notice } from "./game.ts";
 import { actionLabel, fireLook, foodCap, foodDays, hasEffect, plainIngredients, projectStatus, woodCap, woodDays, type ProjectStatus } from "./sim.ts";
@@ -105,6 +106,11 @@ export interface Snapshot {
     displays: Record<DisplaySlotId, string[]>;
     /** 院里看得见的等的慢事：地窖口有没有一坛腌菜，晾架上挂着哪几样（空数组是空架子）。世界事实 */
     curing: { crock: boolean; rack: CureKind[] };
+    /**
+     * 窗外正在发生的小事（03 第 10.4 节）：世界事实，画在窗外一组。氛围态里没有（那是冻结的选择，不生成世界事件）。
+     * 不用点、不弹出来；seen 是他看见了（手记里有一笔）
+     */
+    windowEvent: WindowEventView | null;
   } & PoseProjection;
   /** 当前实际可绘制的天气、季节和时间；独立氛围和真实世界严格分开。 */
   look: LookProjection;
@@ -321,7 +327,7 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
 
   // 表现姿态只读已有的结构化 Activity/phase/data，永远不解析中文 label。
   const pose = actorPose(a);
-  let stage: Omit<Snapshot["stage"], "room" | "visible" | "shelf" | "displays" | "curing">;
+  let stage: Omit<Snapshot["stage"], "room" | "visible" | "shelf" | "displays" | "curing" | "windowEvent">;
   if (g.mode === "outdoorFocus") {
     stage = { show: false, place: null, label: "屋里没人，炉里留着余火", illusion: false, outfit: null, activity: null, pose: null, prop: null };
   } else if (g.mode === "ambience") {
@@ -420,6 +426,7 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
       visible: roomsVisible(stage.show ? stage.place : null),
       shelf: collection.shelf.level,
       displays: Object.fromEntries(collection.displays.map((d) => [d.id, d.items.map((x) => x.id)])) as Record<DisplaySlotId, string[]>,
+      windowEvent: g.mode === "ambience" ? null : windowEventView(w),
     },
     look: projectedLook(g, w, t),
     fire: { look: fireLook(w), burn: Math.round(w.fire.burn), ember: w.fire.ember },

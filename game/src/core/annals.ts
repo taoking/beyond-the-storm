@@ -7,6 +7,7 @@ import { AREA_BY_ID, CATEGORY_NAME, type TaskCategory } from "./content.ts";
 import type { Calendar, FocusState, Spine } from "./focus.ts";
 import type { Game } from "./game.ts";
 import type { World, YearPage } from "./state.ts";
+import { firstSightsLine } from "./windowEvents.ts";
 
 const MIN = 60_000;
 const HOUR = 60 * MIN;
@@ -146,7 +147,9 @@ function worldLines(w: World, p: YearPage): string[] {
   if (life.length) lines.push(life.join(""));
 
   lines.push(p.thriftDays > 0 ? `有${cnNumber(p.thriftDays)}天过得俭。` : "这一年没有过得俭的日子。");
-  // 第一次看到的窗外小事（03 第 10.4 节）：窗外小事做出来以后接在这里
+  // 第一次看到的窗外小事（03 第 10.4 节）：只记他真看见了的，这一年没有就不写
+  const sights = firstSightsLine(p.firstSights);
+  if (sights) lines.push(sights);
   return lines;
 }
 

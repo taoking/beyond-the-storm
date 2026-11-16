@@ -8,6 +8,7 @@ import { advanceCompanionMinutes, newGame } from "../src/core/game.ts";
 import { LOCATIONS, placesIn, ROOM_IDS, ROOMS, roomOf, type RoomId } from "../src/core/rooms.ts";
 import { createTelemetry, type Telemetry } from "../src/core/telemetry.ts";
 import { present } from "../src/core/view.ts";
+import { WINDOW_KINDS, WINDOW_NAME } from "../src/core/windowEvents.ts";
 
 const args = process.argv.slice(2);
 const arg = (name: string, fallback: number): number => (args.includes(`--${name}`) ? Number(args[args.indexOf(`--${name}`) + 1]) : fallback);
@@ -35,6 +36,8 @@ const switchesPer2h: number[] = [];
 /** 他醒着时画面上的样子：键是「地点|姿态|道具」，从 present() 的 stage 取，跟画面读的是同一份 */
 interface PoseCell { place: PlaceId; room: RoomId | null; pose: string; prop: string; minutes: number; acts: Record<string, number> }
 const poseCells = new Map<string, PoseCell>();
+/** 窗外的小事（03 第 10.4 节）：每一种发生了几件、他看见了几件、看了一会儿的几件、窗外一共有几个游戏分钟 */
+const sights: Record<string, { happened: number; seen: number; watched: number; minutes: number }> = {};
 
 for (let seed = 0; seed < runs; seed++) {
   const g = newGame(seed);
@@ -53,6 +56,16 @@ for (let seed = 0; seed < runs; seed++) {
       if (w.actor.activity !== lastAct) windowSwitches += 1;
     }
     lastAct = w.actor.activity;
+    for (const e of w.windowEvents.plan) {
+      if (w.minute < e.start || w.minute >= e.end) continue;
+      const s = (sights[e.kind] ??= { happened: 0, seen: 0, watched: 0, minutes: 0 });
+      s.minutes += 1;
+      if (w.minute === e.end - 1) {
+        s.happened += 1;
+        if (e.seen) s.seen += 1;
+        if (e.watched) s.watched += 1;
+      }
+    }
     // 跟 telemetry 的可见率同一个分母：醒着、没出门
     if (!w.actor.asleep && !w.actor.away) {
       const st = present(g, 0, localCalendar).stage;
@@ -172,3 +185,12 @@ console.log(`- 每个游戏日（约现实 4 小时）记下的事件：平均 $
 console.log(`- 每现实 2 小时（他醒着的 480 个游戏分钟）：「值得一提」以上的事平均 ${mean(notablePer2h)} 件，最少的一成窗口里有 ${q(notablePer2h, 0.1)} 件，中位 ${q(notablePer2h, 0.5)} 件。`);
 console.log(`- 每现实 2 小时他换动作 ${mean(switchesPer2h)} 次，中位 ${q(switchesPer2h, 0.5)} 次（平均每个动作持续约 ${(480 / Number(mean(switchesPer2h))).toFixed(0)} 个游戏分钟，合现实 ${(480 / Number(mean(switchesPer2h)) / 4).toFixed(1)} 分钟）。`);
 console.log(`- 各类事件的条数（${runs * days} 个游戏日合计）：${Object.entries(typeCount).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join("，")}`);
+
+console.log("\n## 窗外的小事\n");
+console.log(`每个世界年（${days} 个游戏日按 60 天一年折算）平均几件；「看见」是他醒着在家（窗沿的鸟要他在观测间）、手记里记了一笔。\n`);
+console.log("| 小事 | 发生 | 他看见 | 看了一会儿 | 每件几个游戏分钟 |\n|---|---|---|---|---|");
+const years = (runs * days) / 60;
+for (const k of WINDOW_KINDS) {
+  const s = sights[k] ?? { happened: 0, seen: 0, watched: 0, minutes: 0 };
+  console.log(`| ${WINDOW_NAME[k]} | ${(s.happened / years).toFixed(1)} | ${(s.seen / years).toFixed(1)} | ${(s.watched / years).toFixed(1)} | ${(s.minutes / Math.max(1, s.happened)).toFixed(0)} |`);
+}

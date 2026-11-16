@@ -6,7 +6,7 @@ import { LOCATIONS, ROOMS, type RoomId } from "../core/rooms.ts";
 import type { PlaceId } from "../core/content.ts";
 import type { Snapshot } from "../core/view.ts";
 import { artFromSnapshot, figureFromSnapshot, layerStack, type Locate } from "../art/layers.ts";
-import { blit, compose, fitCanvas, library, sceneKey, SnowLoop, type Composed, type SceneSpec } from "../art/compose.ts";
+import { blit, compose, fitCanvas, GlassLoop, library, sceneKey, type Composed, type SceneSpec } from "../art/compose.ts";
 
 // 只打包内核坐标那一套（rooms.ts 读的 room_locations.json 在同一个目录）；tests/art.test.ts 查两边一致
 const LIB = library(
@@ -34,8 +34,8 @@ export interface Target {
 let shown: Composed | null = null;
 let pending: string | null = null;
 const painted = new WeakMap<HTMLCanvasElement, string>();
-/** 下雪时只在玻璃那一块逐帧补雪，15 帧；后台、减弱动态效果时不动 */
-const snow = new SnowLoop(15);
+/** 下雪、窗外有小事时只在玻璃那一块逐帧补上，15 帧；后台、减弱动态效果时不动 */
+const glassLoop = new GlassLoop(15);
 
 function cssSize(t: Target): [number, number] {
   if (t.css) return t.css;
@@ -54,7 +54,7 @@ function paintAll(c: Composed, targets: Target[]): void {
     painted.set(t.canvas, sig);
     changed = true;
   }
-  if (changed) snow.play(c, targets.map((t) => t.canvas));
+  if (changed) glassLoop.play(c, targets.map((t) => t.canvas));
 }
 
 /**
@@ -86,5 +86,8 @@ export function paintRoom(targets: Target[], snap: Snapshot, room: RoomId): void
 export function roomCaption(snap: Snapshot, room: RoomId, size: string): string {
   // 文案按演出位置判断，不能用真实 actor.room 去判断冻结的幻影人物。
   const where = snap.stage.room === room ? "看得见人" : `空屋 · ${snap.stage.show ? snap.actor.whereabouts : snap.stage.label}`;
-  return `${size} · ${ROOMS[room].name} · ${where}`;
+  // 窗外的小事：只在说明里轻轻带一句，不弹、不用点（窗沿的鸟只在观测间的窗上）
+  const ev = snap.stage.windowEvent;
+  const sight = ev && (ev.kind !== "bird" || room === "observation_room") ? ` · 窗外：${ev.name}` : "";
+  return `${size} · ${ROOMS[room].name} · ${where}${sight}`;
 }

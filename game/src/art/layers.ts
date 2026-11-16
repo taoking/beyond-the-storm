@@ -3,6 +3,7 @@
 // 只读 Snapshot，不碰世界；纯逻辑，不碰 DOM，测试直接跑。
 import type { RoomId } from "../core/rooms.ts";
 import { MOOD_NAME, type Snapshot } from "../core/view.ts";
+import type { SightArt } from "./sights.ts";
 
 export type ArtTime = "day" | "night";
 export type ArtWeather = "calm" | "lightSnow" | "heavySnow" | "blizzard";
@@ -28,10 +29,12 @@ export interface ArtState {
   lamp: boolean;
   heater: boolean;
   actor: boolean;
+  /** 窗外正在发生的小事（stage.windowEvent）；没有是 null */
+  sight: SightArt | null;
 }
 
 export const EMPTY_STATE: ArtState = {
-  time: "day", weather: "calm", fire: "out", wood: 0, food: "none", jar: 0, props: [], oilLamp: true, lamp: false, heater: false, actor: false,
+  time: "day", weather: "calm", fire: "out", wood: 0, food: "none", jar: 0, props: [], oilLamp: true, lamp: false, heater: false, actor: false, sight: null,
 };
 
 /** 由 time、weather 这些开关管的图层；剩下的才列成单独的物件开关 */
@@ -71,6 +74,8 @@ export const STAND_IN = {
 export const PROCEDURAL = {
   fog: "~fog_",
   snow: "~snow_",
+  /** 窗外的小事：这一套没有 window_<种类> 的图时，compose.ts 逐帧画占位（sights.ts） */
+  sight: "~window_",
 } as const;
 
 /** 光层：用加亮叠法（canvas lighter）叠在夜色上面，几样光重叠时相加 */
@@ -89,6 +94,8 @@ export interface Stack {
   missing: string[];
   /** 夜里：程序画的雪和雾换成夜里的颜色 */
   night: boolean;
+  /** 窗外一组里有程序画的小事（~window_种类）时，是哪一件 */
+  sight: SightArt | null;
 }
 
 /** have(名字) 说这一套、这一间有没有这个图层 */
@@ -112,10 +119,21 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
   }
   // 雪和风雪雾在玻璃外面：跟窗外一起裁，垫在窗框下面。程序画，不找 weather_* 文件；
   // 有窗外才画（没有窗外就没有玻璃可透）
-  if (SNOWY.includes(s.weather) && layers.length > 0) {
-    if (s.weather !== "lightSnow") layers.push(PROCEDURAL.fog + s.weather);
-    layers.push(PROCEDURAL.snow + s.weather);
+  const hasOutside = layers.length > 0;
+  if (SNOWY.includes(s.weather) && hasOutside && s.weather !== "lightSnow") layers.push(PROCEDURAL.fog + s.weather);
+  // 窗外的小事在雾和雪之间（世界里两样不会同时有：小事只在好天、一般的天）。窗沿的鸟只在观测间的窗沿上。
+  // 有图就用图；没有图先用程序画的占位，缺的图照样报出来
+  let sight: SightArt | null = null;
+  if (s.sight && hasOutside && (s.sight.kind !== "bird" || room === "observation_room")) {
+    const file = `window_${s.sight.kind}`;
+    if (have(file)) layers.push(file);
+    else {
+      missing.push(file);
+      layers.push(PROCEDURAL.sight + s.sight.kind);
+      sight = s.sight;
+    }
   }
+  if (SNOWY.includes(s.weather) && hasOutside) layers.push(PROCEDURAL.snow + s.weather);
   const outside = layers.length;
   want("interior_rgba");
 
@@ -178,7 +196,7 @@ export function layerStack(have: (name: string) => boolean, room: RoomId, s: Art
       want("heater_flame_on");
     }
   }
-  return { layers, outside, figureAt, missing, night };
+  return { layers, outside, figureAt, missing, night, sight };
 }
 
 export interface WorldArt {
@@ -268,9 +286,12 @@ export function artFromSnapshot(snap: Snapshot, room: RoomId): WorldArt {
   if (room === "bedroom" && stageOf("bedding") >= 1) props.push("quilt_thick");
 
   const actor = snap.stage.visible[room];
+  // 进度不进画面状态：位置随现实时间逐帧动（compose.ts），快照每拍变的进度不该让整张重叠
+  const ev = snap.stage.windowEvent;
+  const sight: SightArt | null = ev ? { kind: ev.kind, seed: ev.seed } : null;
   const lamp = time === "night" && actor && !snap.actor.asleep;
   return {
-    state: { time, weather, fire, wood, food, jar, props, oilLamp: !done("solar"), lamp, heater: snap.life.heater, actor },
+    state: { time, weather, fire, wood, food, jar, props, oilLamp: !done("solar"), lamp, heater: snap.life.heater, actor, sight },
     notes,
   };
 }
