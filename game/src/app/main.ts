@@ -8,6 +8,7 @@ import { ownsStyle, type Game } from "../core/game.ts";
 import { checkOuting, REFUSAL_TEXT } from "../core/outing.ts";
 import { DEFAULT_ROOM, ROOM_IDS, ROOMS, type RoomId } from "../core/rooms.ts";
 import { present, type Snapshot } from "../core/view.ts";
+import { askPermission, browserPermission, loadPrefs, notifyStatus, savePrefs } from "./notify.ts";
 import { cal, startRuntime } from "./runtime.ts";
 import { paintRoom, roomCaption } from "./scene.ts";
 
@@ -94,6 +95,12 @@ function renderFocus(s: Snapshot, g: Game): string {
   }
   out.push(
     `<label class="dim"><input type="checkbox" data-ui="autoNext"${g.focus.settings.autoNext ? " checked" : ""}/> 自动接下一轮</label>`,
+  );
+  // A7：本机设置，不进存档；状态那一句只说会不会弹，不催你去开权限
+  const notify = loadPrefs().notify;
+  const status = notifyStatus(notify, browserPermission());
+  out.push(
+    `<label class="dim"><input type="checkbox" data-ui="notify"${notify ? " checked" : ""}/> 专注/休息结束时系统通知</label>${status ? `<span class="dim notifyStatus">（${esc(status)}）</span>` : ""}`,
   );
   if (f.bar === "pausedAfterGap") {
     out.push(
@@ -483,6 +490,14 @@ document.addEventListener("change", (ev) => {
     case "autoNext":
       rt.dispatch("setAutoNext", (el as HTMLInputElement).checked);
       break;
+    case "notify": {
+      const on = (el as HTMLInputElement).checked;
+      savePrefs({ ...loadPrefs(), notify: on });
+      // 只在你勾上的这一下问一次；已经允许或拒绝过就不再问
+      if (on) void askPermission().then(render);
+      render();
+      break;
+    }
     case "keepCans":
       rt.dispatch("keep", "cans", (el as HTMLInputElement).checked);
       break;

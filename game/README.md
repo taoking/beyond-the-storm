@@ -19,6 +19,7 @@ npm run longrun     # 无人值守长跑，对照 02 第 5.7 节的验收目标�
 npm run sample      # 打印头几天的动作流水：npm run sample -- 3 2（种子 3，2 天）
 node tools/report.ts  # 人物可见率、活动密度、时间配比、地点 × 姿态 × 房间（约 10 秒）。可加 --runs 40 --days 60
 node tools/wild-smoke.mjs  # 真浏览器冒烟（无界面 Chrome）：野外走、采、回家。先 npm run dev
+node tools/notify-smoke.mjs  # 真浏览器冒烟：系统通知的开关、权限、多窗口只发一次（约 2–3 分钟）。先 npm run dev -- --port 5199
                     # 真机验证日志（06 第 12.1 节）：http://localhost:5173/log.html 导出
 node tools/probe-check.ts 导出的.json  # 按 06 第 12 节逐项判「通过 / 可疑 / 没测到」
 node tools/probe-smoke.mjs  # 真浏览器冒烟：日志写得进、导得出、读得懂（约 5 分钟）。先 npm run dev
@@ -51,7 +52,8 @@ src/art/       画面适配器，主界面和美术查看页共用（06 第 16.1
                  下雪时 SnowLoop 每秒 15 帧只重画玻璃那一块
   snow.ts        窗外飘雪的粒子：固定种子，位置只是时间的函数（纯算术，有测试）
   main.ts        美术查看页（art.html，开发用，不进游戏）
-src/app/       灰盒界面：runtime.ts（心跳、存档、多窗口）、scene.ts（一次画一间，用 b1_20261116 的真图）、main.ts（面板、选房间、手记的日子/专注/年册三栏）
+src/app/       灰盒界面：runtime.ts（心跳、存档、多窗口）、scene.ts（一次画一间，用 b1_20261116 的真图）、main.ts（面板、选房间、手记的日子/专注/年册三栏）、
+               notify.ts（专注/休息结束时的系统通知：本机设置，只有主窗口发）
   probe/         真机验证日志（log.html，开发用）：recorder.ts 记、analyze.ts 判、page.ts 导出页；只记不改
 tests/         自动化测试，标题里写着对应 02/04/06 的哪一条
 tools/         长跑、采样、指标报告

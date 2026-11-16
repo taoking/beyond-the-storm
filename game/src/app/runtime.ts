@@ -2,7 +2,7 @@
 //
 // 多窗口：同一时间只有一个窗口（主窗口）在推进游戏，靠 Web Locks 抢一把锁；
 // 其余窗口只显示主窗口广播过来的状态，操作也发给主窗口去做。主窗口关了，排队的窗口接手。
-// 这样打开第二个窗口不会让世界算两遍，也不会多发份。
+// 这样打开第二个窗口不会让世界算两遍，也不会多发份；系统通知也只有主窗口发（notify.ts）。
 import { localCalendar } from "../core/focus.ts";
 import * as G from "../core/game.ts";
 import { judgeGap, type Beat } from "../core/heartbeat.ts";
@@ -10,6 +10,7 @@ import { deserialize, serialize } from "../core/save.ts";
 import type { TaskCategory } from "../core/content.ts";
 import type { FocusPreset } from "../core/focus.ts";
 import type { WildAction } from "../core/wild.ts";
+import { browserNotifier, roundClock } from "./notify.ts";
 import { startProbe, type Probe } from "./probe/recorder.ts";
 
 const SAVE_KEY = "bts.save.v1";
@@ -95,6 +96,7 @@ export function startRuntime(): Runtime {
   let lastHeard: Beat | null = null;
   // 真机验证日志（06 第 12 节）：只记不改
   const probe = startProbe({ lockName: LOCK, isLeader: () => rt.leader, game: () => rt.game });
+  const notifier = browserNotifier();
 
   const rt: Runtime = {
     game: null,
@@ -167,7 +169,11 @@ export function startRuntime(): Runtime {
       const ms = verdict.verifiedMs + remainder;
       const whole = Math.floor(ms);
       remainder = ms - whole;
-      if (whole > 0) G.advance(g, { wall: now.wall, verifiedMs: whole }, cal);
+      if (whole > 0) {
+        const clock = roundClock(g);
+        const events = G.advance(g, { wall: now.wall, verifiedMs: whole }, cal);
+        notifier.afterAdvance(rt.leader, clock, events);
+      }
       probe.beat(g, before, now, verdict, whole);
     } else {
       G.interrupt(g, verdict.kind === "sleep" ? "sleep" : "gap", verdict.gapMs);
