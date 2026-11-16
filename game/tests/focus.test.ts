@@ -64,6 +64,18 @@ describe("份的结算（02 第 2.4 节的表）", () => {
     expect(shares.filter((m) => m <= 120)).toHaveLength(3);
   });
 
+  it("自动接下一轮：休息时留着上一轮的小结，下一轮开始就收起", () => {
+    const fs = createFocus();
+    fs.settings.autoNext = true;
+    const t0 = at(9);
+    startFocus(fs, t0, cal, { preset: pomodoro(25, 5) });
+    run(fs, t0, t0 + 27 * MIN);
+    expect(fs.lastSummary).not.toBeNull();
+    run(fs, t0 + 27 * MIN, t0 + 32 * MIN, t0);
+    expect(fs.session!.phase).toBe("focus");
+    expect(fs.lastSummary).toBeNull();
+  });
+
   it("50/10 连做：第 10、60、105、150 分钟", () => {
     const fs = createFocus();
     fs.settings.autoNext = true;

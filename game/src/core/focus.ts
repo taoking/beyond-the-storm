@@ -287,6 +287,8 @@ function beginRound(fs: FocusState, wall: number, cal: Calendar): void {
   s.phaseMs = 0;
   s.targetMs = s.preset.kind === "countdown" ? s.preset.focusMin * 60_000 : null;
   s.round = { recordId: id, startedWall: wall, effectiveMs: 0, shares: 0, unlocked: [] };
+  // 上一轮的小结在新一轮开始时收起，专注进行中不挂着份数和解锁
+  fs.lastSummary = null;
 }
 
 /** 一轮专注收尾：记次数、看成就、出那一行小结 */
