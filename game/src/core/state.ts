@@ -3,6 +3,9 @@ import { CONFIG, type LifeTier, type WeatherTier, type YearKind } from "./config
 import {
   DEFAULT_STYLE,
   emptyDisplay,
+  MATERIALS,
+  type CureKind,
+  type PantryKind,
   type DisplaySlotId,
   PROJECTS,
   type CropDef,
@@ -35,6 +38,7 @@ export type ActivityKind =
   | "cones"
   | "swapStyle"
   | "arrange"
+  | "cure"
   | "request"
   | "journal"
   | "leisure";
@@ -236,6 +240,21 @@ export interface ArrangeIntent {
   take: string | null;
 }
 
+/** 地窖口的一坛腌菜、晾架上的一批东西（03 第 7.3 节） */
+export interface CureBatch {
+  kind: CureKind;
+  /** 好了以后得几份（腌菜、肉干算食材；药草茶是几份薄荷） */
+  amount: number;
+  /** 还要等几天；0 是好了，等他去取 */
+  daysLeft: number;
+  /** 哪天放上去的 */
+  day: number;
+}
+
+export function emptyPantry(): Record<PantryKind, number> {
+  return { pickles: 0, jerky: 0, rawMeat: 0, mint: 0 };
+}
+
 export interface World {
   seed: number;
   /** 绝对游戏分钟，第 0 天 00:00 起算。开局是第 0 天 06:00 */
@@ -260,6 +279,14 @@ export interface World {
     fuel: number;
     materials: Record<Material, number>;
   };
+  /** 食材里有名目的几样，都算在 stock.ingredients 之内（腌菜、肉干、生肉大鱼、野薄荷） */
+  pantry: Record<PantryKind, number>;
+  /** 晾好的药草茶还能泡几杯。不是食材，不顶饭 */
+  tea: number;
+  /** 地窖口的坛子、晾架上正在等的东西 */
+  curing: CureBatch[];
+  /** 学会的菜式（只影响画面、声音和手记，03 第 6.2 节） */
+  dishes: string[];
   fire: { burn: number; ember: number };
   today: DayState;
   actor: ActorState;
@@ -359,7 +386,8 @@ export function createWorldShell(seed: number, opt: NewWorldOptions = {}): World
   const projects: Record<string, ProjectState> = {};
   for (const p of PROJECTS) {
     projects[p.id] = {
-      known: true,
+      // 要先拿到什么才出现的慢事（读《北方草木》、冲洗胶卷），开局是「没发现」
+      known: !p.discover,
       stage: 0,
       minutesInStage: 0,
       stageStarted: false,
@@ -393,8 +421,12 @@ export function createWorldShell(seed: number, opt: NewWorldOptions = {}): World
       ingredients: 0,
       cans: 0,
       fuel: 0,
-      materials: { lumber: CONFIG.stock.lumber0, rope: 0, canvas: 0, glass: 0, metal: 0, parts: 0, cloth: 0, hide: 0 },
+      materials: { ...(Object.fromEntries(MATERIALS.map((m) => [m, 0])) as Record<Material, number>), lumber: CONFIG.stock.lumber0 },
     },
+    pantry: emptyPantry(),
+    tea: 0,
+    curing: [],
+    dishes: [],
     // 开局炉膛里有火（03 第 2.7 节）
     fire: opt.coldHearth ? { burn: 0, ember: 0 } : { burn: 240, ember: CONFIG.fire.emberMinutes },
     today: emptyDay(),

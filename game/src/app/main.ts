@@ -118,7 +118,8 @@ function renderInspect(s: Snapshot, g: Game): string {
     <div>${esc(s.life.mood)}${s.life.heater ? " · 点着暖炉" : ""} · 火：${esc(FIRE_NAME[s.fire.look])}</div>
     <div>${esc(s.life.woodLine)} <span class="dim">柴 ${st.wood}/${st.woodCap} 根，约够 ${st.woodDays.toFixed(1)} 天</span></div>
     <div>${esc(s.life.foodLine)} <span class="dim">粮 ${st.food}/${st.foodCap} 餐，约够 ${st.foodDays.toFixed(1)} 天</span></div>
-    <div class="dim">食材 ${st.ingredients} · 罐头 ${st.cans} · 燃油 ${st.fuel} · 木料 ${st.lumber}</div>
+    <div class="dim">食材 ${st.ingredients}${st.pantry.pickles ? `（腌菜 ${st.pantry.pickles}）` : ""}${st.pantry.jerky ? `（肉干 ${st.pantry.jerky}）` : ""} · 罐头 ${st.cans} · 燃油 ${st.fuel} · 木料 ${st.lumber}${st.materials.film ? ` · 胶卷 ${st.materials.film}` : ""}${st.tea ? ` · 薄荷茶 ${st.tea} 杯` : ""}</div>
+    <div class="dim">地窖口：${s.stage.curing.crock ? s.curing.filter((b) => b.place === "cellar").map((b) => (b.ready ? "一坛腌菜腌好了" : `一坛腌菜，还要 ${b.daysLeft} 天`)).join("") : "坛子空着"} · 晾架：${s.curing.some((b) => b.place === "dryingRack") ? s.curing.filter((b) => b.place === "dryingRack").map((b) => `${esc(b.name)}${b.ready ? "晾好了" : `还要 ${b.daysLeft} 天`}`).join("、") : w.projects.dryingRack.done ? "空着" : "还塌着"}${s.tools.length ? ` · 工具：${s.tools.map((t) => esc(t.name)).join("、")}` : ""}</div>
     <div class="row">
       <label><input type="checkbox" data-ui="keepCans"${w.intents.keepCans ? " checked" : ""}/> 罐头留着</label>
       <label><input type="checkbox" data-ui="keepFuel"${w.intents.keepFuel ? " checked" : ""}/> 燃油留着</label>

@@ -4,8 +4,8 @@
 import { seasonOf } from "./calendar.ts";
 import { CONFIG } from "./config.ts";
 import { AREA_BY_ID, GOODS_NAME, KEEPSAKE_BY_ID, type AreaDef, type Goods, type NodeDef } from "./content.ts";
-import { arriveHome, bagSlots, spendOutdoor, type OutdoorNote } from "./outing.ts";
-import { logEvent, woodCap } from "./sim.ts";
+import { arriveHome, bagCapacity, bagSlots, spendOutdoor, type OutdoorNote } from "./outing.ts";
+import { hasEffect, logEvent, woodCap } from "./sim.ts";
 import { bump, type OutingState, type World } from "./state.ts";
 
 const W = CONFIG.IMPL.wild;
@@ -77,8 +77,14 @@ function here(w: World): { o: OutingState; area: AreaDef; pos: Pos } | null {
   return { o, area, pos: o.pos };
 }
 
-/** 一个资源点现在还剩多少能拿；0 是这会儿没有（季节不对、还没恢复、拿完了） */
+/** 他认不认得这个资源点：读完《北方草木》才认得的那几样，之前在地图上不显示 */
+export function nodeKnown(w: World, node: NodeDef): boolean {
+  return !node.needs || hasEffect(w, node.needs);
+}
+
+/** 一个资源点现在还剩多少能拿；0 是这会儿没有（季节不对、还没恢复、拿完了、还不认得） */
 export function nodeAvailable(w: World, node: NodeDef): number {
+  if (!nodeKnown(w, node)) return 0;
   if (node.seasons && !node.seasons.includes(seasonOf(w.day).season)) return 0;
   const rule = W.gather[node.kind];
   if (rule.regrowDays === null) return Math.max(0, (node.total ?? 0) - (w.wild.taken[node.id] ?? 0));
@@ -104,9 +110,10 @@ function homeRoom(w: World, o: OutingState, goods: Goods): number {
 }
 
 /** 背包还能再装多少件这样东西 */
-function bagRoom(o: OutingState, goods: Goods, upTo: number): number {
+function bagRoom(w: World, o: OutingState, goods: Goods, upTo: number): number {
   let n = 0;
-  while (n < upTo && bagSlots(o.rations, { ...o.bag, [goods]: (o.bag[goods] ?? 0) + n + 1 }) <= O.bagSlots) n++;
+  const cap = bagCapacity(w);
+  while (n < upTo && bagSlots(o.rations, { ...o.bag, [goods]: (o.bag[goods] ?? 0) + n + 1 }) <= cap) n++;
   return n;
 }
 
@@ -124,7 +131,7 @@ function gatherAmount(w: World, o: OutingState, node: NodeDef): { n: number; rea
   const want = unique ? Math.min(available, W.gather[node.kind].amount) : available;
   const home = homeRoom(w, o, gives);
   // 会恢复的东西一次采完一份，装不下整份就先不采；旧东西能拿几件拿几件，剩下的留着
-  const fit = Math.min(want, home, bagRoom(o, gives, want));
+  const fit = Math.min(want, home, bagRoom(w, o, gives, want));
   if (home <= 0 || (!unique && home < want)) return { n: 0, reason: `家里的${GOODS_NAME[gives]}放满了，先留在这里。` };
   if (fit <= 0 || (!unique && fit < want)) return { n: 0, reason: "背包装不下了，东西先留在原地。" };
   return { n: fit };
@@ -210,7 +217,7 @@ export function runWild(w: World, action: WildAction): WildResult {
   }
 
   if (action.type === "gather") {
-    const node = area.nodes.find((n) => n.id === action.node);
+    const node = area.nodes.find((n) => n.id === action.node && nodeKnown(w, n));
     if (!node) return refuse("这里没有这样东西。");
     const { n, reason } = gatherAmount(w, o, node);
     if (n <= 0) return refuse(reason!);
@@ -281,7 +288,7 @@ export function wildView(w: World): WildView | null {
       const burning = !!cf && cf.area === area.id && cf.x === f.x && cf.y === f.y && cf.until > w.minute;
       return { ...f, burning, near: dist(f, pos) <= 1, minutesLeft: burning ? cf!.until - w.minute : 0 };
     }),
-    nodes: area.nodes.map((n) => {
+    nodes: area.nodes.filter((n) => nodeKnown(w, n)).map((n) => {
       const g = gatherAmount(w, o, n);
       return {
         id: n.id,

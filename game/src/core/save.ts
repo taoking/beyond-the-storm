@@ -1,12 +1,13 @@
 // 存档：整局游戏就是一份 JSON。世界停住时它不变；重开以后从这一刻接着走，不补离开的时间。
 import { seasonOf } from "./calendar.ts";
-import { AREA_BY_ID, DISPLAY_SLOT_IDS, emptyDisplay, KEEPSAKE_BY_ID } from "./content.ts";
+import { AREA_BY_ID, DISPLAY_SLOT_IDS, emptyDisplay, KEEPSAKE_BY_ID, MATERIALS, PROJECTS } from "./content.ts";
 import { SAVE_VERSION, type Game } from "./game.ts";
 import { fitsOf, freeNow } from "./keepsakes.ts";
 import { fullBody } from "./outing.ts";
+import { discoverProjects } from "./sim.ts";
 import { ROOM_IDS } from "./rooms.ts";
 import { emptyRooms } from "./telemetry.ts";
-import type { OutingState } from "./state.ts";
+import { emptyPantry, type OutingState } from "./state.ts";
 import { minutesToDoor } from "./wild.ts";
 
 export interface SaveFile {
@@ -58,6 +59,16 @@ function repair(g: Game): void {
   }
   w.display ??= emptyDisplay();
   for (const s of DISPLAY_SLOT_IDS) w.display[s] ??= [];
+  // 还没有 7.2 节慢事、腌菜晾架的老存档：补上新的项目（要先拿到东西的照现在有的补成「发现了」）、胶卷、空的坛子和晾架
+  for (const m of MATERIALS) w.stock.materials[m] ??= 0;
+  for (const p of PROJECTS) {
+    w.projects[p.id] ??= { known: !p.discover, stage: 0, minutesInStage: 0, stageStarted: false, done: false, paused: false, timesDone: 0 };
+  }
+  discoverProjects(w, true);
+  w.pantry ??= emptyPantry();
+  w.tea ??= 0;
+  w.curing ??= [];
+  w.dishes ??= [];
   // 野外还只有「离家门几分钟」的老存档：带出去的柴捆按根放进背包，身体是满的，人在区域的入口
   const o = w.outing as (OutingState & { bundles?: number }) | null;
   if (o) o.found ??= [];

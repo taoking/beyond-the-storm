@@ -6,6 +6,7 @@ import { CONFIG, type LifeTier } from "./config.ts";
 import {
   AREA_BY_ID,
   CROP_BY_ID,
+  CURES,
   DISPLAY_SLOT_IDS,
   DISPLAY_SLOTS,
   GOODS_NAME,
@@ -13,18 +14,23 @@ import {
   PLACES,
   PROJECTS,
   STYLES,
+  TOOL_NAME,
   zoneOf,
+  type CureKind,
   type DisplaySlotId,
   type Goods,
   type KeepsakeKind,
+  type Material,
+  type PantryKind,
+  type ProjectEffect,
   type PlaceId,
   type Zone,
 } from "./content.ts";
 import { freeNow, keepsakeCapacity, shelfCount, shelfLevel, whereIs, type ShelfLevel } from "./keepsakes.ts";
 import { focusBarState, sharesToday, unlockedStyleCount, type Calendar, type FocusBarState, type RoundSummary } from "./focus.ts";
 import { frozen, type Game, type Mode, type Notice } from "./game.ts";
-import { actionLabel, fireLook, foodCap, foodDays, hasEffect, projectStatus, woodCap, woodDays, type ProjectStatus } from "./sim.ts";
-import { bagSlots, isDark, nearFire } from "./outing.ts";
+import { actionLabel, fireLook, foodCap, foodDays, hasEffect, plainIngredients, projectStatus, woodCap, woodDays, type ProjectStatus } from "./sim.ts";
+import { bagCapacity, bagSlots, isDark, nearFire } from "./outing.ts";
 import { dayClock, type WildAct, type WorldEvent } from "./state.ts";
 import { TIER_NAME } from "./weather.ts";
 import { actorPose, projectedLook, type LookProjection, type PoseKey, type PoseProjection } from "./visual.ts";
@@ -97,12 +103,37 @@ export interface Snapshot {
     shelf: ShelfLevel;
     /** 六处展示位上摆着的藏品（KEEPSAKES 的 id，木雕可能有几件）；样式和玻璃罐不在这里，看 collection.displays */
     displays: Record<DisplaySlotId, string[]>;
+    /** 院里看得见的等的慢事：地窖口有没有一坛腌菜，晾架上挂着哪几样（空数组是空架子）。世界事实 */
+    curing: { crock: boolean; rack: CureKind[] };
   } & PoseProjection;
   /** 当前实际可绘制的天气、季节和时间；独立氛围和真实世界严格分开。 */
   look: LookProjection;
   fire: { look: string; burn: number; ember: number };
   life: { mood: string; woodLine: string; foodLine: string; heater: boolean };
-  stock: { wood: number; woodCap: number; woodDays: number; food: number; foodCap: number; foodDays: number; ingredients: number; cans: number; fuel: number; lumber: number };
+  stock: {
+    wood: number;
+    woodCap: number;
+    woodDays: number;
+    food: number;
+    foodCap: number;
+    foodDays: number;
+    ingredients: number;
+    /** 食材里有名目的几样（在 ingredients 之内），plain 是不分名目的那些 */
+    pantry: Record<PantryKind, number> & { plain: number };
+    /** 晾好的药草茶还能泡几杯（不是食材） */
+    tea: number;
+    cans: number;
+    fuel: number;
+    lumber: number;
+    /** 所有素材，含木料 */
+    materials: Record<Material, number>;
+  };
+  /** 等的慢事（03 第 7.3 节）：地窖口的坛子、晾架上的东西 */
+  curing: { kind: CureKind; name: string; place: "cellar" | "dryingRack"; amount: number; daysLeft: number; ready: boolean }[];
+  /** 做好的工具（03 第 6.4 节）：钓竿、弓、提灯、大背包 */
+  tools: { effect: string; name: string }[];
+  /** 学会的菜式、茶（只影响画面、声音和手记） */
+  dishes: string[];
   projects: ProjectView[];
   plots: { name: string; crop: string | null; daysLeft: number; ripe: boolean; preferred: string | null }[];
   greenhouse: { usable: boolean };
@@ -290,7 +321,7 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
 
   // 表现姿态只读已有的结构化 Activity/phase/data，永远不解析中文 label。
   const pose = actorPose(a);
-  let stage: Omit<Snapshot["stage"], "room" | "visible" | "shelf" | "displays">;
+  let stage: Omit<Snapshot["stage"], "room" | "visible" | "shelf" | "displays" | "curing">;
   if (g.mode === "outdoorFocus") {
     stage = { show: false, place: null, label: "屋里没人，炉里留着余火", illusion: false, outfit: null, activity: null, pose: null, prop: null };
   } else if (g.mode === "ambience") {
@@ -381,6 +412,10 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
     },
     stage: {
       ...stage,
+      curing: {
+        crock: w.curing.some((b) => CURES[b.kind].place === "cellar"),
+        rack: w.curing.filter((b) => CURES[b.kind].place === "dryingRack").map((b) => b.kind),
+      },
       room: stage.show && stage.place ? roomOf(stage.place) : null,
       visible: roomsVisible(stage.show ? stage.place : null),
       shelf: collection.shelf.level,
@@ -402,10 +437,23 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
       foodCap: foodCap(w),
       foodDays: foodDays(w),
       ingredients: w.stock.ingredients,
+      pantry: { ...w.pantry, plain: plainIngredients(w) },
+      tea: w.tea,
       cans: w.stock.cans,
       fuel: w.stock.fuel,
       lumber: w.stock.materials.lumber,
+      materials: { ...w.stock.materials },
     },
+    curing: w.curing.map((b) => ({
+      kind: b.kind,
+      name: CURES[b.kind].name,
+      place: CURES[b.kind].place,
+      amount: b.amount,
+      daysLeft: Math.max(0, b.daysLeft),
+      ready: b.daysLeft <= 0,
+    })),
+    tools: (Object.entries(TOOL_NAME) as [ProjectEffect, string][]).filter(([e]) => hasEffect(w, e)).map(([effect, name]) => ({ effect, name })),
+    dishes: [...w.dishes],
     projects: PROJECTS.filter((p) => w.projects[p.id].known).map((p) => {
       const ps = w.projects[p.id];
       const st = projectStatus(w, p.id);
@@ -451,7 +499,7 @@ export function present(g: Game, wall: number, cal: Calendar): Snapshot {
           },
           bag: {
             slots: bagSlots(w.outing.rations, w.outing.bag),
-            maxSlots: CONFIG.outing.bagSlots,
+            maxSlots: bagCapacity(w),
             items: (Object.entries(w.outing.bag) as [Goods, number][])
               .filter(([, n]) => n > 0)
               .map(([goods, count]) => ({ goods, name: GOODS_NAME[goods], count })),

@@ -123,6 +123,8 @@ export const CONFIG = {
     evening: [20 * 60, 22 * 60] as [number, number],
     maxPinned: 3,
   },
+  /** 等的慢事（03 第 7.3 节）：腌菜用 2 餐白菜，3 天，得 2 份腌菜（食材）；晾肉干、鱼干和药草茶 2 天。天数在 content.ts 的 CURES */
+  cure: { pickleCabbageMeals: 2, pickleYield: 2 },
   shares: {
     perDay: 9,
     cooldownMs: 45 * 60_000,
@@ -156,6 +158,8 @@ export const CONFIG = {
     collapseMinute: 24 * 60,
     /** 背包（02 第 9.3 节）：20 格；干粮 4 份一格，柴 2 捆（6 根）一格，素材 5 件一格 */
     bagSlots: 20,
+    /** 缝好大背包以后多几格（03 第 6.4、7.2 节：20 格变 26 格） */
+    bigPackExtraSlots: 6,
     rationsPerSlot: 4,
     woodPerSlot: 6,
     materialsPerSlot: 5,
@@ -200,6 +204,13 @@ export const CONFIG = {
     displayCapacity: { photo_wall: 6, hearth_shelf: 3, windowsill: 3, desk_corner: 2, bedside: 1, wall_spare: 1 },
     /** 他把一件藏品摆上去、换下来要几分钟 */
     arrangeMinutes: 5,
+    /**
+     * 腌菜和晾架（03 第 7.3 节没写的部分）。见 设计/讨论记录/2026-11-17_慢事和腌菜晾晒实现_Claude.md
+     * crocks 地窖口同时腌几坛；pickleMinFoodDays 粮够用这么多天以上，收白菜时才留 2 餐去腌；
+     * rackSlots 晾架同时晾几批；rackBatch 一批最多挂几份；teaCupsPerMint 一份薄荷晾干后泡几杯；
+     * putMinutes、takeMinutes 下坛上架、取下来各要几分钟
+     */
+    cure: { crocks: 1, pickleMinFoodDays: 7, rackSlots: 2, rackBatch: 3, teaCupsPerMint: 4, putMinutes: 20, takeMinutes: 15 },
     /**
      * 书架两档（books_few / books_many）：前任留下的书一直在，开局就是「稀疏」；
      * 带回的书和你那一格里的书脊（最多 milestones.spineSlots 本）合起来到这个数，就是「放满」

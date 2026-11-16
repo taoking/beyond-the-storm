@@ -46,7 +46,7 @@ export function zoneOf(place: PlaceId): Zone {
 
 // ---------- 修缮和慢事 ----------
 
-export type Material = "lumber" | "rope" | "canvas" | "glass" | "metal" | "parts" | "cloth" | "hide";
+export type Material = "lumber" | "rope" | "canvas" | "glass" | "metal" | "parts" | "cloth" | "hide" | "film";
 export const MATERIAL_NAME: Record<Material, string> = {
   lumber: "木料",
   rope: "旧绳索",
@@ -56,7 +56,9 @@ export const MATERIAL_NAME: Record<Material, string> = {
   parts: "零件",
   cloth: "布料",
   hide: "皮子",
+  film: "胶卷",
 };
+export const MATERIALS = Object.keys(MATERIAL_NAME) as Material[];
 
 export type ProjectEffect =
   | "saveWood" // 每天的柴用度减 1
@@ -72,7 +74,17 @@ export type ProjectEffect =
   | "forecast" // 能看明天的天气
   | "handbook" // 能看出当天下午的变化
   | "carving"
-  | "book";
+  | "book"
+  // 03 第 7.2 节：要去近处带回素材的慢事
+  | "fishingRod" // 能在溪谷和冰湖钓大鱼（工具，那两处还没做）
+  | "bow" // 能远处打猎（工具，动物还没做）
+  | "lantern" // 傍晚和夜里看得清（工具）
+  | "bigPack" // 背包多 6 格
+  | "photo" // 冲洗胶卷：一张照片，上照片墙
+  | "northernPlants"; // 认得更多能采的植物：近处多出新的采集点
+
+/** 做完就拿在手上的工具（03 第 6.4 节），快照里列出来 */
+export const TOOL_NAME: Partial<Record<ProjectEffect, string>> = { fishingRod: "钓竿", bow: "弓", lantern: "提灯", bigPack: "大背包" };
 
 export interface ProjectDef {
   id: string;
@@ -88,6 +100,10 @@ export interface ProjectDef {
   /** 要先做完哪一件 */
   requires?: string;
   repeatable?: boolean;
+  /** 开局不知道，要先拿到这样东西才出现在手头的事里（02 第 7.3 节的「没发现」） */
+  discover?: { keepsake?: string; material?: Material };
+  /** 能反复做的事做完一回得到什么藏品（KEEPSAKES 的 id；"photo" 按 FILM_PHOTOS 的先后） */
+  yields?: string;
   /** 动作卡上的字 */
   doing: string;
 }
@@ -250,7 +266,62 @@ export const PROJECTS: ProjectDef[] = [
     place: "workbench",
     effect: "carving",
     repeatable: true,
+    yields: "carving",
     doing: "在削木雕",
+  },
+  // 03 第 7.2 节：要去近处带回素材。材料见 03 第 3.4 节；工时、阶段按 7.2 节的表
+  {
+    id: "fishingRod",
+    name: "做钓竿",
+    kind: "craft",
+    stages: stagesOf([4, 4], ["竿身削好了", "装上了线轮和钩"], [{ lumber: 1 }, { metal: 1 }]),
+    where: "indoor",
+    place: "workbench",
+    effect: "fishingRod",
+    doing: "在做钓竿",
+  },
+  {
+    id: "bow",
+    name: "做弓",
+    kind: "craft",
+    stages: stagesOf(three(18), ["弓身削出来了", "弯好定了形", "上了弦"], [{ lumber: 1, rope: 1 }, { lumber: 1 }, { rope: 1 }]),
+    where: "indoor",
+    place: "workbench",
+    effect: "bow",
+    doing: "在做弓",
+  },
+  {
+    id: "lantern",
+    name: "修提灯",
+    kind: "craft",
+    stages: stagesOf([3, 3], ["灯罩擦净、换了芯", "提梁修好了"], [{ metal: 1 }, { metal: 1 }]),
+    where: "indoor",
+    place: "workbench",
+    effect: "lantern",
+    doing: "在修提灯",
+  },
+  {
+    id: "bigPack",
+    name: "缝大背包",
+    kind: "craft",
+    stages: stagesOf(three(18), ["帆布裁好了", "缝上了皮底", "背带缝牢了"], [{ canvas: 1 }, { canvas: 1, hide: 1 }, { hide: 2 }]),
+    where: "indoor",
+    place: "workbench",
+    effect: "bigPack",
+    doing: "在缝大背包",
+  },
+  {
+    id: "developFilm",
+    name: "冲洗胶卷",
+    kind: "craft",
+    stages: stagesOf([3, 3], ["显了影", "晾干了"], [{ film: 1 }]),
+    where: "indoor",
+    place: "workbench",
+    effect: "photo",
+    repeatable: true,
+    yields: "photo",
+    discover: { material: "film" },
+    doing: "在冲洗胶卷",
   },
   {
     id: "handbook",
@@ -274,9 +345,53 @@ export const PROJECTS: ProjectDef[] = [
       doing: `在读${name}`,
     }),
   ),
+  {
+    id: "northernPlants",
+    name: "读《北方草木》",
+    kind: "read",
+    stages: stagesOf(three(15), ["读了三分之一", "读了大半", "读完了"]),
+    where: "indoor",
+    place: "desk",
+    effect: "northernPlants",
+    discover: { keepsake: "northernPlants" },
+    doing: "在读《北方草木》",
+  },
 ];
 
 export const PROJECT_BY_ID: Record<string, ProjectDef> = Object.fromEntries(PROJECTS.map((p) => [p.id, p]));
+
+// ---------- 等的慢事：腌、晾（03 第 7.3 节） ----------
+
+/**
+ * 食材里有名目的几样（都算在 stock.ingredients 之内，02 第 5.3 节照旧按食材吃）：
+ * pickles 腌菜、jerky 肉干鱼干、rawMeat 生肉和大鱼、mint 野薄荷。其余的食材（松子、浆果……）不分名目。
+ */
+export type PantryKind = "pickles" | "jerky" | "rawMeat" | "mint";
+export const PANTRY_NAME: Record<PantryKind, string> = { pickles: "腌菜", jerky: "肉干鱼干", rawMeat: "生肉、大鱼", mint: "野薄荷" };
+
+/** pickles 腌菜（地窖口的坛子）、jerky 肉干鱼干、herbTea 药草茶（晾架） */
+export type CureKind = "pickles" | "jerky" | "herbTea";
+
+export interface CureDef {
+  name: string;
+  /** 在哪等：地窖口的坛子、院里的晾架 */
+  place: "cellar" | "dryingRack";
+  /** 要先做完哪件修缮 */
+  needs: "cellar" | "dryingRack";
+  /** 拿什么做：白菜是收菜时留下的，其余是储物架上有名目的食材 */
+  from: "cabbage" | PantryKind;
+  /** 等几天（03 第 7.3 节） */
+  days: number;
+  /** 下坛、上架、取下来时动作卡上的字 */
+  putLabel: string;
+  takeLabel: string;
+}
+
+export const CURES: Record<CureKind, CureDef> = {
+  pickles: { name: "腌菜", place: "cellar", needs: "cellar", from: "cabbage", days: 3, putLabel: "在地窖口腌白菜", takeLabel: "从地窖口取腌菜" },
+  jerky: { name: "肉干鱼干", place: "dryingRack", needs: "dryingRack", from: "rawMeat", days: 2, putLabel: "在晾架上挂肉和鱼", takeLabel: "从晾架上收肉干" },
+  herbTea: { name: "药草茶", place: "dryingRack", needs: "dryingRack", from: "mint", days: 2, putLabel: "在晾架上晾薄荷", takeLabel: "从晾架上收薄荷" },
+};
 
 // ---------- 作物 ----------
 
@@ -391,7 +506,13 @@ export const KEEPSAKES: KeepsakeDef[] = [
   { id: "jayFeather", name: "一根松鸦的羽毛", kind: "ornament" },
   { id: "postcard", name: "工棚里的一张旧明信片", kind: "oldThing" },
   { id: "northernPlants", name: "《北方草木》", kind: "book" },
+  // 冲洗胶卷得到的照片（03 第 7.2 节）：按冲洗的先后给，松林工棚那一卷是第一张
+  { id: "photoShed", name: "一张旧照片：几个伐木工站在工棚前", kind: "photo" },
+  { id: "photo", name: "一张冲洗出来的照片", kind: "photo", repeatable: true },
 ];
+
+/** 冲洗胶卷按先后给的照片；都有了以后给不带名目的「photo」 */
+export const FILM_PHOTOS = ["photoShed"];
 export const KEEPSAKE_BY_ID: Record<string, KeepsakeDef> = Object.fromEntries(KEEPSAKES.map((k) => [k.id, k]));
 
 export type TaskCategory = "study" | "code" | "write" | "other";
@@ -425,6 +546,8 @@ export interface NodeDef {
   seasons?: Season[];
   /** 是一件藏品（KEEPSAKES 的 id）：不占背包格，带回家才算拿到；kind 是 salvage、total 是 1 */
   keepsake?: string;
+  /** 要先有这个效果才认得、才看得见（读完《北方草木》多出来的采集点） */
+  needs?: ProjectEffect;
 }
 
 export interface AreaDef {
@@ -470,12 +593,16 @@ export const AREAS: AreaDef[] = [
       { id: "twigsB", name: "松树下的枯枝", x: 6, y: 7, kind: "twigs", gives: "wood" },
       { id: "pineNuts", name: "松子", x: 9, y: 1, kind: "forage", gives: "ingredients", seasons: ["autumn", "winter"] },
       { id: "berries", name: "浆果", x: 10, y: 7, kind: "forage", gives: "ingredients", seasons: ["winter", "summer", "autumn"] },
-      // 废弃的伐木工棚。种子、胶卷、旧工具内核里还没有，先不放
+      // 读完《北方草木》才认得的两样（03 第 7.2 节「近处多出新的采集点」）。选了松林春天空着的那一段
+      { id: "lingonberry", name: "林下的越橘", x: 2, y: 2, kind: "forage", gives: "ingredients", seasons: ["autumn", "winter", "spring"], needs: "northernPlants" },
+      { id: "wildOnion", name: "背阴坡的野葱", x: 7, y: 3, kind: "forage", gives: "ingredients", seasons: ["spring", "summer"], needs: "northernPlants" },
+      // 废弃的伐木工棚。种子、旧工具内核里还没有，先不放
       { id: "shedLumber", name: "工棚的旧木料", x: 12, y: 3, kind: "salvage", gives: "lumber", total: 10 },
       { id: "shedRope", name: "工棚的旧绳索", x: 13, y: 4, kind: "salvage", gives: "rope", total: 3 },
       { id: "shedCanvas", name: "工棚的帆布", x: 12, y: 5, kind: "salvage", gives: "canvas", total: 5 },
       { id: "shedFuel", name: "工棚的一罐油", x: 13, y: 6, kind: "salvage", gives: "fuel", total: 1 },
       { id: "shedCan", name: "工棚的罐头", x: 11, y: 6, kind: "salvage", gives: "cans", total: 1 },
+      { id: "shedFilm", name: "工棚抽屉里的一卷胶卷", x: 12, y: 6, kind: "salvage", gives: "film", total: 1 },
       { id: "shedBook", name: "工棚里的一本书", x: 13, y: 2, kind: "salvage", gives: null, total: 1, keepsake: "northernPlants" },
       { id: "shedPostcard", name: "工棚窗台上的明信片", x: 11, y: 3, kind: "salvage", gives: null, total: 1, keepsake: "postcard" },
       // 藏品：林子里的一根羽毛（03 第 6.5 节的标本）

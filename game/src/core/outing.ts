@@ -7,7 +7,9 @@ import { acquireKeepsake } from "./keepsakes.ts";
 import {
   activity,
   bankFire,
+  discoverProjects,
   foodCap,
+  hasEffect,
   logEvent,
   normalWoodUse,
   remainingMinutes,
@@ -39,6 +41,11 @@ export interface OutingCheck {
   /** 行囊下限：柴、粮各自只能拿走够用 3 天以上的部分 */
   maxRations: number;
   maxBundles: number;
+}
+
+/** 背包一共几格：缝好大背包以后多 6 格（03 第 6.4 节） */
+export function bagCapacity(w: World): number {
+  return O.bagSlots + (hasEffect(w, "bigPack") ? O.bigPackExtraSlots : 0);
 }
 
 export function checkOuting(w: World): OutingCheck {
@@ -80,7 +87,7 @@ export function depart(w: World, pack: { rations: number; bundles: number }): Ou
   const wood = pack.bundles * O.sticksPerBundle;
   if (
     pack.rations > check.maxRations || pack.bundles > check.maxBundles || pack.rations < 0 || pack.bundles < 0 ||
-    !Number.isInteger(pack.rations) || !Number.isInteger(pack.bundles) || bagSlots(pack.rations, { wood }) > O.bagSlots
+    !Number.isInteger(pack.rations) || !Number.isInteger(pack.bundles) || bagSlots(pack.rations, { wood }) > bagCapacity(w)
   ) {
     return { ...check, ok: false, reason: "overPack" };
   }
@@ -254,7 +261,10 @@ function settle(w: World, keep: number): string[] {
   return found;
 }
 
-/** 藏品不丢（02 第 9.7 节）：书上书架，别的有空位就等他摆上去，满了收进手记的收藏页 */
+/**
+ * 藏品不丢（02 第 9.7 节）：书上书架，别的有空位就等他摆上去，满了收进手记的收藏页。
+ * 带回的书、胶卷让手头的事多出一件（读《北方草木》、冲洗胶卷）
+ */
 function bringHome(w: World, found: string[]): void {
   for (const id of found) {
     const def = KEEPSAKE_BY_ID[id];
@@ -269,6 +279,7 @@ function bringHome(w: World, found: string[]): void {
           : `带回了${def.name}。能摆的地方都满了，先收进手记的收藏页。`;
     logEvent(w, "keepsake", text, 3);
   }
+  discoverProjects(w);
 }
 
 /** 走回家门：背包入库，换回便服 */

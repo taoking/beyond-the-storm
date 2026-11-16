@@ -3,16 +3,22 @@
 import { CONFIG, type LifeTier, type Season } from "./config.ts";
 import { dayPartOf, daysUntilWinter, seasonOf } from "./calendar.ts";
 import {
+  AREAS,
   CROP_BY_ID,
   CROPS,
+  CURES,
   DISPLAY_SLOTS,
+  FILM_PHOTOS,
+  KEEPSAKE_BY_ID,
   MATERIAL_NAME,
   PROJECT_BY_ID,
   PROJECTS,
   STYLES,
   zoneOf,
   type CropDef,
+  type CureKind,
   type Material,
+  type PantryKind,
   type PlaceId,
   type ProjectDef,
   type ProjectEffect,
@@ -28,6 +34,7 @@ import {
   type Activity,
   type ActivityCategory,
   type ActivityKind,
+  type CureBatch,
   type DayState,
   type MealSlot,
   type NewWorldOptions,
@@ -243,7 +250,9 @@ export function newDay(w: World): void {
   w.yearStats.longestBlizzard = Math.max(w.yearStats.longestBlizzard, w.weather.blizzardRun);
 
   growCrops(w);
+  cureDay(w);
   planDay(w, prev);
+  discoverProjects(w);
 
   if (info.dayInSeason === 0) {
     const first: Record<Season, string> = {
@@ -617,9 +626,25 @@ export function projectStatus(w: World, id: string): { status: ProjectStatus; no
   return { status: "queued", note: "还没排到" };
 }
 
+/**
+ * 要先拿到东西才出现的慢事（02 第 7.3 节的「没发现 → 能做」）：书带回了家、第一卷胶卷进了门，
+ * 就出现在手头的事里。回家、昏倒醒来和每天起床时查一次。quiet 是读老存档时补，不写手记
+ */
+export function discoverProjects(w: World, quiet = false): void {
+  for (const def of PROJECTS) {
+    const ps = w.projects[def.id];
+    if (!ps || ps.known || !def.discover) continue;
+    const { keepsake, material } = def.discover;
+    const has = (keepsake && w.keepsakes.some((k) => k.id === keepsake)) || (material && w.stock.materials[material] > 0);
+    if (!has) continue;
+    ps.known = true;
+    if (!quiet) logEvent(w, "discover", `手头的事里多了一件：${def.name}。`, 2);
+  }
+}
+
 function projectEligible(w: World, def: ProjectDef): boolean {
   const ps = w.projects[def.id];
-  if (def.repeatable && ps.timesDone >= C.IMPL.autoCarvings && !w.intents.pinned.includes(def.id)) {
+  if (def.yields === "carving" && ps.timesDone >= C.IMPL.autoCarvings && !w.intents.pinned.includes(def.id)) {
     // 木雕：他自己只刻头几件，之后你置顶了才接着刻。手上刻到一半的会刻完
     if (ps.stage === 0 && ps.minutesInStage === 0 && !ps.stageStarted) return false;
   }
@@ -675,14 +700,25 @@ function finishStage(w: World, def: ProjectDef): void {
   ps.timesDone += 1;
   if (def.repeatable) {
     ps.stage = 0;
-    w.carvings += 1;
-    const where = acquireKeepsake(w, "carving");
-    const at = where && where !== "bookshelf" ? DISPLAY_SLOTS[where].name : null;
-    logEvent(w, "projectDone", at ? `木雕刻好了，要摆在${at}。` : "木雕刻好了。窗台和炉上搁板都摆满了，先收进手记的收藏页。", 3);
+    if (def.yields === "carving") {
+      w.carvings += 1;
+      const where = acquireKeepsake(w, "carving");
+      const at = where && where !== "bookshelf" ? DISPLAY_SLOTS[where].name : null;
+      logEvent(w, "projectDone", at ? `木雕刻好了，要摆在${at}。` : "木雕刻好了。窗台和炉上搁板都摆满了，先收进手记的收藏页。", 3);
+    } else if (def.yields === "photo") {
+      // 冲洗胶卷：按冲洗的先后给照片，上照片墙（03 第 7.2 节）
+      const id = FILM_PHOTOS.find((k) => !w.keepsakes.some((x) => x.id === k)) ?? "photo";
+      const where = acquireKeepsake(w, id);
+      const at = where && where !== "bookshelf" ? DISPLAY_SLOTS[where].name : null;
+      const name = KEEPSAKE_BY_ID[id].name;
+      logEvent(w, "projectDone", at ? `冲好了一卷胶卷：${name}。要挂到${at}。` : `冲好了一卷胶卷：${name}。墙上挂满了，先收进手记的收藏页。`, 3);
+    }
   } else {
     ps.done = true;
     logEvent(w, "projectDone", def.kind === "read" ? `${def.name.replace(/^读/, "读完了")}。` : `${def.name}：做完了。`, 4);
     if (def.kind === "repair") w.yearStats.repairsDone.push(def.name);
+    const plants = AREAS.flatMap((a) => a.nodes.filter((n) => n.needs === def.effect).map((n) => `${a.name}${n.name}`));
+    if (plants.length) logEvent(w, "discover", `认得了更多能采的东西：${plants.join("、")}。`, 3);
   }
   w.intents.pinned = w.intents.pinned.filter((id) => id !== def.id || def.repeatable === true);
 }
@@ -741,34 +777,47 @@ function plotYield(w: World, plot: PlotState, greenhouse: boolean): number {
   return base - (frost ? C.garden.frostPenalty : 0);
 }
 
-function gardenWork(w: World): { harvest: boolean; plant: boolean } {
+function gardenWork(w: World): { harvest: boolean; plant: boolean; pickle: boolean } {
   let harvest = false;
   let plant = false;
+  let pickle = false;
   const beds: [PlotState[], boolean][] = [[w.plots, false]];
   if (hasEffect(w, "greenhouse")) beds.push([w.greenhouse, true]);
   for (const [plots, gh] of beds) {
     plots.forEach((p, i) => {
       // 粮装满了就留在地里晚几天收，不会凭空消失
-      if (p.crop && p.ripe && w.stock.food + plotYield(w, p, gh) <= foodCap(w)) harvest = true;
+      if (p.crop && p.ripe && w.stock.food + plotYield(w, p, gh) <= foodCap(w)) {
+        harvest = true;
+        if (p.crop === "cabbage" && canPickle(w)) pickle = true;
+      }
       if (!p.crop && chooseCrop(w, plots, i, gh)) plant = true;
     });
   }
-  return { harvest, plant };
+  return { harvest, plant, pickle };
 }
 
-function doGarden(w: World): void {
+function doGarden(w: World, pickle: boolean): void {
   const beds: [PlotState[], boolean][] = [[w.plots, false]];
   if (hasEffect(w, "greenhouse")) beds.push([w.greenhouse, true]);
   const harvested: Record<string, number> = {};
   let meals = 0;
   let planted = 0;
+  let pickled = 0;
   for (const [plots, gh] of beds) {
     plots.forEach((p, i) => {
       if (p.crop && p.ripe) {
         const y = plotYield(w, p, gh);
         if (w.stock.food + y <= foodCap(w)) {
-          addFood(w, y, gh ? "暖棚" : "菜地");
-          meals += y;
+          // 地窖整理好以后，收白菜时留 2 餐在地窖口腌上（03 第 7.3 节）。留下的不进粮
+          let keep = 0;
+          if (pickle && !pickled && p.crop === "cabbage" && crocksInUse(w) < C.IMPL.cure.crocks) {
+            keep = Math.min(y, C.cure.pickleCabbageMeals);
+            pickled = keep;
+            w.curing.push({ kind: "pickles", amount: C.cure.pickleYield, daysLeft: CURES.pickles.days, day: w.day });
+            bump(w, "腌菜:下坛的白菜", keep);
+          }
+          addFood(w, y - keep, gh ? "暖棚" : "菜地");
+          meals += y - keep;
           const name = CROP_BY_ID[p.crop].name;
           harvested[name] = (harvested[name] ?? 0) + 1;
           p.crop = null;
@@ -795,7 +844,126 @@ function doGarden(w: World): void {
   const names = Object.entries(harvested).map(([name, n]) => `${n} 格${name}`);
   if (names.length) parts.push(`收了${names.join("、")}，${meals} 餐`);
   if (planted) parts.push(`下了 ${planted} 格种`);
+  if (pickled) parts.push(`留了 ${pickled} 餐白菜在地窖口腌上`);
   if (parts.length) logEvent(w, "garden", `${parts.join("；")}。`, meals ? 3 : 2);
+}
+
+// ---------- 等的慢事：腌菜、晾架（03 第 7.3 节） ----------
+
+function crocksInUse(w: World): number {
+  return w.curing.filter((b) => CURES[b.kind].place === "cellar").length;
+}
+
+function rackInUse(w: World): number {
+  return w.curing.filter((b) => CURES[b.kind].place === "dryingRack").length;
+}
+
+/** 收白菜时要不要留 2 餐去腌：地窖整理好了、坛子空着、粮够用一阵（俭的时候不腌） */
+function canPickle(w: World): boolean {
+  return (
+    w.projects.cellar.done &&
+    crocksInUse(w) < C.IMPL.cure.crocks &&
+    w.today.foodTier !== "thrift" &&
+    foodDays(w) >= C.IMPL.cure.pickleMinFoodDays
+  );
+}
+
+/** 过天：坛里的照常腌；晾架在暴风雪天不算一天（同菜地，02 第 5.4 节）。好了记一笔 */
+function cureDay(w: World): void {
+  for (const b of w.curing) {
+    if (b.daysLeft <= 0) continue;
+    if (CURES[b.kind].place === "dryingRack" && w.weather.yesterday === "D") continue;
+    b.daysLeft -= 1;
+    if (b.daysLeft <= 0) logEvent(w, "cure", b.kind === "pickles" ? "地窖口那坛白菜腌好了。" : `晾架上的${CURES[b.kind].name}晾好了。`, 2);
+  }
+}
+
+/** 取下来以后放不放得下：腌菜、肉干进储物架，满了就先留在坛里、架上 */
+function cureRoom(w: World, b: CureBatch): boolean {
+  if (b.kind === "herbTea") return true;
+  return w.stock.ingredients + b.amount <= C.stock.ingredientCap;
+}
+
+/** 到了该收的（02 第 6.2 节第 4 条）：好了的取下来；晾架空着、架上有生肉或薄荷就挂上去 */
+function cureDecision(w: World): Activity | null {
+  const ready = w.curing.find((b) => b.daysLeft <= 0 && cureRoom(w, b));
+  if (ready) {
+    const def = CURES[ready.kind];
+    return activity("cure", def.takeLabel, "chore", [{ place: def.place, minutes: C.IMPL.cure.takeMinutes }], { op: "take", kind: ready.kind });
+  }
+  if (!w.projects.dryingRack.done || w.today.mood === "thrift" || rackInUse(w) >= C.IMPL.cure.rackSlots) return null;
+  for (const kind of ["jerky", "herbTea"] as CureKind[]) {
+    const def = CURES[kind];
+    if (w.pantry[def.from as PantryKind] > 0) {
+      return activity("cure", def.putLabel, "chore", [{ place: def.place, minutes: C.IMPL.cure.putMinutes }], { op: "put", kind });
+    }
+  }
+  return null;
+}
+
+function finishCure(w: World, op: string, kind: CureKind): void {
+  const def = CURES[kind];
+  if (op === "put") {
+    const from = def.from as PantryKind;
+    const n = Math.min(w.pantry[from], w.stock.ingredients, C.IMPL.cure.rackBatch);
+    if (n <= 0 || rackInUse(w) >= C.IMPL.cure.rackSlots) return;
+    w.pantry[from] -= n;
+    w.stock.ingredients -= n;
+    w.curing.push({ kind, amount: n, daysLeft: def.days, day: w.day });
+    logEvent(w, "cure", kind === "jerky" ? `把 ${n} 份肉和鱼挂上了晾架。` : `把 ${n} 份野薄荷摊在晾架上。`, 2);
+    return;
+  }
+  const i = w.curing.findIndex((b) => b.kind === kind && b.daysLeft <= 0 && cureRoom(w, b));
+  if (i < 0) return;
+  const [b] = w.curing.splice(i, 1);
+  if (kind === "herbTea") {
+    const cups = b.amount * C.IMPL.cure.teaCupsPerMint;
+    w.tea += cups;
+    logEvent(w, "cure", `晾好的薄荷收进了茶罐，够泡 ${cups} 杯。`, 2);
+    learnDish(w, "mintTea", "有了一样新的茶：薄荷茶。");
+    return;
+  }
+  w.stock.ingredients += b.amount;
+  w.pantry[kind] += b.amount;
+  bump(w, `${def.name}:取出`, b.amount);
+  if (kind === "pickles") {
+    logEvent(w, "cure", `从地窖口取出了 ${b.amount} 份腌白菜，摆上了储物架。`, 2);
+    learnDish(w, "pickleStew", "学会了一道新菜：腌白菜炖锅子。");
+  } else {
+    logEvent(w, "cure", `收下了 ${b.amount} 份肉干鱼干，摆上了储物架。`, 2);
+  }
+}
+
+function learnDish(w: World, id: string, text: string): void {
+  if (w.dishes.includes(id)) return;
+  w.dishes.push(id);
+  logEvent(w, "dish", text, 3);
+}
+
+/** 不分名目的食材有几份（松子、浆果这些） */
+export function plainIngredients(w: World): number {
+  const p = w.pantry;
+  return Math.max(0, w.stock.ingredients - p.pickles - p.jerky - p.rawMeat - p.mint);
+}
+
+/** 用掉一份食材：生肉大鱼先吃（不经放），再吃腌菜、不分名目的、薄荷，肉干留到最后（能带出门） */
+function useIngredient(w: World): PantryKind | null {
+  const plain = plainIngredients(w);
+  w.stock.ingredients -= 1;
+  for (const k of ["rawMeat", "pickles"] as PantryKind[]) {
+    if (w.pantry[k] > 0) {
+      w.pantry[k] -= 1;
+      return k;
+    }
+  }
+  if (plain > 0) return null;
+  for (const k of ["mint", "jerky"] as PantryKind[]) {
+    if (w.pantry[k] > 0) {
+      w.pantry[k] -= 1;
+      return k;
+    }
+  }
+  return null;
 }
 
 // ---------- 他怎么决定下一件事（02 第 6.2 节） ----------
@@ -958,10 +1126,14 @@ function decide(w: World): Activity {
     if (g.harvest || g.plant) {
       const inGreenhouse = seasonOf(w.day).season === "winter";
       const where = inGreenhouse ? "暖棚" : "菜地";
-      return activity("garden", g.harvest ? `在${where}收菜` : `在${where}下种`, "chore", [
+      const phases: Phase[] = [
         { place: inGreenhouse ? "greenhouse" : "garden", minutes: g.harvest ? C.IMPL.harvestMinutes : C.IMPL.plantMinutes },
-      ]);
+      ];
+      if (g.pickle) phases.push({ place: "cellar", minutes: C.IMPL.cure.putMinutes, label: CURES.pickles.putLabel });
+      return activity("garden", g.harvest ? `在${where}收菜` : `在${where}下种`, "chore", phases, { pickle: g.pickle });
     }
+    const cure = cureDecision(w);
+    if (cure) return cure;
   }
 
   // 6. 手头的项目
@@ -1032,13 +1204,15 @@ export function startActivity(w: World, act: Activity): void {
     case "meal": {
       // 先取：开始做饭时就从库里拿
       const src = act.data.source;
-      if (src === "ingredient") w.stock.ingredients -= 1;
+      let used: PantryKind | null = null;
+      if (src === "ingredient") used = useIngredient(w);
       else if (src === "can") w.stock.cans -= 1;
       else {
         w.stock.food -= 1;
         bump(w, "吃粮");
-        if (src === "dish") w.stock.ingredients -= 1;
+        if (src === "dish") used = useIngredient(w);
       }
+      if (used) act.data.used = used;
       break;
     }
     case "project": {
@@ -1116,8 +1290,12 @@ export function complete(w: World, act: Activity): void {
       leaveTrace(w, "bowl", "armchair", 90);
       const name = MEAL_NAME[act.data.meal as keyof typeof MEAL_NAME];
       const src = act.data.source;
-      if (src === "dish") logEvent(w, "meal", `${name}用架上的食材做了顿好的。`, 2);
+      const used = act.data.used;
+      if (src === "dish" && used === "pickles") logEvent(w, "meal", `${name}用腌白菜炖了一锅。`, 2);
+      else if (src === "dish" && used === "jerky") logEvent(w, "meal", `${name}切了些肉干，做了顿好的。`, 2);
+      else if (src === "dish") logEvent(w, "meal", `${name}用架上的食材做了顿好的。`, 2);
       else if (src === "can") logEvent(w, "meal", `${name}开了一个罐头。`, 2);
+      else if (src === "ingredient" && used === "pickles") logEvent(w, "meal", `${name}就着腌白菜吃了。`, 2);
       else if (src === "ingredient") logEvent(w, "meal", `${name}把架上的食材当饭吃了。`, 2);
       else logEvent(w, "meal", `吃了${name}。`, 1);
       break;
@@ -1146,7 +1324,10 @@ export function complete(w: World, act: Activity): void {
       logEvent(w, "eave", "泉屋的笼里有几条小的，收拾了。", 3);
       break;
     case "garden":
-      doGarden(w);
+      doGarden(w, act.data.pickle === true);
+      break;
+    case "cure":
+      finishCure(w, act.data.op as string, act.data.kind as CureKind);
       break;
     case "project": {
       const def = PROJECT_BY_ID[act.data.id as string];
@@ -1191,7 +1372,8 @@ export function complete(w: World, act: Activity): void {
       if (w.intents.request?.kind === kind) w.intents.request = null;
       w.actor.thirst = kind === "tea" ? 0 : w.actor.thirst;
       if (kind === "tea") leaveTrace(w, "cup", "armchair", 60);
-      logEvent(w, "request", kind === "tea" ? "泡了杯茶。" : kind === "windowSit" ? "去窗边坐了会儿。" : "放了张唱片。", 2);
+      const tea = kind === "tea" && useTea(w) ? "泡了杯薄荷茶。" : "泡了杯茶。";
+      logEvent(w, "request", kind === "tea" ? tea : kind === "windowSit" ? "去窗边坐了会儿。" : "放了张唱片。", 2);
       break;
     }
     case "journal":
@@ -1199,17 +1381,27 @@ export function complete(w: World, act: Activity): void {
       leaveTrace(w, "openJournal", "desk", 180);
       logEvent(w, "journal", "记了今天的日志。", 1);
       break;
-    case "leisure":
+    case "leisure": {
+      let text = act.data.text as string;
       if (act.data.id === "tea") {
         w.actor.thirst = 0;
         leaveTrace(w, "cup", "armchair", 60);
+        if (useTea(w)) text = "泡了杯薄荷茶。";
       }
       if (act.data.id === "readIdle") leaveTrace(w, "openBook", act.phases[0].place, 120);
-      logEvent(w, "leisure", act.data.text as string, 1);
+      logEvent(w, "leisure", text, 1);
       break;
+    }
     default:
       break;
   }
+}
+
+/** 晾好的药草茶有就泡一杯（只换手记的说法，不顶饭、不改别的） */
+function useTea(w: World): boolean {
+  if (w.tea <= 0) return false;
+  w.tea -= 1;
+  return true;
 }
 
 /** 当前活动走一分钟。做完了就把它返回，由 stepMinute 在钟走过这一分钟以后结算。 */

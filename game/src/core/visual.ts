@@ -74,6 +74,8 @@ export function actorPose(actor: ActorState): PoseProjection {
   if (kind === "swapStyle") return { activity: kind, pose: "standWork", prop: "tools" };
   if (kind === "arrange") return { activity: kind, pose: "standWork", prop: null };
   if (kind === "garden") return { activity: kind, pose: "crouch", prop: "tools" };
+  // 地窖口蹲着取坛子，晾架前站着挂、收
+  if (kind === "cure") return { activity: kind, pose: place === "cellar" ? "crouch" : "standWork", prop: null };
   if (kind === "bankFire" || kind === "tendFire" || kind === "lightFire")
     return { activity: kind, pose: "crouch", prop: "tools" };
   if (kind === "choreWood" || kind === "choreFood" || kind === "eaveWood" || kind === "eaveFood")

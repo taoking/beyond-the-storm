@@ -60,9 +60,9 @@ describe("区域是数据（03 第 5.1 节）", () => {
     }
   });
 
-  it("松林的工棚按 03 第 3.4 节的账：木料 10、旧绳索 3、帆布 5、1 罐油、1 个罐头", () => {
+  it("松林的工棚按 03 第 3.4、5.1 节的账：木料 10、旧绳索 3、帆布 5、1 卷胶卷、1 罐油、1 个罐头", () => {
     const shed = Object.fromEntries(forest.nodes.filter((n) => n.kind === "salvage" && !n.keepsake).map((n) => [n.gives, n.total]));
-    expect(shed).toEqual({ lumber: 10, rope: 3, canvas: 5, fuel: 1, cans: 1 });
+    expect(shed).toEqual({ lumber: 10, rope: 3, canvas: 5, film: 1, fuel: 1, cans: 1 });
     // 藏品点：工棚的《北方草木》、一张明信片，林子里一根羽毛，都是独一份
     const finds = forest.nodes.filter((n) => n.keepsake);
     expect(finds.map((n) => n.keepsake).sort()).toEqual(["jayFeather", "northernPlants", "postcard"]);
