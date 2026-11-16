@@ -1,7 +1,7 @@
 // 木屋的四间（03 第 3.1 节）：画面只显示玩家选定的那一间，不跟着他走，他不在就是空屋。
 // 地点归哪间、门洞、展示位、窗、站位都读 05 的 room_locations.json，这是唯一的一份坐标（2560×1440）。
 // 这里只读，不是世界事实：模拟不看房间，换了图只改那份 JSON。
-import locations from "../../../assets/05/rooms/g5_20261115/room_locations.json" with { type: "json" };
+import locations from "../../../assets/05/rooms/b1_20261116/room_locations.json" with { type: "json" };
 import { PLACES, type PlaceId } from "./content.ts";
 
 export type RoomId = "hearth_room" | "observation_room" | "kitchen_room" | "bedroom";

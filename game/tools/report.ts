@@ -86,7 +86,7 @@ const q = (xs: number[], p: number): number => [...xs].sort((a, b) => a - b)[Mat
 
 console.log(`# 灰盒采样：${runs} 个种子 × 入冬起 ${days} 个游戏日`);
 console.log(`\n采样条件：正常陪伴，不出门，不专注，他照自己的习惯做项目。共 ${total.companionMinutes} 个游戏分钟，其中他醒着 ${total.awakeMinutes} 个（${pct(total.awakeMinutes, total.companionMinutes)}）。`);
-console.log("地点归哪间读 assets/05/rooms/g5_20261115/room_locations.json；画面只显示选定的那一间，下面是选了那一间时看得见他的比例。\n");
+console.log("地点归哪间读 assets/05/rooms/b1_20261116/room_locations.json；画面只显示选定的那一间，下面是选了那一间时看得见他的比例。\n");
 console.log("## 各间看得见他\n");
 console.log("| 房间 | 占醒着的时间 | 占全部世界时间 | 包括的地点 |");
 console.log("|---|---|---|---|");

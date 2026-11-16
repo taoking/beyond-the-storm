@@ -24,9 +24,24 @@ EXCLUDE = {
         [(1958, 714), (2031, 714), (2033, 742), (2043, 760), (2043, 858), (2035, 868),
          (1953, 868), (1945, 858), (1945, 760), (1955, 742)],
     ],
+    'bedroom': [  # 床：被子米灰偏冷，挡在左边那块玻璃下半截
+        [(400, 860), (1100, 878), (1220, 891), (1242, 902), (1257, 926), (1270, 962), (1288, 1018),
+         (1288, 1300), (400, 1300)],
+    ],
 }
-# 玻璃前没有家具的房间：每块玻璃取凸包，补上窗框边上偏暖的雪光（炉间前面有收音机和椅背，不取）
-HULL = {'observation_room', 'kitchen_room', 'bedroom'}
+# 太小、连通块门槛收不进来的玻璃：多边形里偏冷的像素算玻璃
+INCLUDE = {
+    'bedroom': [[(1289, 256), (1289, 300), (1181, 310)]],  # 左边山墙的小三角窗
+}
+# 玻璃前没有家具的房间：每块玻璃取凸包，补上窗框边上偏暖的雪光（炉间前面有收音机和椅背、卧室有床角和木箱，不取）
+HULL = {'observation_room', 'kitchen_room'}
+# 站位改到新图上（2026-11-16）：旧套好些脚底落在家具里或窗台高度，人形会站进柴炉、料理台、书桌。
+# 现在一律放在他要用的那件家具前面、看得见的地板上；批次 2 画出人物以后按画出来的位置再量
+STATIONS = {
+    'radio': (307, 1250), 'gramophone': (547, 1235), 'hearth': (2107, 1133), 'woodpile': (2347, 1175),
+    'window': (2150, 1235), 'windowsill': (1990, 1225), 'bookshelf': (440, 1255), 'instruments': (2370, 1262),
+    'workbench': (575, 1252), 'door': (1030, 1060), 'shelf': (1253, 1333), 'stove': (1493, 1373),
+}
 # 旧坐标 → 新图：按每间几十个特征点做局部模板匹配后拟合的仿射（x' = a·x + b·y + c）
 FIT = {
     'hearth_room': {'x': [1, 0, 0], 'y': [0, 1.0082, -6.45]},
@@ -46,6 +61,9 @@ def polys_mask(polys):
 def glass(room, rgb, old_room):
     r, b = rgb[..., 0].astype(int), rgb[..., 2].astype(int)
     cool = r < b * K + A
+    # 排除区先扣掉，免得挡在玻璃前的东西经过它连成一片
+    if room in EXCLUDE:
+        cool &= ~polys_mask(EXCLUDE[room])
     near = ndi.binary_dilation(polys_mask([p for w in old_room['windows'] for p in w['panesCanvasPolygons']]), iterations=40)
     lab, n = ndi.label(cool)
     idx = range(n + 1)
@@ -63,6 +81,8 @@ def glass(room, rgb, old_room):
         for c in cs:
             cv2.fillPoly(hull, [cv2.convexHull(c)], 1)
         m = hull > 0
+    if room in INCLUDE:
+        m |= polys_mask(INCLUDE[room]) & cool
     if room in EXCLUDE:
         m &= ~polys_mask(EXCLUDE[room])
     return m
@@ -175,8 +195,11 @@ def build(room, src, old, new):
     sh = R['standingHeight']
     for k, loc in old['locations'].items():
         if loc.get('room') == room and loc.get('footAnchor'):
-            foot = tf(room, loc['footAnchor'])
+            foot = list(STATIONS[k]) if k in STATIONS else tf(room, loc['footAnchor'])
             new['locations'][k].update(footAnchor=foot, standingHeightPx=round(sh['a'] + foot[1] * sh['b']))
+            if k in STATIONS:
+                # 人站到了家具前面，旧的遮挡关系不再成立
+                new['locations'][k]['occludedBy'] = []
     R['source'] = f'出图/批次1/{NAME[room]}.png (Gemini, native 2560x1440, 2026-11-16)'
     R['status'] = 'base_ready'
     print(room, 'glass px', int(m.sum()), 'panes', len(R['windows'][0]['panesCanvasPolygons']))
@@ -184,7 +207,7 @@ def build(room, src, old, new):
 
 def main():
     src = Path(sys.argv[1])
-    rooms = sys.argv[2:] or list(FIT)  # 卧室重出以后：python build.py <目录> bedroom
+    rooms = sys.argv[2:] or list(NAME)
     target = HERE / 'room_locations.json'
     new = json.loads((target if target.exists() else OLD).read_text(encoding='utf-8'))
     old = json.loads(OLD.read_text(encoding='utf-8'))

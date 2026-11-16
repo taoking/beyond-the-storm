@@ -36,7 +36,7 @@ src/core/      内核：纯逻辑，不碰 DOM、不读系统时钟，种子固�
   game.ts        一局游戏：四种世界状态、白名单命令、把现实时间交给专注和世界
   view.ts        只读投影：界面要显示的一切从这里拿
   visual.ts      G2 只读姿态/道具与独立氛围投影：不改世界规则和 RNG
-  rooms.ts       木屋的四间：地点归哪间、窗、门洞、展示位、站位，读 assets/05/rooms/g5_20261115/room_locations.json
+  rooms.ts       木屋的四间：地点归哪间、窗、门洞、展示位、站位，读 assets/05/rooms/b1_20261116/room_locations.json
   telemetry.ts   可见率、时间配比这些不给玩家看的指标
   save.ts        存档
   longrun.ts     长跑的统计口径，工具和测试共用
