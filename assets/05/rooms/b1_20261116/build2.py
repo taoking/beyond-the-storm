@@ -39,7 +39,9 @@ LAYERS = {
         'snack_plate': ('炉间_物件', [1495, 920, 1790, 1100], {}),
         # 收音机和唱片机：旧的（坏收音机、罩着布的唱片机）也拆成图层，罩布让出来的那块并进玻璃
         'radio_fixed': ('炉间_物件', [130, 690, 418, 900], {'reveal': True}),
-        'gramophone_open': ('炉间_物件', [418, 630, 770, 900], {'reveal': True}),
+        # 唱片和唱臂是深灰的，也算「偏冷」，不能当窗外并进玻璃：底座、唱片、唱臂那块划成实物
+        'gramophone_open': ('炉间_物件', [418, 630, 770, 900], {'reveal': True, 'solid': [
+            (418, 786), (561, 786), (563, 765), (595, 765), (598, 788), (770, 788), (770, 900), (418, 900)]}),
     },
     'kitchen_room': {
         'coat': ('灶间_物件1', [870, 480, 1180, 860], {}),
@@ -165,6 +167,7 @@ def build(room, src, locs):
     glass = b1.glass(room, base.astype('uint8'), json.loads(b1.OLD.read_text(encoding='utf-8'))['rooms'][room])
     cache = {}
     reveal = np.zeros((H, W), bool)
+    reveal_reg = np.zeros((H, W), bool)
     reveal_src = None
     report = {}
     for name, (fname, r, opt) in LAYERS[room].items():
@@ -174,19 +177,31 @@ def build(room, src, locs):
         alpha, new, sh = cut(base, cache[fname], glass, reg, opt)
         if opt.get('reveal'):
             # 新图里这块成了窗外、底图里是东西：并进玻璃，图层里这块留空
-            rv = (alpha > 0.5) & cool(new) & ~glass & reg
+            # 窗外是亮的雪景和树；暗的偏冷像素（唱片、金属）不算
+            outdoor = cool(new) & (new.max(2) >= 110) & reg
+            if opt.get('solid'):
+                outdoor &= ~region_mask(opt['solid'])
+            rv = (alpha > 0.5) & outdoor & ~glass
             rv = ndi.binary_opening(rv, iterations=2)
             lab, n = ndi.label(rv)
             if n:
                 size = ndi.sum(rv, lab, range(1, n + 1))
                 rv = np.isin(lab, 1 + np.nonzero(size >= 400)[0])
-            # 外扩 3 像素吃掉旧东西的描边（只扩到新图里也是窗外的地方）
-            rv = (ndi.binary_dilation(rv, iterations=3) & cool(new) & reg) | rv
+            # 外扩吃掉旧东西的描边（只扩到新图里也是窗外的地方），窗外里零星的暗点一起补上
+            rv = ndi.binary_closing(rv, iterations=4) & outdoor | rv
+            rv = (ndi.binary_dilation(rv, iterations=6) & outdoor) | rv
+            # 窗外里暗的树干被围在中间的，也并进来
+            rv = ndi.binary_fill_holes(rv | glass) & ~glass & reg
+            if opt.get('solid'):
+                rv &= ~region_mask(opt['solid'])
             reveal |= rv
+            reveal_reg |= reg
             reveal_src = new
-            alpha = alpha * (1 - feather(rv, 0.7))
+            # 新的那一半：让出来的那块和原玻璃里新图的窗外都不收（外扩、羽化会带进一圈窗外）
+            alpha = alpha * (1 - feather(rv | (glass & cool(new) & (new.max(2) >= 110) & reg), 0.7))
             # 旧的那一半：底图在同一范围里的像素，连同让出来的那块
-            old_a = np.maximum(alpha, feather(rv, 0.7))
+            # 原来就是玻璃的地方不收：底图那里是白天的窗外，室内层这块本来就透明
+            old_a = np.maximum(alpha, feather(rv, 0.7)) * (1 - feather(glass, 0.7))
             save_layer(out / f'{OLD_OF[name]}.webp', base, old_a)
         save_layer(out / f'{name}.webp', new, alpha)
         report[name] = {'from': f'出图/批次2/{fname}.png', 'shift': [round(sh[0], 2), round(sh[1], 2)],
@@ -199,8 +214,9 @@ def build(room, src, locs):
         soft = np.asarray(Image.fromarray((g2 * 255).astype('uint8')).filter(ImageFilter.GaussianBlur(0.7)))
         Image.fromarray(np.dstack([base, 255 - soft]).astype('uint8'), 'RGBA').save(out / 'interior_rgba.webp', 'WEBP', lossless=True, method=6)
         under = ndi.binary_dilation(g2, iterations=2)
-        # 两张图的窗外几乎同色，直接取新图的窗外，往原窗外那边羽化过渡
-        a = feather(ndi.binary_dilation(reveal, iterations=6), 3)[..., None]
+        # 两张图的窗外几乎同色，直接取新图的窗外，往原窗外那边羽化过渡。
+        # 底图的罩布外面还有一圈黑描边落在原玻璃里（离布 5–15 像素），外扩 20 像素一起换掉
+        a = feather(ndi.binary_dilation(reveal, iterations=20) & reveal_reg, 4)[..., None]
         view = (base * (1 - a) + reveal_src * a).round().astype('uint8')
         outside = np.dstack([view, under * 255]).astype('uint8')
         outside[~under, :3] = 0
