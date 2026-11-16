@@ -23,11 +23,11 @@
 | 炉间 | `woodpile_1..4`、`fire_flame_ember/low/mid/high`（含白天炉前石台的暖光）、`kettle`、`armchair_blanket`、`snack_plate`、`oil_lamp_body`、`radio_fixed`/`radio_broken`、`gramophone_open`/`gramophone_covered` |
 | 灶间 | `stock_sparse/half/full`、`coat`、`prep`、`oil_lamp_body` |
 | 卧室 | `quilt_thick`、`oil_lamp_body` |
-| 观测间 | `desk_work`、`cup`、`heater_flame_on`（含暖炉龛里和地上的暖光）、`jar_1..3`、`books_few`/`books_many`（整个书架取新图）；`oil_lamp_body` 还没有：补出那张把油灯画成点着的，等再出 |
+| 观测间 | `desk_work`、`cup`、`heater_flame_on`（含暖炉龛里和地上的暖光）、`jar_1..3`、`books_few`/`books_many`（整个书架取新图）、`oil_lamp_body`（灯罩按轮廓整块取） |
 
 炉间唱片机原来罩着布，揭开后布占的那块是窗外：这块并进了炉间的玻璃掩码（室内层透明、窗外层用新图的窗外），没修好时由 `radio_broken`、`gramophone_covered` 把底图原样盖回去。所以炉间的室内层、窗外层、掩码是 `build.py` 之后再由 `build2.py` 改过的，重跑 `build.py` 以后要接着跑 `build2.py`。
 
-还没有的（G6、G7、G8 做）：夜里的窗外、下雪和暴风雪、夜色、夜里的炉火光和点着的油灯、人物。观测间的玻璃罐、灶间的油灯灯罩是半透明的，里面烤着白天的雪景，夜里会露馅，等夜景那批一起处理。
+还没有的（G6、G7、G8 做）：夜里的窗外、下雪和暴风雪、夜色、夜里的炉火光和点着的油灯、人物。观测间的玻璃罐和油灯灯罩、灶间的油灯灯罩是半透明的，里面烤着白天的雪景，夜里会露馅，等夜景那批一起处理。
 
 ## 坐标
 
